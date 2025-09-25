@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Clock, Users, Star, ArrowRight, Code, Database, Smartphone, Cloud } from "lucide-react"
 import { EnrollmentModal } from "@/components/enrollment-modal"
+import Link from "next/link"
 
 export function CoursesSection() {
   const [selectedCourse, setSelectedCourse] = useState<any>(null)
@@ -14,6 +15,7 @@ export function CoursesSection() {
   const courses = [
     {
       icon: Code,
+      slug: "full-stack-web-development",
       title: "Full Stack Web Development",
       description: "Master React, Node.js, MongoDB and build production-ready web applications",
       duration: "6 months",
@@ -27,6 +29,7 @@ export function CoursesSection() {
     },
     {
       icon: Database,
+      slug: "data-science-ai",
       title: "Data Science & AI",
       description: "Learn Python, Machine Learning, and AI to become a data scientist",
       duration: "8 months",
@@ -40,6 +43,7 @@ export function CoursesSection() {
     },
     {
       icon: Smartphone,
+      slug: "mobile-app-development",
       title: "Mobile App Development",
       description: "Build native iOS and Android apps using React Native and Flutter",
       duration: "5 months",
@@ -53,6 +57,7 @@ export function CoursesSection() {
     },
     {
       icon: Cloud,
+      slug: "devops-cloud-computing",
       title: "DevOps & Cloud Computing",
       description: "Master AWS, Docker, Kubernetes and modern deployment practices",
       duration: "4 months",
@@ -73,7 +78,7 @@ export function CoursesSection() {
 
   return (
     <>
-      <section className="py-20">
+      <section className="py-20" id="course-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4">
@@ -145,9 +150,11 @@ export function CoursesSection() {
                       Enroll Now
                       <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
-                    <Button variant="outline" className="flex-1 bg-transparent">
-                      Learn More
-                    </Button>
+                  <Button asChild variant="outline" className="flex-1 bg-transparent">
+  <Link href={`/courses/${course.slug}`}>
+    Learn More
+  </Link>
+</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -155,9 +162,10 @@ export function CoursesSection() {
           </div>
 
           <div className="text-center mt-12">
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg">  <Link href="/courses" className="flex items-center">
               View All Courses
               <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
             </Button>
           </div>
         </div>
@@ -167,3 +175,5 @@ export function CoursesSection() {
     </>
   )
 }
+
+

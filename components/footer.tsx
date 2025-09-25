@@ -60,22 +60,22 @@ export function Footer() {
             <h4 className="text-lg font-semibold">Services</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/services" className="text-muted-foreground hover:text-primary transition-colors">
                   Business Solutions
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/services"  className="text-muted-foreground hover:text-primary transition-colors">
                   Customer Support
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/services"  className="text-muted-foreground hover:text-primary transition-colors">
                   Digital Innovation
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/services"  className="text-muted-foreground hover:text-primary transition-colors">
                   Consulting
                 </Link>
               </li>

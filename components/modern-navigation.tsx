@@ -54,7 +54,17 @@ export function ModernNavigation() {
                 Home
               </Link>
 
-              <DropdownMenu>
+               <Link href="/#course-section" className="text-foreground hover:text-primary transition-colors">
+                Courses
+              </Link>
+             
+              
+             
+              
+
+
+
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors">
                   Courses <ChevronDown className="h-4 w-4" />
                 </DropdownMenuTrigger>
@@ -72,7 +82,7 @@ export function ModernNavigation() {
                     <Link href="/courses/devops">DevOps & Cloud</Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors">

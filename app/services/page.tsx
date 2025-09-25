@@ -15,6 +15,7 @@ import {
   Laptop,
   BookOpen,
 } from "lucide-react"
+import { ModernNavigation } from "@/components/modern-navigation"
 
 const services = [
   {
@@ -164,7 +165,7 @@ const industries = [
 export default function ServicesPage() {
   return (
     <div className="min-h-screen">
-      <Navigation />
+      <ModernNavigation />
       <main>
         {/* Hero Section */}
         <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
