@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Users, Award, TrendingUp, ArrowRight } from "lucide-react"
+import { Play, Users, Award, TrendingUp, ArrowRight, Link } from "lucide-react"
 import { useState } from "react"
 
 export function ModernHero() {
@@ -50,15 +50,61 @@ export function ModernHero() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="gradient-primary group">
-                Start Your Journey
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+           
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center" asChild>
+                <a href="/education/coding-classes">
+                 Start your Journey
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
               </Button>
-              <Button variant="outline" size="lg" onClick={() => setIsPlaying(!isPlaying)} className="group">
-                <Play className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+              
+{/* watch demo */}
+
+              <Button
+                size="lg"
+                variant="outline"
+                className="flex items-center justify-center"
+                onClick={() => setIsPlaying(true)}
+              >
+                <Play className="mr-2 h-4 w-4" />
                 Watch Demo
               </Button>
+
+              {/* Video Modal */}
+              {isPlaying && (
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-lg overflow-hidden w-11/12 md:w-3/4 lg:w-1/2">
+                    <div className="relative pb-[56.25%]"> {/* 16:9 Aspect Ratio */}
+                      <iframe
+                        className="absolute top-0 left-0 w-full h-full"
+                        src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                        title="Demo Video"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      className="absolute top-2 right-2"
+                      onClick={() => setIsPlaying(false)}
+                    >
+                      <span className="sr-only">Close</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
+             
 
             {/* Trust Indicators */}
             <div className="flex items-center gap-6 pt-4">

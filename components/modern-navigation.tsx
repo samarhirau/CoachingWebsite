@@ -26,9 +26,16 @@ export function ModernNavigation() {
           </div>
           <div className="hidden md:flex items-center gap-4">
             <span>🎓 New Batch Starting Soon!</span>
-            <Button variant="secondary" size="sm" className="text-xs">
-              Register Now
-            </Button>
+          
+<Link
+  href="/courses?filter=upcoming"
+  className="bg-secondary text-secondary-foreground px-3 py-2 rounded text-xs font-medium hover:bg-secondary/80 transition-colors"
+>
+  Register Now
+</Link>
+
+            
+
           </div>
         </div>
       </div>
@@ -149,7 +156,8 @@ export function ModernNavigation() {
                 Free Demo
               </Button>
               <Button size="sm" className="gradient-primary">
-                Enroll Now
+                <Link href="/dashboard">
+                My Courses</Link>
               </Button>
             </div>
 

@@ -1,9 +1,12 @@
+"use client";
 import { ModernNavigation } from "@/components/modern-navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Users, CheckCircle, ArrowRight, Target, BookOpen, TrendingUp } from "lucide-react"
+import { EnrollmentModal } from "@/components/enrollment-modal"
+import { useState } from "react"
 
 const programs = [
   {
@@ -90,6 +93,17 @@ const benefits = [
 ]
 
 export default function CoachingPage() {
+
+    const [selectedCourse, setSelectedCourse] = useState<any>(null)
+    const [isEnrollmentOpen, setIsEnrollmentOpen] = useState(false)
+
+
+      const handleEnrollClick = (course: any) => {
+    setSelectedCourse(course)
+    setIsEnrollmentOpen(true)
+  }
+
+
   return (
     <div className="min-h-screen">
       <ModernNavigation />
@@ -197,7 +211,7 @@ export default function CoachingPage() {
                       </ul>
                     </div>
 
-                    <Button className="w-full">
+                    <Button className="w-full" onClick={() => handleEnrollClick(program)}>
                       Enroll in {program.title}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -263,6 +277,8 @@ export default function CoachingPage() {
         </section>
       </main>
       <Footer />
+            <EnrollmentModal isOpen={isEnrollmentOpen} onClose={() => setIsEnrollmentOpen(false)} course={selectedCourse} />
+      
     </div>
   )
 }
