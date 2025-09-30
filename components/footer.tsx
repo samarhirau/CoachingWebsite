@@ -104,14 +104,15 @@ export function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">© 2025 RidBharat. All rights reserved.</p>
+          <p className="text-muted-foreground text-sm">Created by <span className="text-primary underline underline-offset-2"><a target="_blank" href="https://portfolio2025-wine.vercel.app/">Samar Hirau</a></span></p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
-            <Link href="#" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+            <Link href="/privacy-policy" className="text-muted-foreground hover:text-primary text-sm transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+            <Link href="/terms-of-service" className="text-muted-foreground hover:text-primary text-sm transition-colors">
               Terms of Service
             </Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+            <Link href="/cookie-policy" className="text-muted-foreground hover:text-primary text-sm transition-colors">
               Cookie Policy
             </Link>
           </div>
