@@ -6,6 +6,9 @@ import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
 
+import { ToastProvider } from "@/components/toastProvider"
+import { AuthProvider } from "@/components/auth-provider"
+
 export const metadata: Metadata = {
   title: "RidBharat - Your Trusted Partner in India",
   description:
@@ -21,9 +24,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <Suspense fallback={null}>{children}</Suspense>
-        <Analytics />
+       
+          <AuthProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+          <Analytics />
+          <ToastProvider />
+        </AuthProvider>
       </body>
     </html>
   )
 }
+
+
