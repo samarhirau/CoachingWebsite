@@ -24,7 +24,8 @@ export function ModernHero() {
                 🚀 New Batch Starting January 2025
               </Badge>
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                Master <span className="text-gradient">Coding Skills</span> with Industry Experts
+                Master
+                 <span className="text-gradient">Coding Skills</span> with Industry Experts
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
                 Transform your career with our comprehensive coding bootcamp. Learn from industry professionals and work

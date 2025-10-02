@@ -8,12 +8,11 @@ const userSchema = new mongoose.Schema({
     default: "student",
   },
   email: { type: String, required: true, unique: true },
-  phone: { type: String, required: true, unique: true },
+  phone: { type: String },
   password: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   otp: { type: String },
-otpExpiry: { type: Date }
-
+  otpExpiry: { type: Date },
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);

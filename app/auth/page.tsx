@@ -35,19 +35,25 @@ export default function AuthPage() {
 
   // ---------------- HANDLERS ----------------
 
-  const handleSignup = async (e: React.FormEvent) => {
+
+const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      await register(signupEmail, signupPassword, signupName, signupPhone)
-      toast.success("Registration successful! You can now log in.")
-      setCurrentStep("login")
+      const newUser = await register(signupEmail, signupPassword, signupName, signupPhone)
+      toast.success("Account created successfully!")
+      if (newUser?.role === 'admin') {
+        router.push("/admin")
+        return
+      }
+      router.push("/dashboard")
     } catch (error: any) {
-      toast.error(error.message || "Registration failed")
+      toast.error(error.message || "Signup failed")
     } finally {
       setLoading(false)
     }
   }
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -196,7 +202,7 @@ export default function AuthPage() {
               <form onSubmit={handleSignup} className="space-y-4">
                 <Input type="text" placeholder="Full Name" value={signupName} onChange={(e) => setSignupName(e.target.value)} required />
                 <Input type="email" placeholder="Email Address" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
-                <Input type="tel" placeholder="Phone Number (Optional)" value={signupPhone} onChange={(e) => setSignupPhone(e.target.value)} />
+                <Input type="tel" placeholder="Phone Number (Optional)" value={signupPhone} onChange={(e) => setSignupPhone(e.target.value)}  />
                 <Input type="password" placeholder="Password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
                 <Button type="submit" className="w-full" disabled={loading}>{loading ? "Creating..." : "Create Account"}</Button>
                 {renderSocialLogin()}

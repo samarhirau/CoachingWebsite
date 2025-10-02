@@ -30,22 +30,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth()
   }, [])
 
-  const checkAuth = async () => {
-    try {
-      const response = await fetch("/api/auth/me")
-      if (response.ok) {
-        const data = await response.json()
-        setUser(data.user)
-      } else {
-        setUser(null)
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error)
+const checkAuth = async () => {
+  try {
+    const response = await fetch("/api/auth/me", {
+      method: "GET",
+      credentials: "include", 
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      setUser(data.user)
+    } else {
       setUser(null)
-    } finally {
-      setLoading(false)
     }
+  } catch (error) {
+    console.error("Auth check failed:", error)
+    setUser(null)
+  } finally {
+    setLoading(false)
   }
+}
+
 
   const login = async (email: string, password: string): Promise<User> => {
     const response = await fetch("/api/auth/login", {
@@ -65,22 +70,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return data.user
   }
 
-  const register = async (email: string, password: string, name: string ,phone :string): Promise<User> => {
-    const response = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name, phone}),
-    })
+  const register = async (email: string, password: string, name: string, phone?: string): Promise<User> => {
+  const response = await fetch("/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, name, phone }),
+    cache: "no-store", 
+  })
 
-    const data = await response.json()
+  const data = await response.json()
 
-    if (!response.ok) {
-      throw new Error(data.error || "Registration failed")
-    }
-
-    setUser(data.user)
-    return data.user
+  if (!response.ok) {
+    throw new Error(data.error || "Registration failed")
   }
+
+  setUser(data.user)
+  return data.user
+}
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" })

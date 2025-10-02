@@ -3,19 +3,18 @@ import connectDB from "@/lib/mongoDb"
 import User from "@/models/User"
 import { hashPassword, generateToken } from "@/lib/auth"
 
-
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name , phone} = await request.json()
+    const { email, password, name , phone } = await request.json()
 
-    if (!email || !password || !name || !phone) {
+    if (!email || !password || !name ) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     await connectDB()
 
     // Check if user already exists
-const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+    const existingUser = await User.findOne({ email })
     if (existingUser) {
       return NextResponse.json({ error: "User already exists" }, { status: 400 })
     }
@@ -33,9 +32,9 @@ const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
     // Create user
     const user = await User.create({
       email,
-      phone,
       password: hashedPassword,
       name,
+      phone,
       role: userRole, 
     })
 
@@ -64,8 +63,6 @@ const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
     })
-
-    
 
     return response
   } catch (error) {

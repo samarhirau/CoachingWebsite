@@ -39,7 +39,6 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.name,
         role: user.role,
-   
       },
       message: "Login successful",
     })
@@ -51,15 +50,6 @@ export async function POST(request: NextRequest) {
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
     })
-
-    
-  response.cookies.set("role", user.role, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60,
-  });
 
     return response
   } catch (error) {
