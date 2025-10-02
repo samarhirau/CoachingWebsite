@@ -58,6 +58,7 @@ const checkAuth = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
       credentials: "include",
+      cache: "no-store",
     })
 
     const data = await response.json()
