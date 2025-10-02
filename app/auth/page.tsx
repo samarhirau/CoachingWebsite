@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/components/auth-provider" 
 import toast from "react-hot-toast"
 
+
 type AuthFlowStep = 'login' | 'signup' | 'forgot_email' | 'verify_otp' | 'reset_password'
 
 export default function AuthPage() {
@@ -52,8 +53,12 @@ export default function AuthPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      await login(loginEmail, loginPassword)
+      const loggedInUser = await login(loginEmail, loginPassword)
       toast.success("Logged in successfully!")
+      if (loggedInUser?.role === 'admin') {
+        router.push("/admin")
+        return
+      }
       router.push("/dashboard")
     } catch (error: any) {
       toast.error(error.message || "Login failed")
@@ -62,24 +67,39 @@ export default function AuthPage() {
     }
   }
 
-  const handleForgotEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      // Call your backend API to send OTP
-      await fetch("/api/auth/forgot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: forgotEmail })
-      })
-      toast.success("OTP sent to your email")
-      setCurrentStep("verify_otp")
-    } catch (error: any) {
-      toast.error(error.message || "Failed to send OTP")
-    } finally {
-      setLoading(false)
-    }
+  
+
+  async function sendOtp(email: string) {
+  try {
+    const res = await fetch("/api/auth/forgot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+
+    return data;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to send OTP");
   }
+}
+
+  const handleForgotEmailSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await sendOtp(forgotEmail);
+    toast.success("OTP sent to your email");
+    setCurrentStep("verify_otp");
+  } catch (error: any) {
+    toast.error(error.message || "Failed to send OTP");
+  } finally {
+    setLoading(false);
+  }
+}
+
 
   const handleOtpVerification = async (e: React.FormEvent) => {
     e.preventDefault()

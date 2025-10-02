@@ -1,21 +1,22 @@
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+export function middleware(req: NextRequest) {
+  const token = req.cookies.get("auth-token")?.value;
+  const role = req.cookies.get("role")?.value;
+  const { pathname } = req.nextUrl;
 
-export function middleware(request: NextRequest) {
-  // console.log('🧪 Middleware is running...')
-
-  const token = request.cookies.get('auth-token')?.value
-  // console.log('🔐 Token from cookie:', token)
-
-  if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/', request.url))
+  if (pathname.startsWith("/admin") && (!token || role !== "admin")) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
-  return NextResponse.next()
+  if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) {
+    if (!token) return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path'], 
-
-}
+  matcher: ["/admin/:path*", "/dashboard/:path*"],
+};
