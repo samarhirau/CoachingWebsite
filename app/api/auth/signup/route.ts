@@ -36,7 +36,7 @@ const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
       phone,
       password: hashedPassword,
       name,
-      role: userRole, // Use the determined role
+      role: userRole, 
     })
 
     // Generate token
@@ -64,6 +64,8 @@ const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
     })
+
+    
 
     return response
   } catch (error) {
