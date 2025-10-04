@@ -1,11 +1,20 @@
 import mongoose from "mongoose";
 
 const enrollmentSchema = new mongoose.Schema({
-  student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  course: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
-  status: { type: String, enum: ["pending", "active", "completed"], default: "pending" },
-  enrolledAt: { type: Date, default: Date.now },
-  completedAt: { type: Date }
+  studentId: { type: String, required: true },
+   courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
+    formData: {
+      firstName: String,
+      lastName: String,
+      email: { type: String, required: true },
+      phone: { type: String, required: true },
+      education: String,
+      experience: String,
+      motivation: String,
+      paymentPlan: String,
+      agreeTerms: Boolean,
+      couponCode: String,
+    },
 });
 
 const Enrollment = mongoose.models.Enrollment || mongoose.model("Enrollment", enrollmentSchema);

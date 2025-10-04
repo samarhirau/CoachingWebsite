@@ -19,6 +19,9 @@ import {
   Loader2,
 } from 'lucide-react';
 import { ModernNavigation } from './modern-navigation';
+import { useAuth } from './auth-provider';
+import { log } from 'console';
+import Link from 'next/link';
 
 // --- Global Constants (Mock Data) ---
 
@@ -47,16 +50,18 @@ const RECENT_ACTIVITIES = [
     { type: "project", title: "Portfolio Website", time: "1 week ago" },
 ];
 
-/**
- * Mock Course Data - Represents ALL available courses.
- * The 'status' field dictates if the student is currently enrolled.
- */
-const ALL_MOCK_COURSES = [
-    { id: 1, title: "Master React, Node.js, MongoDB and build production-ready web applications", duration: "6 months", enrollments: "150+", rating: 4.9, status: "In Progress", progress: 75, whatYoullLearn: ["React & Next.js", "MongoDB", "Node.js & Express", "AWS Deployment"], price: "N/A" },
-    { id: 2, title: "Learn Python, Machine Learning, and AI to become a data scientist", duration: "8 months", enrollments: "120+", rating: 4.8, status: "Completed", progress: 100, whatYoullLearn: ["Python & Pandas", "Deep Learning", "Machine Learning", "Data Visualization"], price: "N/A" },
-    { id: 3, title: "Mobile App Development", duration: "5 months", enrollments: "80+", rating: 4.7, status: "Not Started", progress: 0, difficulty: "Intermediate", price: "₹40,000", whatYoullLearn: ["React Native", "Flutter", "iOS Development", "Android Development"], },
-    { id: 4, title: "DevOps & Cloud Computing", duration: "4 months", enrollments: "60+", rating: 4.9, status: "In Progress", progress: 30, difficulty: "Advanced", price: "₹35,000", whatYoullLearn: ["Master AWS", "Docker", "Kubernetes", "Modern Deployments"], },
-];
+
+interface Course {
+  _id: string;
+  title: string;
+  status?: string;
+  price?: number;
+  originalPrice?: number;
+  duration?: string;
+  features?: string[];
+  rating?: number,
+}
+
 
 // --- UTILITY COMPONENTS (Tailwind styled mocks for shadcn/ui) ---
 
@@ -533,19 +538,7 @@ const CourseCard = ({ course }) => {
     return (
         <Card className={`shadow-xl hover:shadow-2xl transition-shadow duration-300 ${topBorderColor}`}>
             <CardContent className="p-6 space-y-4">
-                <div className="flex justify-between items-start">
-                    {course.price && course.price !== "N/A" && (
-                        <div className={`p-1 px-3 text-sm font-bold rounded-md mb-2 ${course.difficulty === "Advanced" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
-                            {course.difficulty}
-                        </div>
-                    )}
-                    {course.price && course.price !== "N/A" && (
-                        <div className="text-2xl font-bold text-red-500">
-                           {course.price}
-                        </div>
-                    )}
-                </div>
-
+               
                 <h3 className="text-xl font-bold min-h-[3rem] text-gray-800">{course.title}</h3>
 
                 {/* Meta Info: Duration, Enrollment, Rating */}
@@ -567,17 +560,19 @@ const CourseCard = ({ course }) => {
                 <hr className="my-3 border-t border-gray-100" />
 
                 {/* What You'll Learn Section */}
-                <div>
-                    <h4 className="font-semibold mb-2 text-gray-700">What you'll learn:</h4>
-                    <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                        {course.whatYoullLearn.slice(0, 4).map((item, index) => (
-                            <li key={index} className="flex items-center gap-2 text-gray-500">
-                                <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
-                                {item}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+        
+<div>
+  <h4 className="font-semibold mb-2 text-gray-700">What you'll learn:</h4>
+  <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+    {(course.features || []).map((item, index) => (
+      <li key={index} className="flex items-center gap-2 text-gray-500">
+        <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
+        {item}
+      </li>
+    ))}
+  </ul>
+</div>
+
 
                 <div className="pt-4">
                     {/* Progress Bar for enrolled courses */}
@@ -603,9 +598,9 @@ const CourseCard = ({ course }) => {
                         </Button>
 
                         {/* Secondary 'Learn More' Button */}
-                        <Button variant="outline">
-                            Learn More
-                        </Button>
+                          <Button  variant="outline" className="flex-1 bg-transparent">
+                      <Link href={`/courses/${course.slug}`}>Learn More</Link>
+                    </Button>
                     </div>
                 </div>
             </CardContent>
@@ -613,43 +608,93 @@ const CourseCard = ({ course }) => {
     );
 };
 
-const MyCoursesTab = () => {
-    // This filter is intentionally left as is, using ALL_MOCK_COURSES, 
-    // to simulate fetching all course data (mocked) and filtering for enrolled (In Progress or Completed)
-    const enrolledCourses = ALL_MOCK_COURSES.filter(course => 
-        course.status === "In Progress" || course.status === "Completed"
-    );
 
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">My Enrolled Courses ({enrolledCourses.length})</h2>
-                <Button variant="outline">
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Explore Catalog
-                </Button>
-            </div>
-            {enrolledCourses.length > 0 ? (
-                <div className="grid md:grid-cols-2 gap-6">
-                    {enrolledCourses.map(course => (
-                        <CourseCard key={course.id} course={course} />
-                    ))}
-                </div>
-            ) : (
-                <Card>
-                    <CardContent className="p-6 text-center space-y-3">
-                        <Zap className="h-10 w-10 text-indigo-500 mx-auto" />
-                        <h3 className="text-xl font-semibold text-gray-800">No Active Courses</h3>
-                        <p className="text-gray-500">It looks like you haven't started any courses yet. Enroll in a new course to begin your journey!</p>
-                        <Button className="gradient-primary">
-                            Explore New Courses
-                        </Button>
-                    </CardContent>
-                </Card>
-            )}
+
+const MyCoursesTab = () => {
+  const { user } = useAuth()
+  const [courses, setCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    if (!user) return
+
+    const fetchCourses = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/enrollments?studentId=${user._id}`, {
+          credentials: "include",
+        })
+        const data = await res.json()
+        // console.log("Fetched enrollments:", data)
+
+        if (!res.ok) throw new Error(data?.error || "Failed to fetch courses")
+
+        const enrolledCourses: Course[] = data.enrollments.map((e: any) => ({
+          _id: e.course._id,
+          slug : e.course.slug,
+          title: e.course.title,
+          status: e.course.status || "In Progress",
+          price: e.course.price,
+          originalPrice: e.course.originalPrice,
+          duration: e.course.duration,
+          features: e.course.features,
+          enrollments: e.course.enrollments || ( 100 + Math.floor(Math.random() * 10)),
+            rating: e.course.rating ,
+          
+          progress: e.progress || Math.floor(Math.random() * 100), // Random progress for demo
+        }))
+
+        setCourses(enrolledCourses)
+      } catch (err: any) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCourses()
+  }, [user])
+
+  if (loading) return <p>Loading your courses...</p>
+  if (error) return <p className="text-red-500">{error}</p>
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">
+          My Enrolled Courses ({courses.length})
+        </h2>
+        <Button variant="outline">
+          <BookOpen className="h-4 w-4 mr-2" />
+          Explore Catalog
+        </Button>
+      </div>
+
+      {courses.length > 0 ? (
+        <div className="grid md:grid-cols-2 gap-6">
+          {courses.map((course) => (
+            <CourseCard key={course._id} course={course} />
+          ))}
         </div>
-    );
-};
+      ) : (
+        <Card>
+          <CardContent className="p-6 text-center space-y-3">
+            <Zap className="h-10 w-10 text-indigo-500 mx-auto" />
+            <h3 className="text-xl font-semibold text-gray-800">No Active Courses</h3>
+            <p className="text-gray-500">
+              It looks like you haven't started any courses yet. Enroll in a new course to begin your journey!
+            </p>
+            <Button className="gradient-primary">Explore New Courses</Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
+}
+
+
+
 
 const ProgressTab = ({ assignments }) => {
     const inProgressAssignments = assignments.filter(a => a.status === 'in-progress' || a.status === 'submitted');
@@ -733,7 +778,8 @@ export default function App() {
   const TabsContent = ({ value, children }) => (
       <div className={`pt-6 ${activeTab === value ? 'block' : 'hidden'}`}>{children}</div>
   );
-  
+    const { user } = useAuth()
+   if (!user) return <p className='absolute top-1/2 left-1/2'>Loading...</p>;
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
       {/* Header */}
@@ -743,13 +789,13 @@ export default function App() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-800 font-bold text-lg">
-                RS
+                {user.name.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">Welcome back, {STUDENT_DATA.name}!</h1>
-                <p className="text-gray-500 text-sm">
+                <h1 className="text-2xl font-bold text-gray-800">Welcome back, {user.name}!</h1>
+                {/* <p className="text-gray-500 text-sm">
                   {STUDENT_DATA.course} • {STUDENT_DATA.batch}
-                </p>
+                </p> */}
               </div>
             </div>
             <div className="flex items-center gap-3">

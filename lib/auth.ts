@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET!
 export interface JWTPayload {
   userId: string
   email: string
-  role: "admin" | "user"
+  role: "admin" | "student"
 }
 
 export function generateToken(payload: JWTPayload): string {

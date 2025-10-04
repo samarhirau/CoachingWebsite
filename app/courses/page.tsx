@@ -317,10 +317,18 @@ export default function CoursesPage() {
                   </div>
                 </div>
                 <div className="flex gap-3 pt-2">
-                  <Button className="flex-1 gradient-primary group" onClick={() => handleEnrollClick(course)}>
-                    Enroll Now
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+
+                  // check if already enroll the course then show continue txt on button
+                  <Button
+  className="flex-1 gradient-primary group"
+  onClick={() => handleEnrollClick(course)}
+>
+  {course.enrolled ? "Continue" : "Enroll Now"}
+  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+</Button>
+
+
+                  
                   <Button asChild variant="outline" className="flex-1 bg-transparent">
                     <Link href={`/courses/${course.slug}`}>Learn More</Link>
                   </Button>
