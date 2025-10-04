@@ -1,20 +1,31 @@
-// middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import jwt from 'jsonwebtoken'
 
-export function middleware(request: NextRequest) {
-  // console.log('🧪 Middleware is running...')
 
+export const runtime = 'nodejs'
+
+import { jwtVerify } from 'jose'
+
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
-  // console.log('🔐 Token from cookie:', token)
+  const { pathname } = request.nextUrl
 
-  if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (!token && (pathname.startsWith('/dashboard') || pathname.startsWith('/admin'))) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
-  return NextResponse.next()
-}
+  if (token && pathname.startsWith('/admin')) {
+    try {
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
+      const { payload } = await jwtVerify(token, secret)
+      if (payload.role !== 'admin') {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+    } catch (err) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
 
-export const config = {
-  matcher: ['/dashboard/:path*'],
+  return NextResponse.next()
 }
