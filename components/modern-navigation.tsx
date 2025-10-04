@@ -3,11 +3,16 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Menu, X, ChevronDown, BookOpen, Phone, Mail } from "lucide-react"
+import { Menu, X, ChevronDown, BookOpen, Phone, Mail, User } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/components/auth-provider"
+
+
 
 export function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false)
+const { user : User } = useAuth();
+
 
   return (
     <>
@@ -155,10 +160,19 @@ export function ModernNavigation() {
               <Button variant="outline" size="sm">
                 Free Demo
               </Button>
-              <Button size="sm" className="gradient-primary">
+            {
+              User ? (
+                  <Button size="sm" className="gradient-primary">
                 <Link href="/dashboard">
                 My Courses</Link>
               </Button>
+              ) : (
+                <Button size="sm" className="gradient-primary">
+                <Link href="/login">
+                Login / Register</Link>
+              </Button>
+              )
+            }
             </div>
 
             {/* Mobile Menu Button */}
@@ -196,9 +210,18 @@ export function ModernNavigation() {
                   <Button variant="outline" size="sm" className="flex-1 bg-transparent">
                     Free Demo
                   </Button>
-                  <Button size="sm" className="flex-1 gradient-primary">
-                    Enroll Now
-                  </Button>
+                  { User ? (
+                    <Button size="sm" className="flex-1 gradient-primary">
+                      <Link href="/dashboard">
+                      My Courses</Link>
+                    </Button>
+                  ) : (
+                    <Button size="sm" className="flex-1 gradient-primary">
+                      <Link href="/login">
+                      Login / Register</Link>
+                    </Button>
+                  )
+                  }
                 </div>
               </div>
             </div>

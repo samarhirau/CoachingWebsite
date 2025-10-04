@@ -18,6 +18,7 @@ import {
   Zap,
   Loader2,
 } from 'lucide-react';
+import { ModernNavigation } from './modern-navigation';
 
 // --- Global Constants (Mock Data) ---
 
@@ -166,6 +167,7 @@ const SubmissionModal = ({ assignment, onClose, onSubmit }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+         
             <Card className="w-full max-w-lg">
                 <CardHeader>
                     <CardTitle>Submit: {assignment.title}</CardTitle>
@@ -735,6 +737,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
       {/* Header */}
+         <ModernNavigation />
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">

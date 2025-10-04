@@ -8,7 +8,11 @@ const userSchema = new mongoose.Schema({
     default: "student",
   },
   email: { type: String, required: true, unique: true },
-  phone: { type: String },
+   phone : {type: String, 
+    unique: true, 
+    sparse: true 
+  },
+  
   password: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   otp: { type: String },

@@ -29,14 +29,26 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(password)
 
-    // Create user
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-      name,
-      phone,
-      role: userRole, 
-    })
+ const userData: {
+  email: string;
+  password: string;
+  name: string;
+  role: "admin" | "student";
+  phone?: string;
+} = {
+  email,
+  password: hashedPassword,
+  name,
+  role: userRole,
+};
+
+if (phone && phone.trim() !== "") {
+  userData.phone = phone.trim();
+}
+
+const user = await User.create(userData);
+
+
 
     // Generate token
     const token = generateToken({

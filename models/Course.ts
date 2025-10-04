@@ -1,19 +1,32 @@
-import mongoose from "mongoose";
 
-const courseSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  slug: { type: String, required: true, unique: true },
-  description: { type: String },
-  duration: { type: String },
-  price: { type: Number, default: 0 },
-  originalPrice: { type: Number },
-  rating: { type: Number, default: 0 },
-  students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  features: [{ type: String }],
-  assignments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Assignment" }],
-  createdAt: { type: Date, default: Date.now },
+import mongoose, { Schema, model, models } from "mongoose";
+
+const TimelineSchema = new Schema({
+  month: { type: String, required: true },
+  focus: { type: String, required: true },
 });
 
-const Course = mongoose.models.Course || mongoose.model("Course", courseSchema);
+const CourseSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
+    description: { type: String, required: true },
+    duration: { type: String },
+    price: { type: Number },
+    originalPrice: { type: Number },
+    rating: { type: Number },
+    professor: { type: String },
+    maxStudents: { type: Number },
+    contactNumber: { type: String },
+    features: [{ type: String }],
+    level: { type: String },
+    color: { type: String },
+    details: { type: String },
+    roadmap: [{ type: String }],        // array of strings
+    timeline: [TimelineSchema],         // array of objects
+  },
+  { timestamps: true }
+);
 
+const Course = models.Course || model("Course", CourseSchema);
 export default Course;
