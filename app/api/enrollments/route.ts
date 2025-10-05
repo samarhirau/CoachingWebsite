@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import Enrollment from "@/models/Enrollment";
+import Course from "@/models/Course";
 
 
 export async function POST(req: Request) {
@@ -44,29 +45,59 @@ export async function POST(req: Request) {
 
 
 
-export async function GET(req: Request) {
-  try {
-    await connectDB();
+// export async function GET(req: Request) {
+//   try {
+//     await connectDB();
 
-    const url = new URL(req.url);
-    const studentId = url.searchParams.get("studentId");
+//     const url = new URL(req.url);
+//     const studentId = url.searchParams.get("studentId");
+
+//     if (!studentId) {
+//       return NextResponse.json({ error: "Missing studentId" }, { status: 400 });
+//     }
+
+//     // Populate course details
+//     const enrollments = await Enrollment.find({ studentId }).populate("courseId");
+
+//     // Format response to match frontend needs
+//     const formatted = enrollments.map((e) => ({
+//       studentId: e.studentId,
+//       course: e.courseId, // populated course
+//     }));
+
+//     return NextResponse.json({ enrollments: formatted }, { status: 200 });
+//   } catch (error: any) {
+//     console.error("GET /api/enrollments error:", error);
+//     return NextResponse.json({ error: "Server error", details: error.message }, { status: 500 });
+//   }
+// }
+
+
+
+export async function GET(req) {
+  try {
+    await connectDB()
+
+    const url = new URL(req.url)
+    const studentId = url.searchParams.get("studentId")
 
     if (!studentId) {
-      return NextResponse.json({ error: "Missing studentId" }, { status: 400 });
+      return NextResponse.json({ error: "Missing studentId" }, { status: 400 })
     }
 
-    // Populate course details
-    const enrollments = await Enrollment.find({ studentId }).populate("courseId");
+    const enrollments = await Enrollment.find({ studentId }).populate("courseId")
 
-    // Format response to match frontend needs
     const formatted = enrollments.map((e) => ({
       studentId: e.studentId,
-      course: e.courseId, // populated course
-    }));
+      course: e.courseId,
+    }))
 
-    return NextResponse.json({ enrollments: formatted }, { status: 200 });
-  } catch (error: any) {
-    console.error("GET /api/enrollments error:", error);
-    return NextResponse.json({ error: "Server error", details: error.message }, { status: 500 });
+    return NextResponse.json({ enrollments: formatted }, { status: 200 })
+  } catch (error) {
+    console.error("GET /api/enrollments error:", error)
+    return NextResponse.json(
+      { error: "Server error", details: error.message },
+      { status: 500 }
+    )
   }
 }
