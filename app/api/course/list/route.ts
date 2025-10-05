@@ -30,6 +30,7 @@ export async function GET() {
         maxStudents: course.maxStudents || 0,
         contactNumber: course.contactNumber || "",
         level: "Beginner to Advanced",
+        mode : course.mode ,
       }))
     });
   } catch (err) {

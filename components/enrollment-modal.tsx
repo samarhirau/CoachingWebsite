@@ -53,6 +53,29 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
+  const isStepValid = () => {
+  if (step === 1) {
+    return (
+      formData.firstName.trim() !== "" &&
+      formData.lastName.trim() !== "" &&
+      formData.email.trim() !== "" &&
+      formData.phone.trim() !== "" &&
+      formData.education.trim() !== ""
+    )
+  }
+  if (step === 2) {
+    return (
+      formData.experience.trim() !== "" &&
+      formData.motivation.trim() !== ""
+    )
+  }
+  if (step === 3) {
+    return formData.agreeTerms
+  }
+  return true
+}
+
+
 
 useEffect(() => {
   if (user) {
@@ -158,7 +181,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     toast.success("Enrollment successful!")
     onClose()
   } catch (err: any) {
-    toast.error("Enrollment API Error:", err)
+    toast.error("Enrollment failed: " + (err.message || "Server error"))
     setError(err.message)
   }
 
@@ -345,9 +368,13 @@ const handleSubmit = async (e: React.FormEvent) => {
           <Button variant="outline" onClick={step === 1 ? onClose : handlePrevious}>
             {step === 1 ? "Cancel" : "Previous"}
           </Button>
-          <Button onClick={step === 3 ? handleSubmit : handleNext} disabled={step === 3 && (!formData.agreeTerms || loading)}>
-            {loading ? "Processing..." : step === 3 ? "Complete Enrollment" : "Next"}
-          </Button>
+        <Button
+  onClick={step === 3 ? handleSubmit : handleNext}
+  disabled={!isStepValid() || loading}
+>
+  {loading ? "Processing..." : step === 3 ? "Complete Enrollment" : "Next"}
+</Button>
+
         </div>
       </DialogContent>
     </Dialog>

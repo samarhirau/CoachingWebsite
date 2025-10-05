@@ -600,8 +600,10 @@ const CourseCard = ({ course }) => {
                             className={enrollButtonClass}
                             variant={buttonVariant}
                         >
+                          <Link href='/overview'>
                             {buttonIcon}
                             {buttonText}
+                            </Link>
                         </Button>
 
                         {/* Secondary 'Learn More' Button */}

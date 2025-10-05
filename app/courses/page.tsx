@@ -80,16 +80,35 @@ export default function CoursesPage() {
                     <div className={`p-3 rounded-lg bg-gradient-to-r ${course.color} text-white`}>
                       <course.icon className="h-6 w-6" />
                     </div>
-                    <div>
+                    <div >
                       <h3 className="text-xl font-bold">{course.title}</h3>
                       <Badge variant="outline" className="mt-1">
                         {course.level}
                       </Badge>
-                    </div>
+                       <Badge
+      className={`${
+        course.mode === "ONLINE" 
+          ? "bg-green-100 text-green-800" 
+          : "bg-red-100 text-red-800"
+      } px-2 py-1 text-xs rounded ml-2.5`}
+    >
+      {course.mode}   
+    </Badge>
+                    </div> 
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-primary">{course.price}</div>
-                    <div className="text-sm text-muted-foreground line-through">{course.originalPrice}</div>
+                  <div className="text-right flex-col flex mb-4 space-x-1">
+                  <div className="flex space-x-2 items-baseline">
+                    <div className="text-2xl font-bold text-primary">₹{course.price}</div>
+                    <div className="text-sm text-muted-foreground line-through">₹{course.originalPrice}</div>
+                       </div> 
+                 {course.originalPrice > course.price && (
+                      <div className="text-sm text-green-600 font-semibold mb-1">
+                        Save ₹{course.originalPrice - course.price}
+                        </div>
+                    )}
+                    
+                      
+                  
                   </div>
                 </div>
               </CardHeader>

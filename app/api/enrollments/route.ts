@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Enrollment successful!", enrollment }, { status: 201 });
   } catch (error: any) {
-    console.error("Enrollment API error:", error);
+    // console.error("Enrollment API error:", error);
     return NextResponse.json({ message: "Server error", error: error.message }, { status: 500 });
   }
 }
