@@ -6,6 +6,13 @@ const TimelineSchema = new Schema({
   focus: { type: String, required: true },
 });
 
+
+const CouponSchema = new Schema({
+  code: { type: String, required: true },
+  discount: { type: Number, required: true }, // decimal (0.5 = 50%)
+});
+
+
 const CourseSchema = new Schema(
   {
     title: { type: String, required: true },
@@ -14,6 +21,7 @@ const CourseSchema = new Schema(
     duration: { type: String },
     price: { type: Number },
     originalPrice: { type: Number },
+    couponCode: [CouponSchema],     
     rating: { type: Number },
     professor: { type: String },
     maxStudents: { type: Number },
@@ -22,8 +30,9 @@ const CourseSchema = new Schema(
     level: { type: String },
     color: { type: String },
     details: { type: String },
-    roadmap: [{ type: String }],        // array of strings
-    timeline: [TimelineSchema],         // array of objects
+    roadmap: [{ type: String }],        
+    timeline: [TimelineSchema],    
+    
   },
   { timestamps: true }
 );

@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import Enrollment from "@/models/Enrollment";
-import Course from "@/models/Course"; 
+
 
 export async function POST(req: Request) {
   try {
@@ -44,49 +44,6 @@ export async function POST(req: Request) {
 
 
 
-// export async function GET(req: Request) {
-//   try {
-//     await connectDB();
-
-//     const url = new URL(req.url);
-//     const studentId = url.searchParams.get("studentId");
-
-//     if (!studentId) {
-//       return NextResponse.json({ error: "Missing studentId" }, { status: 400 });
-//     }
-
-//     const enrollments = await Enrollment.find({ studentId });
-
-//     // Fetch course details for each enrollment
-//     const enrichedEnrollments = await Promise.all(
-//       enrollments.map(async (enroll) => {
-//         const course = await Course.findById(enroll.courseId).lean();
-//         return {
-//           studentId: enroll.studentId,
-//           course: course
-//             ? {
-//                 _id: course._id,
-//                 title: course.title,
-//                 status: course.status,
-//                 price: course.price,
-//                 originalPrice: course.originalPrice,
-//                 duration: course.duration,
-//                 features: course.features,
-//               }
-//             : null,
-//         };
-//       })
-//     );
-
-//     return NextResponse.json({ enrollments: enrichedEnrollments }, { status: 200 });
-//   } catch (error: any) {
-//     console.error("GET /api/enrollments error:", error);
-//     return NextResponse.json(
-//       { error: "Server error", details: error.message },
-//       { status: 500 }
-//     );
-//   }
-// }
 export async function GET(req: Request) {
   try {
     await connectDB();

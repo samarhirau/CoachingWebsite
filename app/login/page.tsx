@@ -13,7 +13,7 @@ type AuthFlowStep = 'login' | 'signup' | 'forgot_email' | 'verify_otp' | 'reset_
 
 export default function AuthPage() {
   const router = useRouter()
-  const { login, register } = useAuth() // AuthProvider functions
+  const { login, register } = useAuth() 
   const [currentStep, setCurrentStep] = useState<AuthFlowStep>('signup')
   const [loading, setLoading] = useState(false)
 

@@ -17,11 +17,15 @@ import {
   ShieldCheck,
   Zap,
   Loader2,
+  LogOut,
 } from 'lucide-react';
 import { ModernNavigation } from './modern-navigation';
-import { useAuth } from './auth-provider';
-import { log } from 'console';
+import { useAuth } from '@/components/auth-provider';
+
 import Link from 'next/link';
+import router from 'next/router';
+import LogoutConfirmation from '@/components/logout-btn';
+
 
 // --- Global Constants (Mock Data) ---
 
@@ -61,6 +65,9 @@ interface Course {
   features?: string[];
   rating?: number,
 }
+
+
+
 
 
 // --- UTILITY COMPONENTS (Tailwind styled mocks for shadcn/ui) ---
@@ -626,7 +633,7 @@ const MyCoursesTab = () => {
           credentials: "include",
         })
         const data = await res.json()
-        // console.log("Fetched enrollments:", data)
+        console.log("Fetched enrollments:", data)
 
         if (!res.ok) throw new Error(data?.error || "Failed to fetch courses")
 
@@ -641,7 +648,6 @@ const MyCoursesTab = () => {
           features: e.course.features,
           enrollments: e.course.enrollments || ( 100 + Math.floor(Math.random() * 10)),
             rating: e.course.rating ,
-          
           progress: e.progress || Math.floor(Math.random() * 100), // Random progress for demo
         }))
 
@@ -778,7 +784,15 @@ export default function App() {
   const TabsContent = ({ value, children }) => (
       <div className={`pt-6 ${activeTab === value ? 'block' : 'hidden'}`}>{children}</div>
   );
-    const { user } = useAuth()
+    const { user ,logout} = useAuth()
+
+
+const handleLogout = async () => {
+  await logout();
+  router.push("/");
+};
+
+    
    if (!user) return <p className='absolute top-1/2 left-1/2'>Loading...</p>;
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
@@ -799,6 +813,10 @@ export default function App() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+        
+<div className="flex justify-end mb-6 gap-3">
+ 
+
               <Button variant="outline" size="sm">
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
@@ -807,9 +825,22 @@ export default function App() {
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Support
               </Button>
+
+               {/* <Button
+    onClick={handleLogout}
+    variant="outline"
+    variant = "outline" size='sm'
+  >
+    <LogOut className="w-4 h-4 mr-2" />
+    Logout
+  </Button> */}
+
+  <LogoutConfirmation/>
+
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

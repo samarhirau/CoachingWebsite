@@ -6,7 +6,9 @@ import Course from "@/models/Course";
 export async function GET() {
   try {
     await connectDB();
-    const courses = await Course.find().sort({ createdAt: -1 });
+
+    // Use .lean() to get plain JS objects, including nested arrays
+    const courses = await Course.find().sort({ createdAt: -1 }).lean();
 
     return NextResponse.json({
       success: true,
@@ -21,10 +23,13 @@ export async function GET() {
         price: course.price || 0,
         originalPrice: course.originalPrice || 0,
         features: course.features || [],
+        couponCode: course.couponCode || [], // nested schema now included
+        roadmap: course.roadmap || [],
+        timeline: course.timeline || [],
         professor: course.professor || "",
         maxStudents: course.maxStudents || 0,
         contactNumber: course.contactNumber || "",
-        level: "Beginner to Advanced"
+        level: "Beginner to Advanced",
       }))
     });
   } catch (err) {

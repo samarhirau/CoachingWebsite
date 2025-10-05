@@ -12,6 +12,7 @@ interface User {
 }
 
 interface AuthContextType {
+  setUser(arg0: null): unknown
   user: User | null
   loading: boolean
   login: (email: string, password: string) => Promise<User>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,11 +12,9 @@ import { CheckCircle } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import toast from "react-hot-toast"
 
-// Mock coupons
-const VALID_COUPONS = {
-  CODE10: 0.1,
-  SUMMER20: 0.2,
-}
+
+
+
 
 interface EnrollmentModalProps {
   isOpen: boolean
@@ -24,9 +22,12 @@ interface EnrollmentModalProps {
   course?: {
     _id?: string
     title: string
-    price: string
-    originalPrice: string
+    price: number | string
+    originalPrice: number | string
+    maxStudents: number
+    rating: number
     duration: string
+    couponCode: { code: string; discount: number }[]
     features: string[]
   }
 }
@@ -52,6 +53,20 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
+
+useEffect(() => {
+  if (user) {
+    setFormData((prev) => ({
+      ...prev,
+      firstName: user.name?.split(" ")[0] || "",
+      lastName: user.name?.split(" ")[1] || "",
+      email: user.email || "",
+      phone: user.phone || "",
+    }));
+  }
+}, [user]);
+
+
 const originalPriceNumber = useMemo(() => {
   if (!course?.originalPrice) return 0
   const value = typeof course.originalPrice === "string" ? course.originalPrice : course.originalPrice.toString()
@@ -74,16 +89,32 @@ const priceNumber = useMemo(() => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+
+
   const handleCouponApply = () => {
-    const code = formData.couponCode.toUpperCase() as keyof typeof VALID_COUPONS
-    if (code in VALID_COUPONS) {
-      setAppliedDiscount(VALID_COUPONS[code])
-      setCouponStatus("valid")
-    } else {
-      setAppliedDiscount(0)
-      setCouponStatus("invalid")
-    }
+
+     console.log("Course object in modal:", course);
+
+   
+
+  const codeInput = formData.couponCode.trim().toUpperCase();
+  const coupon = course?.couponCode?.find(c => c.code.toUpperCase() === codeInput);
+
+  if (coupon) {
+    setAppliedDiscount(coupon.discount);
+    setCouponStatus("valid");
+  } else {
+    setAppliedDiscount(0);
+    setCouponStatus("invalid");
   }
+};
+
+
+
+
+
+
+
 
   const handleNext = () => {
     if (step < 3) setStep(step + 1)
@@ -130,7 +161,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     toast.error("Enrollment API Error:", err)
     setError(err.message)
   }
-  
+
    finally {
     setLoading(false)
   }
@@ -141,6 +172,25 @@ const handleSubmit = async (e: React.FormEvent) => {
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(price)
 
   if (authLoading) return null
+
+  // in use loggedin tahns show form othervise show login/signup prompt
+  if (!user) 
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Please Log In to Enroll</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <p className="mb-4">You need to be logged in to enroll in courses.</p>
+            <Button variant="outline" className="text-primary" onClick={() => { onClose(); window.location.href = "/login"; }}>
+              Go to Login
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
+   
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -172,24 +222,40 @@ const handleSubmit = async (e: React.FormEvent) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>First Name</Label>
-                <Input value={formData.firstName} onChange={(e) => handleInputChange("firstName", e.target.value)} />
+                <Input
+    value={formData.firstName}
+    onChange={(e) => handleInputChange("firstName", e.target.value)}
+    readOnly={!!user?.name}
+    className={user?.name ? "bg-gray-100 cursor-not-allowed" : ""}
+  />
               </div>
               <div>
                 <Label>Last Name</Label>
-                <Input value={formData.lastName} onChange={(e) => handleInputChange("lastName", e.target.value)} />
+                <Input
+    value={formData.lastName}
+    onChange={(e) => handleInputChange("lastName", e.target.value)}
+    readOnly={!!user?.name}
+    className={user?.name ? "bg-gray-100 cursor-not-allowed" : ""}
+  />
               </div>
             </div>
             <div>
               <Label>Email</Label>
-              <Input type="email" value={formData.email} onChange={(e) => handleInputChange("email", e.target.value)} />
+               <Input
+    type="email"
+    value={formData.email}
+    onChange={(e) => handleInputChange("email", e.target.value)}
+    readOnly={!!user?.email}
+    className={user?.email ? "bg-gray-100 cursor-not-allowed" : ""}
+  />
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={formData.phone} onChange={(e) => handleInputChange("phone", e.target.value)} />
+              <Input value={formData.phone} onChange={(e) => handleInputChange("phone", e.target.value)}  required/>
             </div>
             <div>
               <Label>Education</Label>
-              <Select onValueChange={(v) => handleInputChange("education", v)}>
+              <Select onValueChange={(v) => handleInputChange("education", v)} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select education" />
                 </SelectTrigger>
@@ -208,7 +274,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             <h3 className="text-lg font-semibold">Background & Goals</h3>
             <div>
               <Label>Experience</Label>
-              <Select onValueChange={(v) => handleInputChange("experience", v)}>
+              <Select onValueChange={(v) => handleInputChange("experience", v)} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select experience" />
                 </SelectTrigger>
@@ -286,4 +352,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       </DialogContent>
     </Dialog>
   )
+
+
+
 }
