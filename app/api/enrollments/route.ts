@@ -72,11 +72,12 @@ export async function POST(req: Request) {
 //   }
 // }
 
-
-
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     await connectDB()
+
+    // Dynamically load Course model (registers it globally in Mongoose)
+    await import("@/models/Course")
 
     const url = new URL(req.url)
     const studentId = url.searchParams.get("studentId")
@@ -93,7 +94,7 @@ export async function GET(req) {
     }))
 
     return NextResponse.json({ enrollments: formatted }, { status: 200 })
-  } catch (error) {
+  } catch (error: any) {
     console.error("GET /api/enrollments error:", error)
     return NextResponse.json(
       { error: "Server error", details: error.message },
