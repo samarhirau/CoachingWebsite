@@ -7,9 +7,24 @@ import { useAuth } from "@/components/auth-provider"
 import CourseCard from "@/components/students/courseCard"
 
 
-const MyCoursesTab = () => {
+type Course = {
+  _id: string;
+  slug: string;
+  title: string;
+  status?: string;
+  price: number;
+  originalPrice?: number;
+  duration?: string;
+  features?: string[];
+  enrollments?: number;
+  rating?: number;
+  progress?: number;
+};
+
+
+const MyCoursesTab = ({ preloadedCourses = [] }: { preloadedCourses?: Course[] }) => {
+  const [courses, setCourses] = useState<Course[]>(preloadedCourses);
   const { user } = useAuth()
-  const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
