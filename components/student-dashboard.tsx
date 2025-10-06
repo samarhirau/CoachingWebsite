@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useCallback, useEffect } from "react";
 import { MessageSquare, Bell } from "lucide-react";
@@ -13,18 +12,52 @@ import ProgressTab from "./students/progressTab";
 
 // Mock Data for Assignments
 const MOCK_ASSIGNMENTS = [
-  { id: "a1", title: "Build a Todo App", dueDate: "Jan 24, 2025", status: "pending", difficulty: "Medium", progress: 0, submissionContent: null },
-  { id: "a2", title: "Create REST API", dueDate: "Jan 28, 2025", status: "pending", difficulty: "Hard", progress: 0, submissionContent: null },
-  { id: "a3", title: "Portfolio Website", dueDate: "Jan 18, 2025", status: "completed", difficulty: "Easy", progress: 100, score: "92%", submissionContent: "Initial commit of portfolio website." },
+  {
+    id: "a1",
+    title: "Build a Todo App",
+    dueDate: "Jan 24, 2025",
+    status: "pending",
+    difficulty: "Medium",
+    progress: 0,
+    submissionContent: null,
+  },
+  {
+    id: "a2",
+    title: "Create REST API",
+    dueDate: "Jan 28, 2025",
+    status: "pending",
+    difficulty: "Hard",
+    progress: 0,
+    submissionContent: null,
+  },
+  {
+    id: "a3",
+    title: "Portfolio Website",
+    dueDate: "Jan 18, 2025",
+    status: "completed",
+    difficulty: "Easy",
+    progress: 100,
+    score: "92%",
+    submissionContent: "Initial commit of portfolio website.",
+  },
 ];
 
-const Button = ({ children, variant = "default", size = "default", onClick, className = "", disabled }) => {
-  let baseStyle = "font-medium rounded-lg transition-all duration-200 flex items-center justify-center whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed";
+const Button = ({
+  children,
+  variant = "default",
+  size = "default",
+  onClick,
+  className = "",
+  disabled,
+}) => {
+  let baseStyle =
+    "font-medium rounded-lg transition-all duration-200 flex items-center justify-center whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed";
   let sizeStyle = size === "sm" ? "px-3 py-1.5 text-sm" : "px-4 py-2 text-base";
   let colorStyle = "";
   switch (variant) {
     case "outline":
-      colorStyle = "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50";
+      colorStyle =
+        "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50";
       break;
     case "destructive":
       colorStyle = "bg-red-600 text-white hover:bg-red-700";
@@ -39,7 +72,11 @@ const Button = ({ children, variant = "default", size = "default", onClick, clas
       break;
   }
   return (
-    <button className={`${baseStyle} ${sizeStyle} ${colorStyle} ${className}`} onClick={onClick} disabled={disabled}>
+    <button
+      className={`${baseStyle} ${sizeStyle} ${colorStyle} ${className}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </button>
   );
@@ -56,40 +93,16 @@ export default function App() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [assignments, setAssignments] = useState(MOCK_ASSIGNMENTS);
-  const [enrollments, setEnrollments] = useState([]);
-  const [loadingEnrollments, setLoadingEnrollments] = useState(true);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
 
-
-const updateAssignment = useCallback((id, updates) => {
-    setAssignments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, ...updates } : a))
+  // Function to update an assignment in local state
+  const updateAssignment = useCallback((id, updates) => {
+    setAssignments((prevAssignments) =>
+      prevAssignments.map((assignment) =>
+        assignment.id === id ? { ...assignment, ...updates } : assignment
+      )
     );
   }, []);
-
-  // Fetch enrolled courses
-  useEffect(() => {
-    if (!user?._id) return;
-
-    setLoadingEnrollments(true);
-    fetch(`/api/enrollments?studentId=${user._id}`, { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
-        // Preprocess enrollments for quick rendering
-        const enriched = (data.enrollments || []).map((e) => ({
-          _id: e.course._id,
-          title: e.course.title,
-          slug: e.course.slug,
-          status: e.course.status || "In Progress",
-          progress: e.progress || Math.floor(Math.random() * 100),
-        }));
-        setEnrollments(enriched);
-      })
-      .catch(console.error)
-      .finally(() => setLoadingEnrollments(false));
-  }, [user]);
-  
-
 
   // Handle assignment submission from modal
   const handleAssignmentSubmit = (assignmentId, submissionContent) => {
@@ -100,10 +113,6 @@ const updateAssignment = useCallback((id, updates) => {
     });
     setSelectedAssignment(null);
   };
-
-
-
-
 
   if (!user) return <p className="absolute top-1/2 left-1/2">Loading...</p>;
 
@@ -117,7 +126,9 @@ const updateAssignment = useCallback((id, updates) => {
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Welcome back, {user.name}!</h1>
+              <h1 className="text-2xl font-bold text-gray-800">
+                Welcome back, {user.name}!
+              </h1>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -153,22 +164,21 @@ const updateAssignment = useCallback((id, updates) => {
 
           {/* Tabs Content */}
           {TABS.map((tab) => (
-            <div key={tab.value} className={`pt-6 ${activeTab === tab.value ? "block" : "hidden"}`}>
-              {tab.value === "assignments" && <AssignmentsTab assignments={assignments} updateAssignment={updateAssignment} />}
-              {tab.value === "progress" && <ProgressTab assignments={assignments} />}
-              {tab.value === "courses" && (
-                <>
-                  {loadingEnrollments ? (
-                    <div className="space-y-4">
-                      {[...Array(3)].map((_, i) => (
-                        <div key={i} className="h-32 bg-gray-100 animate-pulse rounded-2xl" />
-                      ))}
-                    </div>
-                  ) : (
-                    <MyCoursesTab preloadedCourses={enrollments} />
-                  )}
-                </>
+            <div
+              key={tab.value}
+              className={`pt-6 ${activeTab === tab.value ? "block" : "hidden"}`}
+            >
+              {tab.value === "assignments" && (
+                <AssignmentsTab
+                  assignments={assignments}
+                  updateAssignment={updateAssignment}
+                />
               )}
+              {tab.value === "progress" && (
+                <ProgressTab assignments={assignments} />
+              )}
+              {tab.value === "courses" && <MyCoursesTab />}
+
               {tab.value === "overview" && <OverviewTab />}
             </div>
           ))}
@@ -178,13 +188,12 @@ const updateAssignment = useCallback((id, updates) => {
       {/* Modals */}
       {/* <SubmissionModal assignment={undefined} onClose={undefined} onSubmit={undefined} /> */}
       {selectedAssignment && (
-  <SubmissionModal
-    assignment={selectedAssignment}
-    onClose={() => setSelectedAssignment(null)}
-    onSubmit={handleAssignmentSubmit}
-  />
-)}
-
+        <SubmissionModal
+          assignment={selectedAssignment}
+          onClose={() => setSelectedAssignment(null)}
+          onSubmit={handleAssignmentSubmit}
+        />
+      )}
     </div>
   );
 }
@@ -328,7 +337,7 @@ const updateAssignment = useCallback((id, updates) => {
 
 //   const TabsTrigger = ({ value, children }) => (
 //     <button
-//       className={`px-4 py-3 text-base font-medium transition-colors duration-200 border-b-2 
+//       className={`px-4 py-3 text-base font-medium transition-colors duration-200 border-b-2
 //               ${
 //                 activeTab === value
 //                   ? "border-indigo-600 text-indigo-600"
