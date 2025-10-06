@@ -151,44 +151,81 @@ const priceNumber = useMemo(() => {
 
 
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setLoading(true)
-  setError("")
+// const handleSubmit = async (e: React.FormEvent) => {
+//   e.preventDefault()
+//   setLoading(true)
+//   setError("")
 
-  if (!user) {
-    setError("You must be logged in to enroll.")
-    setLoading(false)
-    return
+//   if (!user) {
+//     setError("You must be logged in to enroll.")
+//     setLoading(false)
+//     return
+//   }
+
+//   try {
+//     const response = await fetch("/api/enrollments", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//  credentials: "include",
+//       body: JSON.stringify({
+//         studentId: user._id,      
+//         courseId: course?._id,
+//         formData,
+//       }),
+//     })
+
+//     const data = await response.json()
+
+//     if (!response.ok) throw new Error(data?.message || "Server error")
+
+//     toast.success("Enrollment successful!")
+//     onClose()
+//   } catch (err: any) {
+//     toast.error("Enrollment failed: " + (err.message || "Server error"))
+//     setError(err.message)
+//   }
+
+//    finally {
+//     setLoading(false)
+//   }
+// }
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
+
+  if (!user?._id || !course?._id) {
+    toast.error("Please wait... User or course not loaded yet.");
+    setLoading(false);
+    return;
   }
 
   try {
     const response = await fetch("/api/enrollments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
- credentials: "include",
+      credentials: "include",
       body: JSON.stringify({
-        studentId: user._id,      
-        courseId: course?._id,
+        studentId: user._id,
+        courseId: course._id,
         formData,
       }),
-    })
+    });
 
-    const data = await response.json()
+    const data = await response.json();
+    if (!response.ok) throw new Error(data?.message || "Server error");
 
-    if (!response.ok) throw new Error(data?.message || "Server error")
-
-    toast.success("Enrollment successful!")
-    onClose()
+    toast.success("Enrollment successful!");
+    onClose();
   } catch (err: any) {
-    toast.error("Enrollment failed: " + (err.message || "Server error"))
-    setError(err.message)
+    toast.error("Enrollment failed: " + (err.message || "Server error"));
+    setError(err.message);
+  } finally {
+    setLoading(false);
   }
+};
 
-   finally {
-    setLoading(false)
-  }
-}
 
 
   const renderPrice = (price: number) =>
@@ -370,7 +407,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </Button>
         <Button
   onClick={step === 3 ? handleSubmit : handleNext}
-  disabled={!isStepValid() || loading}
+  disabled={!isStepValid() || !user?._id || !course?._id || loading}
 >
   {loading ? "Processing..." : step === 3 ? "Complete Enrollment" : "Next"}
 </Button>
