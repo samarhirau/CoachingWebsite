@@ -10,11 +10,54 @@ import { ToastProvider } from "@/components/toastProvider"
 import { AuthProvider } from "@/components/auth-provider"
 
 export const metadata: Metadata = {
-  title: "RidBharat - Your Trusted Partner in India",
+
+  title: "RID Bharat | Research Innovation and Discovery Organization",
   description:
-    "Professional services and solutions tailored for the Indian market. Experience excellence with RidBharat.",
-  generator: "RidBharat.com",
-}
+    "RID Bharat is a national organization driving innovation, technology, and research to empower India’s youth. Join us in shaping the future through projects, hackathons, and community-driven discoveries.",
+  keywords: [
+    "RID Bharat",
+    "Research Innovation and Discovery",
+    "Innovation India",
+    "RID Organization",
+    "Tech Community India",
+    "Student Innovation",
+    "Hackathon India",
+    "Research Projects",
+    "RID Foundation",
+    "RID Students",
+  ],
+  authors: [{ name: "RID Bharat" }],
+  openGraph: {
+    title: "RID Bharat | Research Innovation and Discovery Organization",
+    description:
+      "Empowering Indian youth through research, innovation, and technology. Join RID Bharat and be part of the nation’s innovation movement.",
+    url: "https://ridbharat.com",
+    siteName: "RID Bharat",
+    images: [
+      {
+        url: "https://ridbharat.in/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "RID Bharat - Research Innovation and Discovery",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RID Bharat | Research Innovation and Discovery Organization",
+    description:
+      "Join RID Bharat to innovate, discover, and create impact through technology, research, and community collaboration.",
+    images: ["https://ridbharat.com/og-image.png"],  // replace with your image
+    creator: "@samar_hirau",
+  },
+  metadataBase: new URL("https://ridbharat.com"),
+  alternates: {
+    canonical: "https://ridbharat.com",
+  },
+};
+
 
 export default function RootLayout({
   children,

@@ -2,56 +2,20 @@
 
 import type React from "react"
 
-import { useState } from "react"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { MapPin, Phone, Mail, Clock, Send, MessageSquare, HelpCircle, CheckCircle } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, MessageSquare, HelpCircle } from "lucide-react"
+import { ContactForm } from "./contact-form"
 
 export function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    course: "",
-    message: "",
-    inquiryType: "",
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+  
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        course: "",
-        message: "",
-        inquiryType: "",
-      })
-    }, 3000)
-  }
+ 
 
   const faqs = [
     {
@@ -99,124 +63,9 @@ export function ContactSection() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Contact Form */}
-          <Card className="lg:col-span-2 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                Send us a Message
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {!isSubmitted ? (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange("name", e.target.value)}
-                        placeholder="Enter your full name"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange("email", e.target.value)}
-                        placeholder="Enter your email"
-                        required
-                      />
-                    </div>
-                  </div>
+       < ContactForm />
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange("phone", e.target.value)}
-                        placeholder="Enter your phone number"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="inquiryType">Inquiry Type</Label>
-                      <Select onValueChange={(value) => handleInputChange("inquiryType", value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select inquiry type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="course-info">Course Information</SelectItem>
-                          <SelectItem value="enrollment">Enrollment Process</SelectItem>
-                          <SelectItem value="pricing">Pricing & Payment</SelectItem>
-                          <SelectItem value="placement">Job Placement</SelectItem>
-                          <SelectItem value="technical">Technical Support</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="course">Interested Course</Label>
-                    <Select onValueChange={(value) => handleInputChange("course", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a course" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full-stack">Full Stack Web Development</SelectItem>
-                        <SelectItem value="data-science">Data Science & AI</SelectItem>
-                        <SelectItem value="mobile">Mobile App Development</SelectItem>
-                        <SelectItem value="devops">DevOps & Cloud Computing</SelectItem>
-                        <SelectItem value="not-sure">Not sure yet</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message *</Label>
-                    <Textarea
-                      id="message"
-                      value={formData.message}
-                      onChange={(e) => handleInputChange("message", e.target.value)}
-                      placeholder="Tell us about your goals, questions, or anything else you'd like to know..."
-                      rows={4}
-                      required
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full gradient-primary" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                        Sending Message...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-2" />
-                        Send Message
-                      </>
-                    )}
-                  </Button>
-                </form>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="h-8 w-8 text-success" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">Message Sent Successfully!</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Thank you for reaching out. We'll get back to you within 24 hours.
-                  </p>
-                  <Badge variant="secondary">Response time: 2-4 hours</Badge>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+     
 
           {/* Contact Info & FAQ */}
           <div className="space-y-6">
