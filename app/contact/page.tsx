@@ -1,11 +1,22 @@
-"use client"
+"use client";
 
-import { Footer } from "@/components/footer"
-import { ContactForm } from "@/components/contact-form"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Footer } from "@/components/footer";
+import { ContactForm } from "@/components/contact-form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   Mail,
   Phone,
@@ -16,9 +27,10 @@ import {
   Users,
   Award,
   HeadphonesIcon,
-} from "lucide-react"
-import { ModernNavigation } from "@/components/modern-navigation"
-import  {QuickAction} from "@/components/quick-action"
+} from "lucide-react";
+import { ModernNavigation } from "@/components/modern-navigation";
+import { QuickAction } from "@/components/quick-action";
+import toast from "react-hot-toast";
 
 const contactInfo = [
   {
@@ -45,13 +57,17 @@ const contactInfo = [
     action: "#",
     badge: "Campus Tour",
   },
-]
+];
 
 const officeHours = [
-  { day: "Monday - Friday", hours: "8:00 AM - 8:00 PM", type: "Regular Classes" },
+  {
+    day: "Monday - Friday",
+    hours: "8:00 AM - 8:00 PM",
+    type: "Regular Classes",
+  },
   { day: "Saturday", hours: "9:00 AM - 6:00 PM", type: "Weekend Batches" },
   { day: "Sunday", hours: "10:00 AM - 4:00 PM", type: "Counseling Only" },
-]
+];
 
 const faqs = [
   {
@@ -84,7 +100,7 @@ const faqs = [
     answer:
       "Yes, we offer both online and offline classes. Our online platform provides live interactive sessions, recorded lectures, virtual labs, and real-time doubt resolution. Students can choose between classroom, online, or hybrid learning modes based on their preference.",
   },
-]
+];
 
 const contactStats = [
   {
@@ -105,14 +121,12 @@ const contactStats = [
     label: "Student Satisfaction",
     description: "Based on 10,000+ reviews",
   },
-]
+];
 
 export default function ContactPage() {
-
-  
   return (
     <div className="min-h-screen">
-  <ModernNavigation />
+      <ModernNavigation />
       <main>
         {/* Hero Section */}
         <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -132,8 +146,9 @@ export default function ContactPage() {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground text-balance max-w-3xl mx-auto mb-8">
-              Ready to start your learning journey? Get in touch with our expert counselors who will guide you to the
-              perfect course that matches your career goals and aspirations.
+              Ready to start your learning journey? Get in touch with our expert
+              counselors who will guide you to the perfect course that matches
+              your career goals and aspirations.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto mt-12">
@@ -142,9 +157,13 @@ export default function ContactPage() {
                   <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
                     {stat.icon}
                   </div>
-                  <div className="text-2xl font-bold text-primary">{stat.number || stat.title}</div>
+                  <div className="text-2xl font-bold text-primary">
+                    {stat.number || stat.title}
+                  </div>
                   <div className="text-sm font-medium">{stat.label}</div>
-                  <div className="text-xs text-muted-foreground">{stat.description}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {stat.description}
+                  </div>
                 </div>
               ))}
             </div>
@@ -160,7 +179,9 @@ export default function ContactPage() {
                   key={index}
                   className="text-center group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
                 >
-                  <Badge className="absolute top-4 right-4 text-xs">{info.badge}</Badge>
+                  <Badge className="absolute top-4 right-4 text-xs">
+                    {info.badge}
+                  </Badge>
 
                   <CardHeader>
                     <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
@@ -170,7 +191,11 @@ export default function ContactPage() {
                     <CardDescription>{info.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button variant="ghost" className="text-primary hover:text-primary/80" asChild>
+                    <Button
+                      variant="ghost"
+                      className="text-primary hover:text-primary/80"
+                      asChild
+                    >
                       <a href={info.action}>{info.contact}</a>
                     </Button>
                   </CardContent>
@@ -194,15 +219,22 @@ export default function ContactPage() {
                       <Clock className="h-6 w-6 text-primary" />
                       <CardTitle className="text-xl">Campus Hours</CardTitle>
                     </div>
-                    <CardDescription>Our campus and support team availability</CardDescription>
+                    <CardDescription>
+                      Our campus and support team availability
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       {officeHours.map((schedule, index) => (
-                        <div key={index} className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
+                        <div
+                          key={index}
+                          className="flex justify-between items-center p-3 rounded-lg bg-muted/50"
+                        >
                           <div>
                             <div className="font-medium">{schedule.day}</div>
-                            <div className="text-sm text-muted-foreground">{schedule.type}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {schedule.type}
+                            </div>
                           </div>
                           <div className="text-right">
                             <div className="font-medium">{schedule.hours}</div>
@@ -214,24 +246,33 @@ export default function ContactPage() {
                 </Card>
 
                 {/* Quick Actions */}
-              
-  < QuickAction />
+
+                <QuickAction />
 
                 {/* Location Map Placeholder */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-xl">Visit Our Campus</CardTitle>
                     <CardDescription>
-                      Experience our state-of-the-art facilities and learning environment
+                      Experience our state-of-the-art facilities and learning
+                      environment
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="bg-muted rounded-lg h-48 flex items-center justify-center relative overflow-hidden">
                       <div className="text-center z-10">
                         <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-muted-foreground font-medium">Interactive Campus Map</p>
-                        <p className="text-sm text-muted-foreground">Bhopal, MP, India</p>
-                        <Button variant="outline" size="sm" className="mt-2 bg-transparent">
+                        <p className="text-muted-foreground font-medium">
+                          Interactive Campus Map
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Bhopal, MP, India
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-2 bg-transparent"
+                        >
                           Get Directions
                         </Button>
                       </div>
@@ -248,15 +289,22 @@ export default function ContactPage() {
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold text-balance mb-4">Frequently Asked Questions</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-balance mb-4">
+                Frequently Asked Questions
+              </h2>
               <p className="text-xl text-muted-foreground text-balance">
-                Get answers to common questions about our courses, admissions, and career support.
+                Get answers to common questions about our courses, admissions,
+                and career support.
               </p>
             </div>
 
             <Accordion type="single" collapsible className="space-y-4">
               {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-card border rounded-lg px-6">
+                <AccordionItem
+                  key={index}
+                  value={`item-${index}`}
+                  className="bg-card border rounded-lg px-6"
+                >
                   <AccordionTrigger className="text-left hover:no-underline">
                     <span className="font-semibold">{faq.question}</span>
                   </AccordionTrigger>
@@ -272,14 +320,25 @@ export default function ContactPage() {
                 <CardContent className="space-y-4">
                   <h3 className="text-2xl font-bold">Still Have Questions?</h3>
                   <p className="text-muted-foreground">
-                    Our expert counselors are here to help you make the right choice for your career.
+                    Our expert counselors are here to help you make the right
+                    choice for your career.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button size="lg">
-                      <Phone className="mr-2 h-4 w-4" />
-                      Call Now
-                    </Button>
-                    <Button size="lg" variant="outline">
+                    <a href="tel:+911234567890">
+                      {/*  Replace with actual phone number */}
+                      <Button size="lg">
+                        <Phone className="mr-2 h-4 w-4" />
+                        Call Now
+                      </Button>
+                    </a>
+
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      onClick={() => {
+                        toast.success("Feature coming soon!");
+                      }}
+                    >
                       <Calendar className="mr-2 h-4 w-4" />
                       Schedule Consultation
                     </Button>
@@ -292,5 +351,5 @@ export default function ContactPage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }

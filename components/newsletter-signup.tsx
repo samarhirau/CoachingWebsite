@@ -8,22 +8,35 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Mail, CheckCircle, Gift, TrendingUp, Users } from "lucide-react"
+import toast from "react-hot-toast"
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) return
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  if (!email) return
 
-    setIsSubmitting(true)
+  setIsSubmitting(true)
 
-    // Simulate subscription
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+  try {
+    const response = await fetch("/api/newslatter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    })
 
-    setIsSubmitting(false)
+    if (!response.ok) {
+      throw new Error("Failed to subscribe")
+    }
+
+    const data = await response.json()
+    console.log("Subscribed:", data)
+
     setIsSubscribed(true)
 
     // Reset after 3 seconds
@@ -31,7 +44,14 @@ export function NewsletterSignup() {
       setIsSubscribed(false)
       setEmail("")
     }, 3000)
+  } catch (error: any) {
+    console.error(error)
+    toast.error(error.message || "Something went wrong!")
+  } finally {
+    setIsSubmitting(false)
   }
+}
+
 
   const benefits = [
     { icon: Gift, text: "Exclusive course discounts" },
@@ -128,3 +148,4 @@ export function NewsletterSignup() {
     </section>
   )
 }
+
