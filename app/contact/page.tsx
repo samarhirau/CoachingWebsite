@@ -1,3 +1,5 @@
+"use client"
+
 import { Footer } from "@/components/footer"
 import { ContactForm } from "@/components/contact-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,11 +14,11 @@ import {
   MessageCircle,
   Calendar,
   Users,
-  BookOpen,
   Award,
   HeadphonesIcon,
 } from "lucide-react"
 import { ModernNavigation } from "@/components/modern-navigation"
+import  {QuickAction} from "@/components/quick-action"
 
 const contactInfo = [
   {
@@ -106,6 +108,8 @@ const contactStats = [
 ]
 
 export default function ContactPage() {
+
+  
   return (
     <div className="min-h-screen">
   <ModernNavigation />
@@ -210,30 +214,8 @@ export default function ContactPage() {
                 </Card>
 
                 {/* Quick Actions */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl">Quick Actions</CardTitle>
-                    <CardDescription>Need immediate assistance? Try these options for instant help.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <Button className="w-full justify-start bg-transparent" variant="outline">
-                      <MessageCircle className="mr-2 h-4 w-4" />
-                      Start Live Chat with Counselor
-                    </Button>
-                    <Button className="w-full justify-start bg-transparent" variant="outline">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Book Free Demo Class
-                    </Button>
-                    <Button className="w-full justify-start bg-transparent" variant="outline">
-                      <Phone className="mr-2 h-4 w-4" />
-                      Request Callback
-                    </Button>
-                    <Button className="w-full justify-start bg-transparent" variant="outline">
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Download Course Brochure
-                    </Button>
-                  </CardContent>
-                </Card>
+              
+  < QuickAction />
 
                 {/* Location Map Placeholder */}
                 <Card>

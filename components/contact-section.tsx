@@ -2,14 +2,12 @@
 
 import type React from "react"
 
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { MapPin, Phone, Mail, Clock, MessageSquare, HelpCircle } from "lucide-react"
-import { ContactForm } from "./contact-form"
+import { MapPin, Phone, Mail, Clock, } from "lucide-react"
+import { ContactForm } from "@/components/contact-form"
+import { QuickAction } from "@/components/quick-action"
 
 export function ContactSection() {
 
@@ -63,7 +61,9 @@ export function ContactSection() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Contact Form */}
-       < ContactForm />
+     <div className="lg:col-span-2">
+        < ContactForm />
+     </div>
 
      
 
@@ -126,25 +126,8 @@ export function ContactSection() {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Schedule a Call
-                </Button>
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Live Chat Support
-                </Button>
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <HelpCircle className="h-4 w-4 mr-2" />
-                  Browse FAQ
-                </Button>
-              </CardContent>
-            </Card>
+            <QuickAction />
+          
           </div>
         </div>
 
