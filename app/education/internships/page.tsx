@@ -1,9 +1,12 @@
+"use client"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Users, Award, CheckCircle, ArrowRight, Briefcase, Code } from "lucide-react"
 import { ModernNavigation } from "@/components/modern-navigation"
+import { ApplyModal } from "@/components/apply-internship"
+import { useState } from "react"
 
 const programs = [
   {
@@ -81,6 +84,15 @@ const benefits = [
 ]
 
 export default function InternshipsPage() {
+
+
+  const [isApplyOpen, setIsApplyOpen] = useState(false)
+
+  const handleApplyClick = () => {
+    
+    setIsApplyOpen(true)
+  }
+
   return (
     <div className="min-h-screen">
           <ModernNavigation/>
@@ -199,8 +211,8 @@ export default function InternshipsPage() {
                       </ul>
                     </div>
 
-                    <Button className="w-full">
-                      Apply for {program.title}
+                   <Button className="w-full" onClick={() => handleApplyClick()}>
+                      Enroll in {program.title}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </CardContent>
@@ -271,6 +283,7 @@ export default function InternshipsPage() {
         </section>
       </main>
       <Footer />
+      <ApplyModal isOpen={isApplyOpen} onClose={() => setIsApplyOpen(false)}/>
     </div>
   )
 }
