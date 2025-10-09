@@ -8,6 +8,7 @@ import { Clock, Users, Star, ArrowRight, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { EnrollmentModal } from "@/components/enrollment-modal"
 import { Code, Database, Smartphone, Cloud, Shield, Globe, BarChart, Cpu, PenTool, Layers, LineChart, Brain, Terminal, Camera, Briefcase } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function CoursesPage() {
   const initialLimit = 4  // first load 4 courses
@@ -54,9 +55,7 @@ export default function CoursesPage() {
     setIsEnrollmentOpen(true)
   }
 
-  if (loading) {
-    return <div className="text-center py-10">Loading courses...</div>
-  }
+ 
 
   return (
     <main className="min-h-screen py-5 px-4">
@@ -71,6 +70,44 @@ export default function CoursesPage() {
         </Button>
 
         <div className="grid md:grid-cols-2 gap-8">
+            {loading && courses.length === 0 ? (
+              Array.from({ length: 4 }).map((_, idx) => (
+                <Card key={idx} className="border-0 shadow-lg overflow-hidden">
+                  <div className="h-2 bg-gradient-to-r " />
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <Skeleton className="h-6 w-48 mb-2" />
+                        <Skeleton className="h-5 w-24" />
+                      </div>
+                      <div className="text-right">
+                        <Skeleton className="h-8 w-20 mb-1" />
+                        <Skeleton className="h-5 w-16" />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-2/3" />
+
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-32 mb-2" />
+                      <div className="grid grid-cols-2 gap-2">
+                        {Array.from({ length: 4 }).map((_, idx) => (
+                          <Skeleton key={idx} className="h-4 w-full" />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <Skeleton className="h-10 flex-1" />
+                      <Skeleton className="h-10 flex-1" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : null}
           {visibleCourses.map((course, index) => (
             <Card key={index} className="hover-lift border-0 shadow-lg overflow-hidden">
               <div className={`h-2 bg-gradient-to-r ${course.color}`} />

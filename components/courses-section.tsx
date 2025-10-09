@@ -9,6 +9,7 @@ import { Clock, Users, Star, ArrowRight } from "lucide-react"
 import { EnrollmentModal } from "@/components/enrollment-modal"
 import Link from "next/link"
 import { useAuth } from "@/components/auth-provider"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Course {
   _id: string
@@ -31,6 +32,7 @@ export function CoursesSection() {
   const [courses, setCourses] = useState<Course[]>([])
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
   const [isEnrollmentOpen, setIsEnrollmentOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -53,6 +55,9 @@ export function CoursesSection() {
       } catch (err) {
         console.error("Failed to fetch courses:", err)
         setCourses([])
+      }
+      finally {
+        setIsLoading(false)
       }
     }
     fetchCourses()
@@ -82,6 +87,44 @@ export function CoursesSection() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
+            {isLoading && courses.length === 0 ? (
+              Array.from({ length: 4 }).map((_, idx) => (
+                <Card key={idx} className="border-0 shadow-lg overflow-hidden">
+                  <div className="h-2 bg-gray-400" />
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <Skeleton className="h-6 w-48 mb-2" />
+                        <Skeleton className="h-5 w-24" />
+                      </div>
+                      <div className="text-right">
+                        <Skeleton className="h-8 w-20 mb-1" />
+                        <Skeleton className="h-5 w-16" />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-2/3" />
+
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-32 mb-2" />
+                      <div className="grid grid-cols-2 gap-2">
+                        {Array.from({ length: 4 }).map((_, idx) => (
+                          <Skeleton key={idx} className="h-4 w-full" />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <Skeleton className="h-10 flex-1" />
+                      <Skeleton className="h-10 flex-1" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : null}
             {courses.map((course) => (
               <Card key={course._id} className="hover-lift border-0 shadow-lg overflow-hidden">
                 <div className={`h-2 bg-gradient-to-r ${course.color}`} />
