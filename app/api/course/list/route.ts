@@ -29,7 +29,7 @@ export async function GET() {
         professor: course.professor || "",
         maxStudents: course.maxStudents || 0,
         contactNumber: course.contactNumber || "",
-        level: "Beginner to Advanced",
+        level: course.level ,
         mode : course.mode ,
       }))
     });

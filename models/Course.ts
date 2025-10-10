@@ -32,7 +32,7 @@ const CourseSchema = new Schema(
     details: { type: String },
     roadmap: [{ type: String }],        
     timeline: [TimelineSchema],  
-    mode: { type: String, enum: ['ONLINE', 'OFFLINE', 'HYBRID'], default: 'OFFLINE' },  
+    mode: { type: String, enum: ['ONLINE', 'OFFLINE', ], default: 'OFFLINE' },  
     
   },
   { timestamps: true }

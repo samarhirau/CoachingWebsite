@@ -66,7 +66,7 @@ const { user : User } = useAuth();
                 Home
               </Link>
 
-               <Link href="/#course-section" className="text-foreground hover:text-primary transition-colors">
+               <Link href="/courses" className="text-foreground hover:text-primary transition-colors">
                 Courses
               </Link>
              
