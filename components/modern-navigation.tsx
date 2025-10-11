@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X, ChevronDown, BookOpen, Phone, Mail, User } from "lucide-react"
@@ -11,7 +11,15 @@ import { useAuth } from "@/components/auth-provider"
 
 export function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false)
-const { user : User } = useAuth();
+const { user: User } = useAuth();
+  const [isClient, setIsClient] = useState(false);
+
+
+   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
 
 
   return (
@@ -160,19 +168,11 @@ const { user : User } = useAuth();
               <Button variant="outline" size="sm">
                 Free Demo
               </Button>
-            {
-              User ? (
-                  <Button size="sm" className="gradient-primary">
-                <Link href="/dashboard">
-                My Courses</Link>
-              </Button>
-              ) : (
-                <Button size="sm" className="gradient-primary">
-                <Link href="/login">
-                Login / Register</Link>
-              </Button>
-              )
-            }
+           <Button size="sm" className="gradient-primary">
+      <Link href={User ? "/dashboard" : "/login"}>
+        {User ? "My Courses" : "Login / Register"}
+      </Link>
+    </Button>
             </div>
 
             {/* Mobile Menu Button */}
