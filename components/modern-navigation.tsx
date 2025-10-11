@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X, ChevronDown, BookOpen, Phone, Mail, User } from "lucide-react"
@@ -11,14 +11,7 @@ import { useAuth } from "@/components/auth-provider"
 
 export function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false)
-  const { user, loading } = useAuth()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted || loading) return null
+const { user  } = useAuth();
 
 
   return (
@@ -167,11 +160,19 @@ export function ModernNavigation() {
               <Button variant="outline" size="sm">
                 Free Demo
               </Button>
-         <Button size="sm" className="gradient-primary">
-      <Link href={user ? "/dashboard" : "/login"}>
-        {user ? "My Courses" : "Login / Register"}
-      </Link>
-    </Button>
+            {
+              user ? (
+                  <Button size="sm" className="gradient-primary">
+                <Link href="/dashboard">
+                My Courses</Link>
+              </Button>
+              ) : (
+                <Button size="sm" className="gradient-primary">
+                <Link href="/login">
+                Login / Register</Link>
+              </Button>
+              )
+            }
             </div>
 
             {/* Mobile Menu Button */}
