@@ -9,6 +9,9 @@ import "./globals.css"
 import { ToastProvider } from "@/components/toastProvider"
 import { AuthProvider } from "@/components/auth-provider"
 
+
+
+
 export const metadata: Metadata = {
 
   title: "RID Bharat | Research Innovation and Discovery Organization",
@@ -63,7 +66,10 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
-}>) {
+}>)
+
+
+{
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>

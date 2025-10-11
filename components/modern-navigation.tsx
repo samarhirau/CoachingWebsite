@@ -11,15 +11,14 @@ import { useAuth } from "@/components/auth-provider"
 
 export function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false)
-const { user: User } = useAuth();
-  const [isClient, setIsClient] = useState(false);
+  const { user, loading } = useAuth()
+  const [mounted, setMounted] = useState(false)
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null;
+  if (!mounted || loading) return null
 
 
   return (
@@ -168,9 +167,9 @@ const { user: User } = useAuth();
               <Button variant="outline" size="sm">
                 Free Demo
               </Button>
-           <Button size="sm" className="gradient-primary">
-      <Link href={User ? "/dashboard" : "/login"}>
-        {User ? "My Courses" : "Login / Register"}
+         <Button size="sm" className="gradient-primary">
+      <Link href={user ? "/dashboard" : "/login"}>
+        {user ? "My Courses" : "Login / Register"}
       </Link>
     </Button>
             </div>
