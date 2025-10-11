@@ -21,27 +21,25 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/me", {
+        const res = await fetch("/api/auth/me", {
           method: "GET",
           credentials: "include",
           cache: "no-store",
         })
-
-        if (response.ok) {
-          const data = await response.json()
-          setUser(data.user)
-        } else {
+        if (!res.ok) {
           setUser(null)
+        } else {
+          const data = await res.json()
+          setUser(data.user ?? null)
         }
-      } catch (error) {
-        console.error("Auth check failed:", error)
+      } catch {
         setUser(null)
       } finally {
         setLoading(false)
@@ -51,34 +49,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string): Promise<User> => {
-    const response = await fetch("/api/auth/login", {
+  const login = async (email: string, password: string) => {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
       credentials: "include",
       cache: "no-store",
     })
-
-    const data = await response.json()
-    if (!response.ok) throw new Error(data.error || "Login failed")
-
-    setUser(data.user)
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || "Login failed")
+    setUser(data.user ?? null)
     return data.user
   }
 
-  const register = async (email: string, password: string, name: string, phone: string): Promise<User> => {
-    const response = await fetch("/api/auth/signup", {
+  const register = async (email: string, password: string, name: string, phone?: string) => {
+    const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, name, phone }),
       cache: "no-store",
     })
-
-    const data = await response.json()
-    if (!response.ok) throw new Error(data.error || "Registration failed")
-
-    setUser(data.user)
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || "Registration failed")
+    setUser(data.user ?? null)
     return data.user
   }
 
@@ -90,13 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshUser = async () => {
     setLoading(true)
     try {
-      const response = await fetch("/api/auth/me", { method: "GET", credentials: "include", cache: "no-store" })
-      if (response.ok) {
-        const data = await response.json()
-        setUser(data.user)
-      } else {
-        setUser(null)
-      }
+      const res = await fetch("/api/auth/me", { method: "GET", credentials: "include", cache: "no-store" })
+      const data = await res.json()
+      setUser(data.user ?? null)
     } catch {
       setUser(null)
     } finally {
@@ -111,8 +101,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (!context) throw new Error("useAuth must be used within an AuthProvider")
+  if (!context) throw new Error("useAuth must be used within AuthProvider")
   return context
 }
