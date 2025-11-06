@@ -151,7 +151,7 @@ export default function GalleryPage() {
             Our Moments, Our Legacy
           </Badge>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-            Gallery of <span className="text-primary">RidBharat</span>
+            Gallery of <span className="text-primary">Upcoder</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             A visual journey through our campus, events, and achievements.

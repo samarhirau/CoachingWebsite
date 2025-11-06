@@ -1078,10 +1078,10 @@ const FeesReceiptView: React.FC<{ data: typeof initialFeesReceipt }> = ({ data }
 
                 <div className="grid grid-cols-2 gap-8 mb-8 text-gray-700">
                     <div>
-                        <h4 className="font-bold text-lg mb-2 text-indigo-700">Billed From: Ridbharat (School Admin)</h4>
-                        <p>Ridbharat Education</p>
+                        <h4 className="font-bold text-lg mb-2 text-indigo-700">Billed From: Upcoder (School Admin)</h4>
+                        <p>Upcoder Education</p>
                         <p>#8801 Address Line, City</p>
-                        <p>Email: info@ridbharat.com</p>
+                        <p>Email: info@Upcoder.com</p>
                         <p>Phone: +91 123 456 7890</p>
                     </div>
                     <div className="text-right">
@@ -1315,7 +1315,7 @@ const AdminDashboard: React.FC = () => {
         } lg:relative lg:translate-x-0 transition duration-300 ease-in-out w-64 bg-white shadow-xl z-20 flex flex-col rounded-tr-xl rounded-br-xl`}
       >
         <div className="p-6 border-b border-gray-100">
-          <h1 className="text-3xl font-extrabold text-indigo-700">RIDBHARAT</h1>
+          <h1 className="text-3xl font-extrabold text-indigo-700">Upcoder</h1>
           <p className='text-xs text-gray-500'>Admin Panel</p>
         </div>
         <nav className="flex-1 p-4 overflow-y-auto">
@@ -1332,7 +1332,7 @@ const AdminDashboard: React.FC = () => {
           ))}
         </nav>
         <div className='p-4 border-t border-gray-100 text-sm text-center text-gray-500'>
-            © 2025 Ridbharat. All Rights Reserved.
+            © 2025 Upcoder. All Rights Reserved.
         </div>
       </aside>
 

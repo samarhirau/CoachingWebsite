@@ -8,7 +8,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-primary">RidBharat</h3>
+            {/* <h3 className="text-2xl font-bold text-primary">Upcoder</h3> */}
+             <div className="">
+                <img src="/Upcoder.png" alt="Upcoder Logo" className="h-8 w-auto" />
+
+              </div>
             <p className="text-muted-foreground">
               Your trusted partner for professional services and innovative solutions in India.
             </p>
@@ -88,7 +92,7 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">info@ridbharat.com</span>
+                <span className="text-muted-foreground">info@Upcoder.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 text-primary" />
@@ -103,7 +107,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-muted-foreground text-sm">© 2025 RidBharat. All rights reserved.</p>
+          <p className="text-muted-foreground text-sm">© 2025 Upcoder. All rights reserved.</p>
           <p className="text-muted-foreground text-sm">Created by <span className="text-primary underline underline-offset-2"><a target="_blank" href="https://portfolio2025-wine.vercel.app/">Samar Hirau</a></span></p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
             <Link href="/privacy-policy" className="text-muted-foreground hover:text-primary text-sm transition-colors">

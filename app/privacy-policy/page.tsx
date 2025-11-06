@@ -15,7 +15,7 @@ const PrivacyPolicy: React.FC = () => {
 
       <section className="space-y-6 text-gray-700">
         <p>
-          This Privacy Policy describes how <strong>RidBharat</strong>! ("we," "us," or "our") collects, uses, and discloses your information when you use our website, programs, and services (collectively, the "Service").
+          This Privacy Policy describes how <strong>Upcoder</strong>! ("we," "us," or "our") collects, uses, and discloses your information when you use our website, programs, and services (collectively, the "Service").
         </p>
 
         {/* 1. Information We Collect */}
@@ -55,7 +55,7 @@ const PrivacyPolicy: React.FC = () => {
             2. Use of Data
           </h2>
           <p>
-            RidBharat uses the collected data for various purposes:
+            Upcoder uses the collected data for various purposes:
           </p>
           <ul className="list-disc list-inside ml-4 space-y-1">
             <li>To provide and maintain the Service (e.g., access to courses, bootcamps).</li>
@@ -78,7 +78,7 @@ const PrivacyPolicy: React.FC = () => {
           </p>
           <ul className="list-disc list-inside ml-4 space-y-1">
             <li>Comply with a legal obligation.</li>
-            <li>Protect and defend the rights or property of RidBharat.</li>
+            <li>Protect and defend the rights or property of Upcoder.</li>
             <li>Facilitate job placements with our 50+ Hiring Partners, only with your explicit consent.</li>
             <li>Protect the personal safety of users of the Service or the public.</li>
             <li>Protect against legal liability.</li>
@@ -134,7 +134,7 @@ const PrivacyPolicy: React.FC = () => {
             If you have any questions about this Privacy Policy, please contact us:
           </p>
           <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>By email: <a href="mailto:support@ridbharat.com" className="text-primary hover:underline">support@ridbharat.com</a></li>
+            <li>By email: <a href="mailto:support@Upcoder.com" className="text-primary hover:underline">support@Upcoder.com</a></li>
             <li>By phone: <span className="font-mono">+91-98927 62728</span></li>
           </ul>
         </div>

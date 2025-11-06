@@ -14,7 +14,7 @@ const TermsOfService: React.FC = () => {
 
       <section className="space-y-8 text-gray-700">
         <p>
-          Welcome to <strong>RidBharat</strong>! These Terms of Service ("Terms") govern your use of the website, courses, programs (including Bootcamps, Internships, and Mentorship), and all related services (collectively, the "Service") provided by RidBharat ("we," "us," or "our").
+          Welcome to <strong>Upcoder</strong>! These Terms of Service ("Terms") govern your use of the website, courses, programs (including Bootcamps, Internships, and Mentorship), and all related services (collectively, the "Service") provided by Upcoder ("we," "us," or "our").
         </p>
         <p>
           By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
@@ -57,7 +57,7 @@ const TermsOfService: React.FC = () => {
           </h3>
           <div className="border-l-4 border-yellow-500 pl-4 py-2 bg-yellow-50 space-y-2">
             <p>
-              At RidBharat, we value your trust and aim to provide a high-quality learning experience. Our refund policy is as follows:
+              At Upcoder, we value your trust and aim to provide a high-quality learning experience. Our refund policy is as follows:
             </p>
 
             <p>
@@ -78,7 +78,7 @@ const TermsOfService: React.FC = () => {
             </p>
 
             <p>
-              <strong>Process:</strong> To request a refund, email <a href="mailto:support@ridbharat.com" className="text-blue-500 hover:underline">support@ridbharat.com</a> with proof of payment and reason. Approved refunds will be processed within 7–10 business days to the original payment method.
+              <strong>Process:</strong> To request a refund, email <a href="mailto:support@Upcoder.com" className="text-blue-500 hover:underline">support@Upcoder.com</a> with proof of payment and reason. Approved refunds will be processed within 7–10 business days to the original payment method.
             </p>
           </div>
         </div>
@@ -89,7 +89,7 @@ const TermsOfService: React.FC = () => {
             3. Intellectual Property and Licensing
           </h2>
           <p>
-            The Service and its original content, features, and functionality are and will remain the exclusive property of RidBharat and its licensors.
+            The Service and its original content, features, and functionality are and will remain the exclusive property of Upcoder and its licensors.
           </p>
           <h3 className="text-xl font-medium mt-4 mb-2">
             Course Materials
@@ -105,7 +105,7 @@ const TermsOfService: React.FC = () => {
             4. Placement Guarantee and Expectations
           </h2>
           <p>
-            While RidBharat boasts a high <strong>95% Success Rate/Placement Rate</strong> and offers placement assistance, <strong>any specific "Job Guarantee" must be clearly defined and conditioned</strong>.
+            While Upcoder boasts a high <strong>95% Success Rate/Placement Rate</strong> and offers placement assistance, <strong>any specific "Job Guarantee" must be clearly defined and conditioned</strong>.
           </p>
           <ul className="list-disc list-inside ml-4 space-y-2">
             <li>
@@ -123,7 +123,7 @@ const TermsOfService: React.FC = () => {
             5. Limitation of Liability
           </h2>
           <p>
-            In no event shall RidBharat, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service.
+            In no event shall Upcoder, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service.
           </p>
         </div>
 
@@ -156,7 +156,7 @@ const TermsOfService: React.FC = () => {
             Questions about the Terms of Service should be sent to us at:
           </p>
           <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Email: <a href="mailto:support@ridbharat.com" className="text-blue-500 hover:underline">support@ridbharat.com</a></li>
+            <li>Email: <a href="mailto:support@Upcoder.com" className="text-blue-500 hover:underline">support@Upcoder.com</a></li>
           </ul>
         </div>
       </section>

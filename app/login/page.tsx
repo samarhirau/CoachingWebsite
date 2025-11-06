@@ -173,7 +173,7 @@ const handleSignup = async (e: React.FormEvent) => {
         <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-tl from-indigo-500 to-blue-600 p-8 relative">
           <img src="/images/auth-visual.svg" alt="Learning illustration" className="max-w-md animate-fade-in-up"/>
           <div className="absolute bottom-8 left-8 text-white text-opacity-80">
-            <h2 className="text-3xl font-bold mb-2">Welcome to RidBharat!</h2>
+            <h2 className="text-3xl font-bold mb-2">Welcome to Upcoder!</h2>
             <p className="text-lg">Your journey to knowledge starts here.</p>
           </div>
         </div>

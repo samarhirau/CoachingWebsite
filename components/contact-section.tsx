@@ -105,7 +105,7 @@ export function ContactSection() {
                   </div>
                   <div>
                     <div className="font-medium">Email</div>
-                    <div className="text-sm text-muted-foreground">support@ridbharat.com</div>
+                    <div className="text-sm text-muted-foreground">support@Upcoder.com</div>
                   </div>
                 </div>
 

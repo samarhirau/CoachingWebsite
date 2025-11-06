@@ -26,7 +26,7 @@ const { user  } = useAuth();
             </div>
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4" />
-              <span>support@ridbharat.com</span>
+              <span>support@Upcoder.com</span>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-4">
@@ -51,12 +51,11 @@ const { user  } = useAuth();
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <BookOpen className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gradient">RidBharat</h1>
-                <p className="text-xs text-muted-foreground">Coding Excellence</p>
+            
+
+              <div className="">
+                <img src="/Upcoder.png" alt="Upcoder Logo" className="h-8 w-auto" />
+
               </div>
             </Link>
 
@@ -76,32 +75,14 @@ const { user  } = useAuth();
 
 
 
-              {/* <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors">
-                  Courses <ChevronDown className="h-4 w-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem asChild>
-                    <Link href="/courses/web-development">Web Development</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/courses/data-science">Data Science</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/courses/mobile-development">Mobile Development</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/courses/devops">DevOps & Cloud</Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu> */}
+             
 
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors">
+              {/* <DropdownMenu> */}
+                {/* <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors">
                   Programs <ChevronDown className="h-4 w-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem asChild>
+                </DropdownMenuTrigger> */}
+                {/* <DropdownMenuContent> */}
+                  {/* <DropdownMenuItem asChild>
                     <Link href="/programs/bootcamp">Intensive Bootcamp</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -111,7 +92,7 @@ const { user  } = useAuth();
                     <Link href="/programs/mentorship">1-on-1 Mentorship</Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
 
      <div className="relative group">
                 <button className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium">
@@ -191,9 +172,9 @@ const { user  } = useAuth();
                 <Link href="/courses" className="text-foreground hover:text-primary transition-colors">
                   Courses
                 </Link>
-                <Link href="/programs" className="text-foreground hover:text-primary transition-colors">
+                {/* <Link href="/programs" className="text-foreground hover:text-primary transition-colors">
                   Programs
-                </Link>
+                </Link> */}
                 <Link href="/gallery" className="text-foreground hover:text-primary transition-colors">
                   Gallery
                 </Link>
@@ -210,7 +191,7 @@ const { user  } = useAuth();
                   <Button variant="outline" size="sm" className="flex-1 bg-transparent">
                     Free Demo
                   </Button>
-                  { User ? (
+                  { user ? (
                     <Button size="sm" className="flex-1 gradient-primary">
                       <Link href="/dashboard">
                       My Courses</Link>

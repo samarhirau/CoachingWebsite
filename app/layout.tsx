@@ -34,11 +34,11 @@ export const metadata: Metadata = {
     title: "RID Bharat | Research Innovation and Discovery Organization",
     description:
       "Empowering Indian youth through research, innovation, and technology. Join RID Bharat and be part of the nation’s innovation movement.",
-    url: "https://ridbharat.com",
+    url: "https://Upcoder.com",
     siteName: "RID Bharat",
     images: [
       {
-        url: "https://ridbharat.in/og-image.jpg",
+        url: "https://Upcoder.in/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "RID Bharat - Research Innovation and Discovery",
@@ -52,12 +52,12 @@ export const metadata: Metadata = {
     title: "RID Bharat | Research Innovation and Discovery Organization",
     description:
       "Join RID Bharat to innovate, discover, and create impact through technology, research, and community collaboration.",
-    images: ["https://ridbharat.com/og-image.png"],  // replace with your image
+    images: ["https://Upcoder.com/og-image.png"],  // replace with your image
     creator: "@samar_hirau",
   },
-  metadataBase: new URL("https://ridbharat.com"),
+  metadataBase: new URL("https://Upcoder.com"),
   alternates: {
-    canonical: "https://ridbharat.com",
+    canonical: "https://Upcoder.com",
   },
 };
 

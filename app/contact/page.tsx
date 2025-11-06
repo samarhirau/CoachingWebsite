@@ -37,8 +37,8 @@ const contactInfo = [
     icon: <Mail className="h-6 w-6 text-primary" />,
     title: "Email Us",
     description: "Get detailed responses to your queries",
-    contact: "admissions@ridbharat.com",
-    action: "mailto:admissions@ridbharat.com",
+    contact: "admissions@Upcoder.com",
+    action: "mailto:admissions@Upcoder.com",
     badge: "24/7 Support",
   },
   {
@@ -142,7 +142,7 @@ export default function ContactPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-balance mb-6">
               Contact{" "}
               <span className="text-primary bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                RidBharat
+                Upcoder
               </span>
             </h1>
             <p className="text-xl text-muted-foreground text-balance max-w-3xl mx-auto mb-8">

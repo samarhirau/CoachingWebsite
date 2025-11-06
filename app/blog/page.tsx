@@ -95,7 +95,7 @@ export default function BlogPage() {
         <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-balance mb-6">
-              RidBharat <span className="text-primary">Blog</span>
+              Upcoder <span className="text-primary">Blog</span>
             </h1>
             <p className="text-xl text-muted-foreground text-balance max-w-3xl mx-auto mb-8">
               Insights, trends, and expert advice to help your business thrive in the Indian market. Stay updated with

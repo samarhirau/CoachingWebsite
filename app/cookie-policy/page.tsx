@@ -15,7 +15,7 @@ const CookiePolicy: React.FC = () => {
 
       <section className="space-y-8 text-gray-700">
         <p>
-          This Cookie Policy explains what cookies are and how <strong>RidBharat</strong>! ("we," "us," or "our") uses them on our website and through our Service. By continuing to use our Service, you consent to the use of cookies as described in this policy.
+          This Cookie Policy explains what cookies are and how <strong>Upcoder</strong>! ("we," "us," or "our") uses them on our website and through our Service. By continuing to use our Service, you consent to the use of cookies as described in this policy.
         </p>
 
         {/* 1. What Are Cookies? */}
@@ -31,7 +31,7 @@ const CookiePolicy: React.FC = () => {
         {/* 2. How We Use Cookies */}
         <div>
           <h2 className="text-2xl font-semibold text-primary mb-3">
-            2. How RidBharat Uses Cookies
+            2. How Upcoder Uses Cookies
           </h2>
           <p>
             We use cookies for the following purposes:
@@ -94,7 +94,7 @@ const CookiePolicy: React.FC = () => {
             If you have any questions about this Cookie Policy, you can contact us:
           </p>
           <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>By email: <a href="mailto:support@ridbharat.com" className="text-primary hover:underline">support@ridbharat.com</a></li>
+            <li>By email: <a href="mailto:support@Upcoder.com" className="text-primary hover:underline">support@Upcoder.com</a></li>
           </ul>
         </div>
       </section>

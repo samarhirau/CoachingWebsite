@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Play, Users, Award, TrendingUp, ArrowRight, Link } from "lucide-react"
 import { useState } from "react"
 
+
 export function ModernHero() {
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -21,16 +22,23 @@ export function ModernHero() {
           <div className="space-y-8">
             <div className="space-y-4">
               <Badge variant="secondary" className="text-sm">
-                🚀 New Batch Starting January 2025
+                🚀 New Batch Starting January 2026
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                Master
-                 <span className="text-gradient">Coding Skills</span> with Industry Experts
-              </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                Transform your career with our comprehensive coding bootcamp. Learn from industry professionals and work
-                on real-world projects that matter.
-              </p>
+   <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+  Level Up Your <span className="text-gradient">Coding Journey</span> with Upcoder
+</h1>
+
+<p className="text-lg font-semibold text-primary mt-2 tracking-wide">
+  From Beginner to Pro — The Upcoder Way.
+</p>
+
+<p className="text-xl text-muted-foreground leading-relaxed">
+  Empower your future with hands-on learning, expert mentorship, and real-world projects. 
+  At Upcoder, we turn passion into profession.
+</p>
+
+ 
+             
             </div>
 
             {/* Stats */}
@@ -188,3 +196,4 @@ export function ModernHero() {
     </section>
   )
 }
+// From Beginner to Pro — The Upcoder Way.

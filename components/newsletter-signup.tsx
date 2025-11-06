@@ -71,7 +71,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     <Mail className="h-8 w-8 text-primary" />
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                    Stay Updated with <span className="text-gradient">RidBharat</span>
+                    Stay Updated with <span className="text-gradient">Upcoder</span>
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                     Join 5,000+ students and professionals who receive our weekly newsletter with coding tips, career
@@ -131,7 +131,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle className="h-8 w-8 text-success" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Welcome to RidBharat!</h3>
+                    <h3 className="text-xl font-semibold mb-2">Welcome to Upcoder!</h3>
                     <p className="text-muted-foreground mb-4">
                       You've successfully subscribed to our newsletter. Check your email for a welcome message.
                     </p>
