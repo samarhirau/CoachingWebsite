@@ -95,7 +95,7 @@ const CourseCard = ({ course }) => {
                             className={enrollButtonClass}
                             variant={buttonVariant}
                         >
-                          <Link href={course.status === "Not Started" ? `/${course.slug}/enroll` : `/${course.slug}/`} className="flex items-center">
+                          <Link href={course.status === "Not Started" ? `/${course.slug}/enroll` : `course/${course.slug}/`} className="flex items-center">
                             {buttonIcon}
                             {buttonText}
                             </Link>
