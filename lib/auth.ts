@@ -34,7 +34,7 @@ export async function comparePassword(password: string, hash: string): Promise<b
 
 export async function getServerSession(): Promise<JWTPayload | null> {
   // console.log("getServerSession called")
-  const cookieStore = await cookies()
+  const cookieStore =  cookies()
   const token = cookieStore.get("auth-token")?.value
 
   // console.log("Auth token from cookie:", token)
@@ -43,6 +43,10 @@ export async function getServerSession(): Promise<JWTPayload | null> {
 
   return verifyToken(token)
 }
+
+
+
+
 
 export async function setAuthCookie(token: string) {
   const cookieStore = await cookies()

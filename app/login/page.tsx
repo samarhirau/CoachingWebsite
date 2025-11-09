@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/components/auth-provider" 
 import toast from "react-hot-toast"
+import Image from "next/image"
 
 
 type AuthFlowStep = 'login' | 'signup' | 'forgot_email' | 'verify_otp' | 'reset_password'
@@ -171,7 +172,8 @@ const handleSignup = async (e: React.FormEvent) => {
       <div className="flex w-full max-w-6xl rounded-xl overflow-hidden shadow-3xl bg-background border border-border/50">
         {/* Left Section */}
         <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-tl from-indigo-500 to-blue-600 p-8 relative">
-          <img src="/images/auth-visual.svg" alt="Learning illustration" className="max-w-md animate-fade-in-up"/>
+          {/* <img src="" alt="Learning illustration" className="max-w-md animate-fade-in-up"/> */}
+          <Image src="/Upcoder.png" alt="Learning illustration" width={400} height={400} className="animate-fade-in-up" />
           <div className="absolute bottom-8 left-8 text-white text-opacity-80">
             <h2 className="text-3xl font-bold mb-2">Welcome to Upcoder!</h2>
             <p className="text-lg">Your journey to knowledge starts here.</p>
