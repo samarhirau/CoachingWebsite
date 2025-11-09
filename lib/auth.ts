@@ -49,14 +49,16 @@ export async function getServerSession(): Promise<JWTPayload | null> {
 
 
 export async function setAuthCookie(token: string) {
-  const cookieStore = await cookies()
-  cookieStore.set("auth-token", token, {
+  const cookieStore = await cookies();
+   cookieStore.set({
+    name: 'auth-token',
+    value: token,
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',  
+    path: '/', 
     maxAge: 7 * 24 * 60 * 60, // 7 days
-    path: "/",
-  })
+  });
 }
 
 export async function clearAuthCookie() {

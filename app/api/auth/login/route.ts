@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import connectDB from "@/lib/mongoDb"
 import User from "@/models/User"
-import { comparePassword, generateToken } from "@/lib/auth"
+import { comparePassword, generateToken,setAuthCookie } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,13 +43,7 @@ export async function POST(request: NextRequest) {
       message: "Login successful",
     })
 
-    response.cookies.set("auth-token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-      path: "/",
-    })
+    await setAuthCookie(token)
 
     return response
   } catch (error) {
