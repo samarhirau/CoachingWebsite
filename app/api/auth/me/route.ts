@@ -1,8 +1,8 @@
-
 // import { NextResponse } from "next/server"
 // import connectDB from "@/lib/mongoDb"
 // import User from "@/models/User"
 // import { getServerSession } from "@/lib/auth"
+
 
 // export const dynamic = "force-dynamic"
 
@@ -15,8 +15,9 @@
 //     }
 
 //     await connectDB()
-//     const user = await User.findById(session.userId).select("-password")
 
+//     const user = await User.findById(session.userId).select("-password")
+//     console.log("Authenticated user:", user);
 //     if (!user) {
 //       return NextResponse.json({ error: "User not found" }, { status: 404 })
 //     }
@@ -27,21 +28,32 @@
 //     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
 //   }
 // }
+
 import { NextResponse } from "next/server"
 import connectDB from "@/lib/mongoDb"
 import User from "@/models/User"
 import { getServerSession } from "@/lib/auth"
 
-export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 export async function GET() {
-  const session = await getServerSession()
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  try {
+    const session = await getServerSession()
 
-  await connectDB()
-  const user = await User.findById(session.userId).select("-password")
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 })
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
-  return NextResponse.json({ user })
+    await connectDB()
+    const user = await User.findById(session.userId).select("-password")
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    return NextResponse.json({ user })
+  } catch (error) {
+    console.error("Auth check error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }

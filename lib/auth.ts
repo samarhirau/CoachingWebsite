@@ -1,79 +1,3 @@
-// import jwt from "jsonwebtoken"
-// import bcrypt from "bcryptjs"
-// import { cookies } from "next/headers"
-
-// const JWT_SECRET = process.env.JWT_SECRET!
-
-// export interface JWTPayload {
-//   userId: string
-//   email: string
-//   role: "admin" | "student"
-// }
-
-// export function generateToken(payload: JWTPayload): string {
-//   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" })
-// }
-
-// export function verifyToken(token?: string): JWTPayload | null {
-//   if (!token) return null
-//   try {
-//     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
-//     // console.log("Decoded token payload:", decoded)
-//     return decoded
-//   } catch (error) {
-//     return null
-//   }
-// }
-
-// export async function hashPassword(password: string): Promise<string> {
-//   return bcrypt.hash(password, 12)
-// }
-
-// export async function comparePassword(password: string, hash: string): Promise<boolean> {
-//   return bcrypt.compare(password, hash)
-// }
-
-// export async function getServerSession(): Promise<JWTPayload | null> {
-//   // console.log("getServerSession called")
-//   const cookieStore =  cookies()
-//   const token = cookieStore.get("auth-token")?.value
-
-//   // console.log("Auth token from cookie:", token)
-
-//   // const token = cookieStore.get("auth-token")?.value
-// console.log("TOKEN:", token)
-// const session = verifyToken(token)
-// console.log("SESSION:", session)
-
-
-//   if (!token) return null
-
-//   return verifyToken(token)
-// }
-
-
-
-
-
-// export async function setAuthCookie(token: string) {
-//   const cookieStore = await cookies();
-//    cookieStore.set({
-//     name: 'auth-token',
-//     value: token,
-//     httpOnly: true,
-//     secure: process.env.NODE_ENV === 'production',
-//     sameSite: 'none',
-//     path: '/', 
-//     maxAge: 7 * 24 * 60 * 60, // 7 days
-//   });
-// }
-
-// export async function clearAuthCookie() {
-//   const cookieStore = await cookies()
-//   cookieStore.delete("auth-token")
-// }
-
-
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
 import { cookies } from "next/headers"
@@ -86,47 +10,58 @@ export interface JWTPayload {
   role: "admin" | "student"
 }
 
-export function generateToken(payload: JWTPayload) {
+export function generateToken(payload: JWTPayload): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" })
 }
 
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload
-  } catch {
+    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
+    // console.log("Decoded token payload:", decoded)
+    return decoded
+  } catch (error) {
     return null
   }
 }
 
-export async function hashPassword(password: string) {
+export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12)
 }
 
-export async function comparePassword(password: string, hash: string) {
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
   return bcrypt.compare(password, hash)
 }
 
-export async function getServerSession() {
-  const cookieStore = cookies()
+export async function getServerSession(): Promise<JWTPayload | null> {
+  // console.log("getServerSession called")
+  const cookieStore =  cookies()
   const token = cookieStore.get("auth-token")?.value
+
+  // console.log("Auth token from cookie:", token)
+
   if (!token) return null
+
   return verifyToken(token)
 }
 
+
+
+
+
 export async function setAuthCookie(token: string) {
-  const cookieStore = cookies()
-  cookieStore.set({
-    name: "auth-token",
+  const cookieStore = await cookies();
+   cookieStore.set({
+    name: 'auth-token',
     value: token,
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // true only on HTTPS
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60,
-  })
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+    path: '/', 
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+  });
 }
 
 export async function clearAuthCookie() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   cookieStore.delete("auth-token")
 }
