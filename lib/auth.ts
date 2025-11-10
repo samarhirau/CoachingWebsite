@@ -14,7 +14,8 @@ export function generateToken(payload: JWTPayload): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" })
 }
 
-export function verifyToken(token: string): JWTPayload | null {
+export function verifyToken(token?: string): JWTPayload | null {
+  if (!token) return null
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
     // console.log("Decoded token payload:", decoded)
@@ -38,6 +39,12 @@ export async function getServerSession(): Promise<JWTPayload | null> {
   const token = cookieStore.get("auth-token")?.value
 
   // console.log("Auth token from cookie:", token)
+
+  // const token = cookieStore.get("auth-token")?.value
+console.log("TOKEN:", token)
+const session = verifyToken(token)
+console.log("SESSION:", session)
+
 
   if (!token) return null
 
