@@ -1,7 +1,8 @@
+
 // import { type NextRequest, NextResponse } from "next/server"
 // import connectDB from "@/lib/mongoDb"
 // import User from "@/models/User"
-// import { comparePassword, generateToken,setAuthCookie } from "@/lib/auth"
+// import { comparePassword, generateToken } from "@/lib/auth"
 
 // export async function POST(request: NextRequest) {
 //   try {
@@ -25,14 +26,14 @@
 //       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
 //     }
 
-//     // Generate token
+//     // Generate JWT
 //     const token = generateToken({
 //       userId: user._id.toString(),
 //       email: user.email,
 //       role: user.role,
 //     })
 
-//     // Set HTTP-only cookie
+//     // Create JSON response
 //     const response = NextResponse.json({
 //       user: {
 //         id: user._id,
@@ -43,7 +44,11 @@
 //       message: "Login successful",
 //     })
 
-//     await setAuthCookie(token)
+//     // ✅ Set cookie manually via response header (works on Netlify/Vercel)
+//     response.headers.set(
+//       "Set-Cookie",
+//       `auth-token=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${7 * 24 * 60 * 60}`
+//     )
 
 //     return response
 //   } catch (error) {
@@ -52,61 +57,31 @@
 //   }
 // }
 
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import connectDB from "@/lib/mongoDb"
 import User from "@/models/User"
-import { comparePassword, generateToken } from "@/lib/auth"
+import { comparePassword, generateToken, setAuthCookie } from "@/lib/auth"
 
-export async function POST(request: NextRequest) {
-  try {
-    const { email, password } = await request.json()
+export const runtime = "nodejs"
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
-    }
+export async function POST(req: Request) {
+  const { email, password } = await req.json()
+  if (!email || !password) return NextResponse.json({ error: "Email & password required" }, { status: 400 })
 
-    await connectDB()
+  await connectDB()
+  const user = await User.findOne({ email })
+  if (!user) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
 
-    // Find user
-    const user = await User.findOne({ email })
-    if (!user) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
-    }
+  const isValid = await comparePassword(password, user.password)
+  if (!isValid) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
 
-    // Check password
-    const isValidPassword = await comparePassword(password, user.password)
-    if (!isValidPassword) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
-    }
+  const token = generateToken({ userId: user._id.toString(), email: user.email, role: user.role })
 
-    // Generate JWT
-    const token = generateToken({
-      userId: user._id.toString(),
-      email: user.email,
-      role: user.role,
-    })
+  const res = NextResponse.json({
+    user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    message: "Login successful",
+  })
 
-    // Create JSON response
-    const response = NextResponse.json({
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      },
-      message: "Login successful",
-    })
-
-    // ✅ Set cookie manually via response header (works on Netlify/Vercel)
-    response.headers.set(
-      "Set-Cookie",
-      `auth-token=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${7 * 24 * 60 * 60}`
-    )
-
-    return response
-  } catch (error) {
-    console.error("Login error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-  }
+  await setAuthCookie(token)
+  return res
 }
-
