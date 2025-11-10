@@ -13,7 +13,7 @@ interface FileItemType {
 }
 
 // Dynamic import for SSR-safe FilePreview
-const FilePreview = dynamic(() => import('@/components/filepreview'), { ssr: false });
+const FilePreview = dynamic(() => import('@/components/ShimmerLoader'), { ssr: false });
 
 const getFileIcon = (format: string) => {
   switch (format.toLowerCase()) {
