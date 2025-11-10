@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import connectDB from "@/lib/mongoDb"
 import User from "@/models/User"
-import { generateToken,setAuthCookie } from "@/lib/auth"
+import { comparePassword, generateToken,setAuthCookie } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Check password
-    const isPasswordValid = await user.comparePassword(password)
-    if (!isPasswordValid) {
+    const isValidPassword = await comparePassword(password, user.password)
+    if (!isValidPassword) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 

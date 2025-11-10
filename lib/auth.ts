@@ -1,5 +1,8 @@
+
+
 import jwt from "jsonwebtoken"
 import { cookies } from "next/headers"
+import bcrypt from "bcryptjs"
 
 // NOTE: In a real app, this should be read from process.env
 const JWT_SECRET = process.env.JWT_SECRET! 
@@ -31,6 +34,13 @@ export function verifyToken(token: string): JWTPayload | null {
     // Token is invalid, expired, or malformed
     return null
   }
+}
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12)
+}
+
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash)
 }
 
 /**
