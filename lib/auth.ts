@@ -66,7 +66,7 @@ export async function setAuthCookie(token: string) {
     value: token,
     httpOnly: true, // Prevents client-side JS from reading it
     secure: process.env.NODE_ENV === 'production', // Requires HTTPS in production
-    sameSite: 'lax', // Correct for single-site apps, 'none' for cross-domain
+    sameSite: 'none', // Correct for single-site apps, 'none' for cross-domain
     path: '/', 
     maxAge: 7 * 24 * 60 * 60, // 7 days
   })
