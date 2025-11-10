@@ -34,7 +34,8 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { jwtVerify } from "jose"
 
-export const runtime = "edge"
+export const runtime = 'experimental-edge'
+
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("auth-token")?.value
