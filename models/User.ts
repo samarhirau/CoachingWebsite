@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema({
     unique: true, 
     sparse: true 
   },
-  
-  password: { type: String, required: true },
+
+  password: { type: String , required: true },
   createdAt: { type: Date, default: Date.now },
   otp: { type: String },
   otpExpiry: { type: Date },

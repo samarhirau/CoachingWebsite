@@ -226,7 +226,7 @@ import { useAuth } from "@/components/auth-provider"
 export function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false)
   // CRITICAL: Destructure 'isLoggedIn' and 'loading' for reliable checks
-  const { user, isLoggedIn, loading } = useAuth();
+  const { isLoggedIn, loading } = useAuth();
 
 
   return (
@@ -328,8 +328,7 @@ export function ModernNavigation() {
                 Free Demo
               </Button>
             {
-              // Use isLoggedIn for clarity and reliability
-              isLoggedIn ? (
+             loading ? null :  isLoggedIn ? (
                   <Button size="sm" className="gradient-primary">
                 <Link href="/dashboard">
                 My Courses</Link>

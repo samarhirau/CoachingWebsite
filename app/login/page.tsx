@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/components/auth-provider" 
 import toast from "react-hot-toast"
 import Image from "next/image"
+import { FcGoogle } from "react-icons/fc"
 
 
 type AuthFlowStep = 'login' | 'signup' | 'forgot_email' | 'verify_otp' | 'reset_password'
@@ -152,16 +153,26 @@ const handleSignup = async (e: React.FormEvent) => {
     }
   }
 
+
+
+
   // ----------------- RENDER -----------------
 
   const renderSocialLogin = () => (
     <div className="mt-4 flex space-x-2">
-      <Button variant="outline" className="w-full flex items-center justify-center gap-2">
+     <Button
+        variant="outline"
+        className="w-full flex items-center justify-center gap-2"
+     
+      >
+        <FcGoogle size={20} />
         Continue with Google
       </Button>
-      <Button variant="outline" className="w-full flex items-center justify-center gap-2">
+
+    
+      {/* <Button variant="outline" className="w-full flex items-center justify-center gap-2">
         Continue with GitHub
-      </Button>
+      </Button> */}
     </div>
   )
 
