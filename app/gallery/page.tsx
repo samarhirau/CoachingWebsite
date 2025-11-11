@@ -5,21 +5,7 @@ import { Images, X } from "lucide-react";
 import { ModernNavigation } from '@/components/modern-navigation';
 import { Footer } from '@/components/footer';
 
-// const Button = ({ children, variant, onClick, className, ...props }) => {
-//   let baseClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors";
-//   let variantClasses = variant === "outline"
-//     ? "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground"
-//     : "bg-primary text-primary-foreground shadow hover:bg-primary/90";
-//   return (
-//     <button
-//       className={`${baseClasses} ${variantClasses} ${className}`}
-//       onClick={onClick}
-//       {...props}
-//     >
-//       {children}
-//     </button>
-//   );
-// };
+
 
 const Card = ({ children, className, onClick }) => (
   <div 
@@ -43,9 +29,12 @@ const galleryItems = [
     description: "Students working on their latest research projects.", 
     category: "Academics",
     images: [
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=Innovation+Lab+1",
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=Innovation+Lab+2",
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=Innovation+Lab+3"
+      "gallery/unnamed.jpg",
+      "gallery/inno1.jpg",
+      "gallery/inno2.jpg",
+      "gallery/inno3.jpg",
+      "gallery/inno4.jpg"
+
     ]
   },
   { 
@@ -54,9 +43,11 @@ const galleryItems = [
     description: "Our vibrant campus, a hub of creativity and learning.", 
     category: "Campus",
     images: [
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Campus+1",
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Campus+2",
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Campus+3"
+      "gallery/camp1.jpg",
+      "gallery/camp2.jpg",
+      "gallery/camp3.jpg",
+      "gallery/camp4.jpg",
+      "gallery/camp5.jpg"
     ]
   },
   { 
@@ -65,9 +56,11 @@ const galleryItems = [
     description: "Glimpses from our annual technology festival.", 
     category: "Events",
     images: [
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=TechFest+1",
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=TechFest+2",
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=TechFest+3"
+      "gallery/tech1.jpg",
+      "gallery/tech2.jpg",
+      "gallery/tech3.jpg",
+      "gallery/tech4.jpg",
+      "gallery/tech5.jpg"
     ]
   },
   { 
@@ -76,8 +69,11 @@ const galleryItems = [
     description: "Celebrating the achievements of our successful graduates.", 
     category: "Events",
     images: [
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Graduation+1",
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Graduation+2"
+     "gallery/grad1.jpg",
+     "gallery/grad2.jpg",
+     "gallery/grad3.jpg",
+     "gallery/grad4.jpg",
+     "gallery/grad5.jpg"
     ]
   },
   { 
@@ -86,8 +82,9 @@ const galleryItems = [
     description: "Hands-on coding workshop in our modern classrooms.", 
     category: "Academics",
     images: [
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=Workshop+1",
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=Workshop+2"
+     "gallery/work1.jpg",
+     "gallery/work2.jpg",
+     "gallery/work3.jpg",
     ]
   },
   { 
@@ -96,9 +93,8 @@ const galleryItems = [
     description: "Students participating in various sports and activities.", 
     category: "Campus",
     images: [
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Sports+1",
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Sports+2",
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Sports+3"
+      "gallery/sport1.jpg",
+      "gallery/sport2.jpg",
     ]
   },
   { 
@@ -107,8 +103,11 @@ const galleryItems = [
     description: "One-on-one sessions with our expert faculty members.", 
     category: "Academics",
     images: [
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=Faculty+1",
-      "https://placehold.co/1024x768/dbeafe/1e40af?text=Faculty+2"
+      "gallery/fac.jpg",
+      "gallery/fac2.jpg",
+      "gallery/fac3.jpg",
+      "gallery/fac4.jpg",
+
     ]
   },
   { 
@@ -117,8 +116,8 @@ const galleryItems = [
     description: "Leading the way with our dynamic student council.", 
     category: "Campus",
     images: [
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Council+1",
-      "https://placehold.co/1024x768/c7d2fe/1e40af?text=Council+2"
+      "gallery/coun1.jpg",
+      "gallery/coun2.jpg",
     ]
   }
 ];
@@ -167,6 +166,7 @@ export default function GalleryPage() {
                   src={item.images[0]} 
                   alt={item.title} 
                   className="w-full h-64 object-cover group-hover:scale-105 transition-transform" 
+                  loading='lazy'
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-end p-4">
                   <div className="text-white">
@@ -207,6 +207,7 @@ export default function GalleryPage() {
             src={img}
             alt={`${activeGallery.title} ${index + 1}`}
             className="rounded-lg object-cover w-full h-64 group-hover:scale-105 transition-transform"
+            loading='lazy'
           />
         </div>
       ))}
