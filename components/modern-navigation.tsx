@@ -218,15 +218,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-// NOTE: Assuming your path to AuthProvider is correct
 import { useAuth } from "@/components/auth-provider" 
 
 
-export function ModernNavigation() {
+export async function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false)
   // CRITICAL: Destructure 'isLoggedIn' and 'loading' for reliable checks
-  const { isLoggedIn, loading } = useAuth();
+  const { isLoggedIn } = useAuth();
 
 
   return (
@@ -328,7 +326,7 @@ export function ModernNavigation() {
                 Free Demo
               </Button>
             {
-             loading ? null :  isLoggedIn ? (
+               await isLoggedIn() ? (
                   <Button size="sm" className="gradient-primary">
                 <Link href="/dashboard">
                 My Courses</Link>

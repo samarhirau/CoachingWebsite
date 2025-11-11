@@ -12,7 +12,7 @@ interface User {
 }
 
 interface AuthContextType {
-  isLoggedIn : boolean
+  isLoggedIn : () => Promise<boolean>
   user: User | null
   loading: boolean
   login: (email: string, password: string) => Promise<User>
@@ -101,10 +101,12 @@ const checkAuth = async () => {
     await checkAuth()
   }
 
-  const isLoggedIn = !!user
+  const isLoggedIn = async () => {
+    return user !== null
+  }
 
   return (
-    <AuthContext.Provider value={{ user,isLoggedIn, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser , isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   )
