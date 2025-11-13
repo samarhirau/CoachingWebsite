@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useState } from "react"
-import { BookOpen, Zap } from "lucide-react"
+import { BookOpen, Zap, RefreshCcw} from "lucide-react"
 import { Card, CardContent } from "../ui/card"
 import { Button } from "../ui/button"
 import { useAuth } from "@/components/auth-provider"
@@ -27,6 +27,10 @@ const MyCoursesTab = ({ preloadedCourses = [] }: { preloadedCourses?: Course[] }
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+
+  
+
+
 
   useEffect(() => {
     if (!user) return
@@ -70,16 +74,32 @@ const MyCoursesTab = ({ preloadedCourses = [] }: { preloadedCourses?: Course[] }
   if (loading) return <p>Loading your courses...</p>
   if (error) return <p className="text-red-500">{error}</p>
 
+function mutate() {
+    setLoading(true)
+    setError("")
+    setTimeout(() => {
+      setLoading(false)
+    }, 1000)
+
+  
+}
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800">
           My Enrolled Courses ({courses.length})
         </h2>
+        <div className="flex gap-2">
+        <Button onClick={() => mutate()} variant="outline">
+          <RefreshCcw/>
+        </Button>
+     
         <Button variant="outline">
           <BookOpen className="h-4 w-4 mr-2" />
           Explore Catalog
         </Button>
+           </div>
       </div>
 
       {courses.length > 0 ? (

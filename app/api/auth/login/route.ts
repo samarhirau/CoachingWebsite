@@ -3,6 +3,7 @@ import connectDB from "@/lib/mongoDb"
 import User from "@/models/User"
 import { comparePassword, generateToken } from "@/lib/auth"
 
+
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json()
@@ -42,6 +43,9 @@ export async function POST(request: NextRequest) {
       },
       message: "Login successful",
     })
+
+  
+
 
   response.cookies.set("auth-token", token, {
       httpOnly: true,

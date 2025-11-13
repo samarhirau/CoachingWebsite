@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import User from "@/models/User";
-import { hashPassword } from "@/lib/auth"; // agar tumhara password hashing function hai
+import { hashPassword } from "@/lib/auth"; 
+import { sendSuccessResetEmail } from "@/lib/services/sendmailtrap";  // chnaged here
 
 export async function POST(req: Request) {
   try {
@@ -28,6 +29,11 @@ export async function POST(req: Request) {
     user.otpExpiry = undefined;  // clear OTP expiry
     await user.save();
 
+    // Send success email
+await sendSuccessResetEmail(email, user.name).catch((err) => {
+      console.error("Error sending success reset email:", err);
+      throw new Error("Failed to send success reset email");
+    });
     return NextResponse.json({ success: true, message: "Password reset successfully" });
   } catch (error: any) {
     console.error("Error resetting password:", error);

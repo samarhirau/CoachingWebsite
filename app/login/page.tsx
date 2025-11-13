@@ -215,7 +215,7 @@ const handleSignup = async (e: React.FormEvent) => {
               <form onSubmit={handleSignup} className="space-y-4">
                 <Input type="text" placeholder="Full Name" value={signupName} onChange={(e) => setSignupName(e.target.value)} required />
                 <Input type="email" placeholder="Email Address" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
-                <Input type="tel" placeholder="Phone Number (Optional)" value={signupPhone} onChange={(e) => setSignupPhone(e.target.value)}  />
+                <Input type="tel" placeholder="Phone Number" value={signupPhone} onChange={(e) => setSignupPhone(e.target.value)}  required/>
                 <Input type="password" placeholder="Password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
                 <Button type="submit" className="w-full" disabled={loading}>{loading ? "Creating..." : "Create Account"}</Button>
                 {renderSocialLogin()}

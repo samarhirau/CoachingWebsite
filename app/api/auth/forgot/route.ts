@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import User from "@/models/User";
-import { sendOtpEmail } from "@/lib/mailService";
+import { sendOtpEmail } from "@/lib/services/sendmailtrap"; // chnaged here
 
 export async function POST(req: Request) {
   try {
@@ -26,7 +26,10 @@ export async function POST(req: Request) {
     await user.save();
 
     // Send OTP email
-    await sendOtpEmail(email, otp);
+    await sendOtpEmail(email, otp).catch((err) => {
+      console.error("Error sending OTP email:", err);
+      throw new Error("Failed to send OTP email");
+    });
 
     return NextResponse.json({ success: true, message: "OTP sent successfully" });
   } catch (error: any) {
