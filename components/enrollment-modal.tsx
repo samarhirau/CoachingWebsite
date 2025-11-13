@@ -75,6 +75,17 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
   return true
 }
 
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+  return () => {
+    document.body.removeChild(script);
+  };
+}, []);
+
+
 
 
 useEffect(() => {
@@ -150,45 +161,41 @@ const priceNumber = useMemo(() => {
 
 
 
-
 // const handleSubmit = async (e: React.FormEvent) => {
-//   e.preventDefault()
-//   setLoading(true)
-//   setError("")
+//   e.preventDefault();
+//   setLoading(true);
+//   setError("");
 
-//   if (!user) {
-//     setError("You must be logged in to enroll.")
-//     setLoading(false)
-//     return
+//   if (!user?._id || !course?._id) {
+//     toast.error("Please wait... User or course not loaded yet.");
+//     setLoading(false);
+//     return;
 //   }
 
 //   try {
 //     const response = await fetch("/api/enrollments", {
 //       method: "POST",
 //       headers: { "Content-Type": "application/json" },
-//  credentials: "include",
+//       credentials: "include",
 //       body: JSON.stringify({
-//         studentId: user._id,      
-//         courseId: course?._id,
+//         studentId: user._id,
+//         courseId: course._id,
 //         formData,
 //       }),
-//     })
+//     });
 
-//     const data = await response.json()
+//     const data = await response.json();
+//     if (!response.ok) throw new Error(data?.message || "Server error");
 
-//     if (!response.ok) throw new Error(data?.message || "Server error")
-
-//     toast.success("Enrollment successful!")
-//     onClose()
+//     toast.success("Enrollment successful!");
+//     onClose();
 //   } catch (err: any) {
-//     toast.error("Enrollment failed: " + (err.message || "Server error"))
-//     setError(err.message)
+//     toast.error("Enrollment failed: " + (err.message || "Server error"));
+//     setError(err.message);
+//   } finally {
+//     setLoading(false);
 //   }
-
-//    finally {
-//     setLoading(false)
-//   }
-// }
+// };
 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -202,24 +209,64 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 
   try {
-    const response = await fetch("/api/enrollments", {
+    // 1️⃣ Create Razorpay order
+    const orderRes = await fetch("/api/razorpay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        studentId: user._id,
-        courseId: course._id,
-        formData,
-      }),
+      body: JSON.stringify({ type: "order", amount: discountedPrice }),
     });
+    const { order } = await orderRes.json();
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data?.message || "Server error");
+    // 2️⃣ Setup Razorpay checkout
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: "INR",
+      name: "Upcoder",
+      description: course?.title,
+      order_id: order.id,
+      prefill: {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        contact: formData.phone,
+      },
+      handler: async (response: any) => {
+        // 3️⃣ Verify payment
+        const verifyRes = await fetch("/api/razorpay", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "verify", ...response }),
+        });
+        const verifyData = await verifyRes.json();
 
-    toast.success("Enrollment successful!");
-    onClose();
+        if (verifyData.success) {
+          // 4️⃣ Store enrollment only after payment success
+          await fetch("/api/enrollments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              studentId: user._id,
+              courseId: course._id,
+              formData,
+              paymentId: response.razorpay_payment_id,
+            }),
+          });
+
+          toast.success("Payment Successful! Enrollment confirmed.");
+          onClose();
+        } else {
+          toast.error("Payment verification failed.");
+        }
+      },
+      theme: { color: "#6366f1" },
+    };
+
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
   } catch (err: any) {
-    toast.error("Enrollment failed: " + (err.message || "Server error"));
+    console.error(err);
+    toast.error("Payment failed. Try again.");
     setError(err.message);
   } finally {
     setLoading(false);
