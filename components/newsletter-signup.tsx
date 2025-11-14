@@ -1,6 +1,5 @@
-"use client"
 
-import type React from "react"
+"use client"
 
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -8,50 +7,46 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Mail, CheckCircle, Gift, TrendingUp, Users } from "lucide-react"
-import toast from "react-hot-toast"
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [subscriptionStatus, setSubscriptionStatus] = useState<null | "subscribed" | "already">(
+    null
+  )
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  if (!email) return
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
 
-  setIsSubmitting(true)
+    setIsSubmitting(true)
 
-  try {
-    const response = await fetch("/api/newslatter", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    })
+    try {
+      const response = await fetch("/api/newslatter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
 
-    if (!response.ok) {
-      throw new Error("Failed to subscribe")
-    }
+      const data = await response.json()
 
-    const data = await response.json()
-    console.log("Subscribed:", data)
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to subscribe")
+      }
 
-    setIsSubscribed(true)
+      if (data.message === "You are already subscribed!") {
+        setSubscriptionStatus("already")
+      } else {
+        setSubscriptionStatus("subscribed")
+      }
 
-    // Reset after 3 seconds
-    setTimeout(() => {
-      setIsSubscribed(false)
       setEmail("")
-    }, 3000)
-  } catch (error: any) {
-    console.error(error)
-    toast.error(error.message || "Something went wrong!")
-  } finally {
-    setIsSubmitting(false)
+    } catch (error: any) {
+      console.error(error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
-}
-
 
   const benefits = [
     { icon: Gift, text: "Exclusive course discounts" },
@@ -74,12 +69,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                     Stay Updated with <span className="text-gradient">Upcoder</span>
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Join 5,000+ students and professionals who receive our weekly newsletter with coding tips, career
-                    advice, and exclusive course updates.
+                    Join 5,000+ students and professionals who receive our weekly newsletter with coding tips, career advice, and exclusive course updates.
                   </p>
                 </div>
 
-                {!isSubscribed ? (
+                {!subscriptionStatus ? (
                   <>
                     <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-8">
                       <div className="flex gap-3">
@@ -114,15 +108,9 @@ const handleSubmit = async (e: React.FormEvent) => {
 
                     <div className="text-center mt-6">
                       <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                        <Badge variant="outline" className="text-xs">
-                          No spam, ever
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          Unsubscribe anytime
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          Weekly updates
-                        </Badge>
+                        <Badge variant="outline" className="text-xs">No spam, ever</Badge>
+                        <Badge variant="outline" className="text-xs">Unsubscribe anytime</Badge>
+                        <Badge variant="outline" className="text-xs">Weekly updates</Badge>
                       </div>
                     </div>
                   </>
@@ -131,12 +119,20 @@ const handleSubmit = async (e: React.FormEvent) => {
                     <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle className="h-8 w-8 text-success" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Welcome to Upcoder!</h3>
+                    <h3 className="text-xl font-semibold mb-2">
+                      {subscriptionStatus === "subscribed"
+                        ? "Welcome to Upcoder!"
+                        : "You're already subscribed!"}
+                    </h3>
                     <p className="text-muted-foreground mb-4">
-                      You've successfully subscribed to our newsletter. Check your email for a welcome message.
+                      {subscriptionStatus === "subscribed"
+                        ? "You've successfully subscribed to our newsletter. Check your email for a welcome message."
+                        : "You are already in our subscriber list. No need to subscribe again."}
                     </p>
                     <Badge variant="secondary" className="bg-success/10 text-success">
-                      Subscription confirmed
+                      {subscriptionStatus === "subscribed"
+                        ? "Subscription confirmed"
+                        : "Already subscribed"}
                     </Badge>
                   </div>
                 )}
@@ -148,4 +144,5 @@ const handleSubmit = async (e: React.FormEvent) => {
     </section>
   )
 }
+
 
