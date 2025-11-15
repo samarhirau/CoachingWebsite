@@ -5,6 +5,7 @@ import { CoursesSection } from "@/components/courses-section"
 import { ContactSection } from "@/components/contact-section"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { Footer } from "@/components/footer"
+import UnderDevelopmentPopup from "@/components/underDevelopment"
 
 
 // CodeMentor Academy
@@ -20,6 +21,7 @@ export default function HomePage() {
         <NewsletterSignup />
       </main>
       <Footer />
+       <UnderDevelopmentPopup />
     </div>
   )
 }
