@@ -18,6 +18,7 @@ export async function GET(req: Request) {
     .limit(limit)
     .sort({ createdAt: -1 });
 
+
   const total = await User.countDocuments(filter);
 
   return NextResponse.json({ users, total });
