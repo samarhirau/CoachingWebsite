@@ -3,11 +3,16 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   Home, Users, BookOpen, DollarSign, Briefcase, PlusCircle, Edit, ListChecks, Mail,
   ScrollText, BarChart, GraduationCap, ChevronsDown, ChevronsUp, HardHat, FileText,
-  Bell, Trash2, Save, X, ClipboardCheck, CornerDownRight, FileSignature, CheckCircle
+  Bell, Trash2, Save, X, ClipboardCheck, CornerDownRight, FileSignature, CheckCircle,
+  Zap
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import QuickActionListView from '@/components/admin/quickActionView';
+import NewsletterListView from '@/components/admin/newsletterListView';
+import GenericManagementView from '@/components/admin/genericManagementView';
+import AllStudentsView from '@/components/admin/allStudentsView';
 
-// --- 1. TYPE DEFINITIONS & DUMMY DATA ---
+
+// --- 1. DATA INTERFACES & DUMMY DATA ---
 
 interface Student {
   id: number;
@@ -21,8 +26,10 @@ interface Student {
   assignedProfessor: string;
   subject: string;
   fees: string;
-  profileImage?: string; // Added for the new UI
 }
+
+
+
 
 interface Course {
   id: number;
@@ -102,11 +109,7 @@ interface CourseFormData {
 }
 
 
-interface NewsletterItem {
-  _id: string;
-  email: string;
-  createdAt: string;
-}
+
 
 // --- INITIAL DUMMY DATA ---
 const initialStudentList: Student[] = [
@@ -252,123 +255,7 @@ const SidebarLink: React.FC<{
 // --- 3. VIEW COMPONENTS (CRUD) ---
 
 // 3.1 All Students View (List with CRUD Actions) - Updated to match screenshot style
-const AllStudentsView: React.FC<{ students: Student[]; onDelete: (id: number) => void }> = ({ students, onDelete }) => {
-    // Note: Inline editing logic (isEditing, etc.) has been removed to match the screenshot's clean table look.
-    const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 
-    const getStatusClass = (status: Student['status']) => {
-        switch (status) {
-            case 'Checkin': return 'bg-green-100 text-green-800 font-bold';
-            case 'Pending': return 'bg-yellow-100 text-yellow-800 font-bold';
-            case 'Canceled': return 'bg-red-100 text-red-800 font-bold';
-        }
-    };
-
-    return (
-        <div className="p-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-                <div className="flex justify-between items-center mb-6 border-b pb-4">
-                    {/* List/Grid View Tabs */}
-                    <div className="flex space-x-2 border border-gray-300 rounded-lg p-1">
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={`px-4 py-2 text-sm font-semibold rounded-md transition ${
-                                viewMode === 'list' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                        >
-                            List View
-                        </button>
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={`px-4 py-2 text-sm font-semibold rounded-md transition ${
-                                viewMode === 'grid' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                        >
-                            Grid View
-                        </button>
-                    </div>
-
-                    <h2 className="text-xl font-bold text-gray-800 hidden sm:block">All Students List</h2>
-                    
-                    <button onClick={() => console.log('Navigate to Add Student')} className='px-4 py-2 bg-indigo-500 text-white rounded-lg font-semibold hover:bg-indigo-600 transition flex items-center'>
-                        <PlusCircle className='w-4 h-4 mr-1' /> Add new
-                    </button>
-                </div>
-
-                {/* Search and Entries */}
-                <div className="flex justify-between items-center mb-6">
-                    <div className="text-sm text-gray-600">
-                        Show
-                        <select className="mx-2 p-1 border rounded-md bg-white">
-                            <option>10</option>
-                            <option>25</option>
-                            <option>50</option>
-                        </select>
-                        entries
-                    </div>
-                    <input
-                        type="search"
-                        placeholder="Search..."
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-                    />
-                </div>
-
-                {/* Table Content */}
-                {viewMode === 'list' && (
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
-                                    {['Roll No.', 'Name', 'Education', 'Mobile', 'Email', 'Admission Date', 'Status', 'Actions'].map(header => (
-                                        <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{header}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {students.map(student => (
-                                    <tr key={student.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <img
-                                                className="h-9 w-9 rounded-full object-cover"
-                                                src={student.profileImage || `https://placehold.co/150x150/4f46e5/ffffff?text=${student.rollNo}`}
-                                                alt={student.name}
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.rollNo}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.education}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.mobile}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.email}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.admissionDate}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(student.status)}`}>
-                                                {student.status === 'Checkin' ? 'Check-in' : student.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div className='flex space-x-2'>
-                                                {/* Edit button is now a navigation placeholder */}
-                                                <button title="Edit Student" className="text-indigo-600 hover:text-indigo-900 transition"><Edit className="w-4 h-4" /></button>
-                                                <button title="Delete Student" onClick={() => onDelete(student.id)} className="text-red-600 hover:text-red-900 transition"><Trash2 className="w-4 h-4" /></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-                {viewMode === 'grid' && (
-                    <div className="p-10 text-center text-gray-500">
-                        <p className='text-lg font-semibold'>Grid View is a placeholder for a card layout of students.</p>
-                        <p className='text-sm mt-2'>Please select 'List View' to see the student data.</p>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
 
 // 3.2 Add Student Form (Create)
 const AddStudentForm: React.FC<{ onAdd: (student: Omit<Student, 'id' | 'status' | 'profileImage'>) => void }> = ({ onAdd }) => {
@@ -777,42 +664,6 @@ const AllCoursesView: React.FC<{ data: typeof initialCourseList }> = ({ data }) 
       </div>
     </div>
   );
-// const AddCourseForm: React.FC = () => {
-//     const handleSubmit = (e: React.FormEvent) => {
-//         e.preventDefault();
-//         console.log('API Integration: Submitting new course data...');
-//         // NOTE: Replacing alert with console log
-//         console.log('Course submission initiated (Check console for dummy API call)');
-//     };
-
-//     return (
-//         <div className="p-6">
-//             <h2 className="text-3xl font-bold mb-6 text-gray-800">Add New Course</h2>
-//             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
-//                 <h3 className="text-xl font-semibold mb-6 border-b pb-2 text-indigo-700">Course Details</h3>
-//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-//                     <input type="text" placeholder="Course Name" required className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                     <input type="text" placeholder="Course Code (e.g., EC004)" required className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                 </div>
-//                 <textarea placeholder="Course Description/Details" rows={5} className="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none" required />
-
-//                 <h3 className="text-xl font-semibold mb-6 border-b pb-2 text-indigo-700">Logistics</h3>
-//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-//                     <input type="text" placeholder="Start Date/Semester" className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                     <input type="text" placeholder="Course Duration (e.g., 6 Months)" className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                     <input type="number" placeholder="Course Price ($)" required className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                     <input type="text" placeholder="Professor Name" required className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                     <input type="number" placeholder="Maximum Students" className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                     <input type="tel" placeholder="Contact Number" className="p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-//                 </div>
-//                 <button type="submit" className="w-full py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition duration-150 mt-4">
-//                     <PlusCircle className="w-5 h-5 inline mr-2" /> Add Course
-//                 </button>
-//             </form>
-//         </div>
-//     );
-// };
-
 
 
 
@@ -1162,185 +1013,14 @@ const FeesReceiptView: React.FC<{ data: typeof initialFeesReceipt }> = ({ data }
         </div>
     );
 };
-const GenericManagementView: React.FC<{ section: string }> = ({ section }) => (
-    <div className="p-6">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800">{section}</h2>
-        <div className="bg-white p-8 rounded-xl shadow-lg">
-            <p className="text-gray-700 mb-4">
-                This section, **{section}**, is a placeholder for your **Professor/Fees/Reports** management interface.
-            </p>
-            <div className="p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
-                <p className="font-semibold text-yellow-800">
-                    API Integration Ready:
-                </p>
-                <p className="text-sm text-yellow-700 mt-1">
-                    Here, you would implement the **CRUD logic** for {section.toLowerCase().replace(/ /g, '_')}.
-                </p>
-            </div>
-        </div>
-    </div>
-);
-
-// 3.8 Newslatter Management View (Implemented as placeholder with API integration note)  
 
 
-const NewsletterListView: React.FC = () => {
-  const [newsletters, setNewsletters] = useState<NewsletterItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [perPage] = useState(10);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [sending, setSending] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  const fetchNewsletters = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`/api/newslatter/list?page=${page}&limit=${perPage}`);
-      const data = await res.json();
-      if (res.ok) {
-        setNewsletters(data.data);
-      } else {
-        setError(data.message || "Failed to fetch newsletters");
-        toast.error(data.message || "Failed to fetch newsletters");
-      }
-    } catch {
-      setError("Something went wrong while fetching newsletters.");
-      toast.error("Something went wrong while fetching newsletters.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNewsletters();
-  }, [page]);
-
-  const toggleSelect = (id: string) => {
-    const newSet = new Set(selected);
-    if (newSet.has(id)) newSet.delete(id);
-    else newSet.add(id);
-    setSelected(newSet);
-  };
-
-const sendEmails = async () => {
-  if (selected.size === 0) return alert("Please select at least one subscriber.");
-
-  try {
-    setSending(true);
-    setError(null);
-    setSuccessMessage(null);
-
-    const res = await fetch("/api/newslatter/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: Array.from(selected) }), 
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      setSuccessMessage(data.message || "Emails sent successfully!");
-      setSelected(new Set()); // clear selection
-      toast.success("Emails sent successfully!");
-    } else {
-      setError(data.message || "Failed to send emails.");
-      toast.error("Failed to send emails.");
-    }
-  } catch {
-    setError("Something went wrong while sending emails.");
-    toast.error("Something went wrong while sending emails.");
-  } finally {
-    setSending(false);
-  }
-};
 
 
-  if (loading) return <p className="p-6 text-gray-700">Loading newsletters...</p>;
-  if (error) return <p className="p-6 text-red-500">{error}</p>;
 
-  return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Newsletter Subscribers</h2>
 
-      {successMessage && (
-        <p className="mb-4 p-3 bg-green-100 text-green-800 rounded">{successMessage}</p>
-      )}
 
-      {error && (
-        <p className="mb-4 p-3 bg-red-100 text-red-800 rounded">{error}</p>
-      )}
 
-      <div className="overflow-x-auto bg-white p-4 rounded-xl shadow-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Select
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Subscribed At
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {newsletters.map((item) => (
-              <tr key={item._id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <input
-                    type="checkbox"
-                    checked={selected.has(item._id)}
-                    onChange={() => toggleSelect(item._id)}
-                  />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-700">{item.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                  {new Date(item.createdAt).toLocaleString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {newsletters.length === 0 && (
-          <p className="mt-4 text-gray-500">No subscribers found.</p>
-        )}
-
-        <div className="mt-4 flex justify-between items-center">
-          <div>
-            <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              className="px-4 py-2 mr-2 bg-gray-200 rounded hover:bg-gray-300"
-              disabled={page === 1 || sending}
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setPage((prev) => prev + 1)}
-              className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              disabled={sending}
-            >
-              Next
-            </button>
-          </div>
-          <button
-            onClick={sendEmails}
-            className={`px-6 py-2 rounded text-white ${
-              sending ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-            }`}
-            disabled={sending || selected.size === 0}
-          >
-            {sending ? "Sending..." : `Send Email (${selected.size})`}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 
 
@@ -1354,7 +1034,8 @@ const menuStructure = [
   { title: 'Fees', section: 'fees', icon: DollarSign, submenu: ['Fees Collection', 'Fees Receipt'] },
   { title: 'Assignments', section: 'assignments', icon: ListChecks, submenu: ['Add Assignment', 'Review Assignments'] },
   { title: 'Reports', section: 'reports', icon: BarChart, submenu: [] },
-  { title: 'Newslatter', section: 'Newslatter', icon: BarChart, submenu: [] },
+  { title: 'Newslatter', section: 'Newslatter', icon: Mail, submenu: [] },
+  { title: 'Quick Actions', section: 'quick-actions', icon: Zap, submenu: [] },
 ];
 
 const AdminDashboard: React.FC = () => {
@@ -1461,6 +1142,9 @@ const AdminDashboard: React.FC = () => {
 
       case 'Newslatter':
         return <NewsletterListView />;
+
+      case 'quick-actions':
+        return <QuickActionListView />;  
 
       default:
         return <div>404: Page Not Found</div>;
