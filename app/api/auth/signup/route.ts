@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import connectDB from "@/lib/mongoDb"
 import User from "@/models/User"
 import { hashPassword, generateToken } from "@/lib/auth"
-import { sendWelcomeEmail } from "@/lib/services/sendmailtrap"  // chnaged here
+// import { sendWelcomeEmail } from "@/lib/services/sendmailtrap"  // chnaged here
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,10 +51,10 @@ const user = await User.create(userData);
 
 
  // Send welcome email
-    await sendWelcomeEmail(email, name).catch((err) => {
-      console.error("Error sending welcome email:", err)
-      throw new Error("Failed to send welcome email");
-    })
+    // await sendWelcomeEmail(email, name).catch((err) => {
+    //   console.error("Error sending welcome email:", err)
+    //   throw new Error("Failed to send welcome email");
+    // })
 
 
 
