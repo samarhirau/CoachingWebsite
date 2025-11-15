@@ -14,3 +14,4 @@ const ActionSchema = new mongoose.Schema({
 
 const Action = mongoose.models.Action || mongoose.model("Action", ActionSchema);
 export default Action;
+

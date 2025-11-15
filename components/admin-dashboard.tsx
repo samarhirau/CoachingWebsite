@@ -254,8 +254,6 @@ const SidebarLink: React.FC<{
 
 // --- 3. VIEW COMPONENTS (CRUD) ---
 
-// 3.1 All Students View (List with CRUD Actions) - Updated to match screenshot style
-
 
 // 3.2 Add Student Form (Create)
 const AddStudentForm: React.FC<{ onAdd: (student: Omit<Student, 'id' | 'status' | 'profileImage'>) => void }> = ({ onAdd }) => {
@@ -1052,7 +1050,7 @@ const AdminDashboard: React.FC = () => {
     // API READY: Replace with actual POST API call
     const id = studentList.length > 0 ? Math.max(...studentList.map(s => s.id)) + 1 : 1;
     // Mocking the status and a placeholder image for new students
-    const student: Student = { ...newStudent, id, status: 'Pending' as 'Pending', profileImage: `https://placehold.co/150x150/000000/ffffff?text=NEW` };
+    const student: Student = { ...newStudent, id, status: 'Pending' as 'Pending',  };
     setStudentList(prev => [...prev, student]);
     console.log('API READY: Student added:', student);
   }, [studentList]);
