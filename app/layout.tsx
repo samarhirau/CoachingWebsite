@@ -14,52 +14,63 @@ import { AuthProvider } from "@/components/auth-provider"
 
 export const metadata: Metadata = {
 
-  title: "RID Bharat | Research Innovation and Discovery Organization",
+  metadataBase: new URL("https://upcoder.netlify.app"),
+
+  title: "Upcoder | Learn, Build & Launch",
   description:
-    "RID Bharat is a national organization driving innovation, technology, and research to empower India’s youth. Join us in shaping the future through projects, hackathons, and community-driven discoveries.",
+    "Upcoder empowers developers, students, and innovators through real projects, mentorship, and community-driven learning.",
   keywords: [
-    "RID Bharat",
-    "Research Innovation and Discovery",
-    "Innovation India",
-    "RID Organization",
-    "Tech Community India",
-    "Student Innovation",
-    "Hackathon India",
-    "Research Projects",
-    "RID Foundation",
-    "RID Students",
+    "Upcoder",
+    "coding projects",
+    "developer community",
+    "learn to code",
+    "web development",
+    "tech students",
+    "innovation",
   ],
-  authors: [{ name: "RID Bharat" }],
+
+  authors: [{ name: "SAMAR HIRAU", url: "https://samarhirau.dev",
+   }],
+
+  alternates: {
+    canonical: "https://upcoder.netlify.app",
+  },
+
   openGraph: {
-    title: "RID Bharat | Research Innovation and Discovery Organization",
+    title: "Upcoder | Learn, Build & Launch",
     description:
-      "Empowering Indian youth through research, innovation, and technology. Join RID Bharat and be part of the nation’s innovation movement.",
-    url: "https://Upcoder.com",
-    siteName: "RID Bharat",
+      "Join Upcoder to learn by building real projects, get mentorship, and launch your ideas.",
+    url: "https://upcoder.netlify.app",
+    siteName: "Upcoder",
     images: [
       {
-        url: "https://Upcoder.in/og-image.jpg",
+        url: "https://upcoder.netlify.app/og-image.png",
         width: 1200,
         height: 630,
-        alt: "RID Bharat - Research Innovation and Discovery",
+        alt: "Upcoder OpenGraph Image",
       },
     ],
-    locale: "en_IN",
     type: "website",
+    locale: "en_IN",
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "RID Bharat | Research Innovation and Discovery Organization",
-    description:
-      "Join RID Bharat to innovate, discover, and create impact through technology, research, and community collaboration.",
-    images: ["https://Upcoder.com/og-image.png"],  // replace with your image
+    title: "Upcoder | Learn, Build & Launch",
+    description: "Build real projects. Join a powerful community. Become an Upcoder.",
     creator: "@samar_hirau",
+    images: ["https://upcoder.netlify.app/og-image.png"],
   },
-  metadataBase: new URL("https://Upcoder.com"),
-  alternates: {
-    canonical: "https://Upcoder.com",
+
+  robots: {
+    index: true,
+    follow: true,
   },
+
+  category: "technology",
+  themeColor: "#ffffff",
 };
+
 
 
 export default function RootLayout({

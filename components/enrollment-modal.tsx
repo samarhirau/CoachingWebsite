@@ -27,7 +27,6 @@ interface EnrollmentModalProps {
     maxStudents: number
     rating: number
     duration: string
-    couponCode: { code: string; discount: number }[]
     features: string[]
   }
 }
@@ -37,16 +36,15 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
   const { user, loading: authLoading } = useAuth()
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
+     firstName: user?.name?.split(" ")[0] || "",
+    lastName: user?.name?.split(" ")[1] || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
     education: "",
     experience: "",
     motivation: "",
     paymentPlan: "full",
     agreeTerms: false,
-    couponCode: "",
   })
   const [couponStatus, setCouponStatus] = useState<"initial" | "valid" | "invalid">("initial")
   const [appliedDiscount, setAppliedDiscount] = useState(0)
@@ -131,8 +129,6 @@ const priceNumber = useMemo(() => {
 
    
 
-  const codeInput = formData.couponCode.trim().toUpperCase();
-  const coupon = course?.couponCode?.find(c => c.code.toUpperCase() === codeInput);
 
   if (coupon) {
     setAppliedDiscount(coupon.discount);
@@ -405,7 +401,6 @@ const handleSubmit = async (e: React.FormEvent) => {
             <div>
               <Label>Coupon Code</Label>
               <div className="flex gap-2">
-                <Input value={formData.couponCode} onChange={(e) => handleInputChange("couponCode", e.target.value)} />
                 <Button onClick={handleCouponApply}>Apply</Button>
               </div>
               {couponStatus === "valid" && <p className="text-green-500">Coupon Applied!</p>}
@@ -454,7 +449,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </Button>
         <Button
   onClick={step === 3 ? handleSubmit : handleNext}
-  disabled={!isStepValid() || !user?._id || !course?._id || loading}
+  disabled={!isStepValid() ||  loading}
 >
   {loading ? "Processing..." : step === 3 ? "Complete Enrollment" : "Next"}
 </Button>

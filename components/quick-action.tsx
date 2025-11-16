@@ -23,7 +23,7 @@ import { useAuth } from "@/components/auth-provider";
 export const QuickAction = () => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { isLoggedIn ,user } = useAuth();
 
   const handleClick = (action: string) => {
     setPendingAction(action);
@@ -35,17 +35,19 @@ export const QuickAction = () => {
     setIsConfirming(false);
 
     try {
-      if (!user?._id) {
+      if (!isLoggedIn || !user) {
         toast.error("You must be logged in to perform this action.");
         return;
       }
+
+      const userId = user._id;
 
       const res = await fetch("/api/quick-action", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: pendingAction,
-          userId: user._id,
+          userId,
         }),
       });
 
