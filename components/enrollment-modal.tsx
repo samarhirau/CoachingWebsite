@@ -449,7 +449,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </Button>
         <Button
   onClick={step === 3 ? handleSubmit : handleNext}
-  disabled={!isStepValid() ||  loading}
+  disabled={!isStepValid() ||  loading  ||  }
 >
   {loading ? "Processing..." : step === 3 ? "Complete Enrollment" : "Next"}
 </Button>
