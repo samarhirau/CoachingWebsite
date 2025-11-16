@@ -23,12 +23,18 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({
+  children,
+  defaultUser = null,
+}: {
+  children: React.ReactNode
+  defaultUser?: User | null
+}) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    checkAuth()
+   if (!defaultUser)  checkAuth()
   }, [])
 
 const checkAuth = async () => {
