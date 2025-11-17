@@ -84,7 +84,7 @@ export default function StudentDashboard() {
     setSelectedAssignment(null);
   }, []);
 
-  if (loading) return <SkeletonDashboard />;
+  if (loading && user) return <SkeletonDashboard />;
 
   const ActiveTabComponent = TABS.find(tab => tab.value === activeTab)?.component;
 
