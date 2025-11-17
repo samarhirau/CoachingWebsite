@@ -1,222 +1,266 @@
-// @/components/student-dashboard.tsx
+// "use client";
+// import React, { useState, useCallback } from "react";
+// import { MessageSquare, Bell } from "lucide-react";
+// import LogoutConfirmation from "@/components/logout-btn";
+// import SubmissionModal from "./students/submissionModal";
+// import AssignmentsTab from "./students/assignmentTab";
+// import OverviewTab from "./students/overviewTab";
+// import MyCoursesTab from "./students/myCourseTab";
+// import ProgressTab from "./students/progressTab";
+
+// // Mock Data for Assignments
+// const MOCK_ASSIGNMENTS = [
+//   {
+//     id: "a1",
+//     title: "Build a Todo App",
+//     dueDate: "Jan 24, 2025",
+//     status: "pending",
+//     difficulty: "Medium",
+//     progress: 0,
+//     submissionContent: null,
+//   },
+//   {
+//     id: "a2",
+//     title: "Create REST API",
+//     dueDate: "Jan 28, 2025",
+//     status: "pending",
+//     difficulty: "Hard",
+//     progress: 0,
+//     submissionContent: null,
+//   },
+//   {
+//     id: "a3",
+//     title: "Portfolio Website",
+//     dueDate: "Jan 18, 2025",
+//     status: "completed",
+//     difficulty: "Easy",
+//     progress: 100,
+//     score: "92%",
+//     submissionContent: "Initial commit of portfolio website.",
+//   },
+// ];
+
+// const Button = ({
+//   children,
+//   variant = "default",
+//   size = "default",
+//   onClick,
+//   className = "",
+//   disabled,
+// }) => {
+//   let baseStyle =
+//     "font-medium rounded-lg transition-all duration-200 flex items-center justify-center whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed";
+//   let sizeStyle = size === "sm" ? "px-3 py-1.5 text-sm" : "px-4 py-2 text-base";
+//   let colorStyle = "";
+//   switch (variant) {
+//     case "outline":
+//       colorStyle =
+//         "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50";
+//       break;
+//     case "destructive":
+//       colorStyle = "bg-red-600 text-white hover:bg-red-700";
+//       break;
+//     case "success":
+//       colorStyle = "bg-green-600 text-white hover:bg-green-700";
+//       break;
+//     default:
+//       colorStyle = className.includes("gradient-primary")
+//         ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
+//         : "bg-indigo-600 text-white hover:bg-indigo-700";
+//       break;
+//   }
+//   return (
+//     <button
+//       className={`${baseStyle} ${sizeStyle} ${colorStyle} ${className}`}
+//       onClick={onClick}
+//       disabled={disabled}
+//     >
+//       {children}
+//     </button>
+//   );
+// };
+
+
+// const TABS = [
+//   { value: "overview", label: "Overview", component: OverviewTab },
+//   { value: "courses", label: "My Courses", component: MyCoursesTab },
+//   { value: "assignments", label: "Assignments", component: AssignmentsTab },
+//   { value: "progress", label: "Progress", component: ProgressTab },
+// ];
+
+// export default function dashboard({ user }: { user?: { name: string; email?: string } | null }) {
+//   const [activeTab, setActiveTab] = useState("overview");
+//   const [assignments, setAssignments] = useState(MOCK_ASSIGNMENTS);
+//   const [selectedAssignment, setSelectedAssignment] = useState(null);
+//   // Function to update an assignment in local state
+//   const updateAssignment = useCallback((id, updates) => {
+//     setAssignments((prevAssignments) =>
+//       prevAssignments.map((assignment) =>
+//         assignment.id === id ? { ...assignment, ...updates } : assignment
+//       )
+//     );
+//   }, []);
+
+//   // Handle assignment submission from modal
+//   const handleAssignmentSubmit = (assignmentId, submissionContent) => {
+//     updateAssignment(assignmentId, {
+//       submissionContent,
+//       status: "submitted",
+//       progress: 100,
+//     });
+//     setSelectedAssignment(null);
+//   };
+
+
+
+
+
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 font-inter">
+
+//       <div className="bg-white border-b shadow-sm">
+//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+//           <div className="flex items-center gap-4">
+//             <div className="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-800 font-bold text-lg">
+//               {user?.name.charAt(0).toUpperCase()}
+//             </div>
+//             <div>
+//               <h1 className="text-2xl font-bold text-gray-800">
+//                 Welcome back, {user?.name}!
+//               </h1>
+//               <p className="text-gray-500 text-sm">{user?.email}</p>
+//             </div>
+//           </div>
+//           <div className="flex items-center gap-3">
+//             <Button variant="outline" size="sm">
+//               <Bell className="h-4 w-4 mr-2" /> Notifications
+//             </Button>
+//             <Button variant="outline" size="sm">
+//               <MessageSquare className="h-4 w-4 mr-2" /> Support
+//             </Button>
+//             <LogoutConfirmation />
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+//         <div className="space-y-6">
+//           {/* Tabs Header */}
+//           <div className="flex justify-start border-b border-gray-200 grid w-full grid-cols-4">
+//             {TABS.map((tab) => (
+//               <button
+//                 key={tab.value}
+//                 className={`px-4 py-3 text-base font-medium transition-colors duration-200 border-b-2 ${
+//                   activeTab === tab.value
+//                     ? "border-indigo-600 text-indigo-600"
+//                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+//                 }`}
+//                 onClick={() => setActiveTab(tab.value)}
+//               >
+//                 {tab.label}
+//               </button>
+//             ))}
+//           </div>
+
+//           {/* Tabs Content */}
+//           {TABS.map((tab) => (
+//             <div
+//               key={tab.value}
+//               className={`pt-6 ${activeTab === tab.value ? "block" : "hidden"}`}
+//             >
+//               {tab.value === "assignments" && (
+//                 <AssignmentsTab
+//                   assignments={assignments}
+//                   updateAssignment={updateAssignment}
+//                 />
+//               )}
+//               {tab.value === "progress" && (
+//                 <ProgressTab assignments={assignments} />
+//               )}
+//               {tab.value === "courses" && <MyCoursesTab />}
+
+//               {tab.value === "overview" && <OverviewTab />}
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+
+//       {/* Modals */}
+//       {/* <SubmissionModal assignment={undefined} onClose={undefined} onSubmit={undefined} /> */}
+//       {selectedAssignment && (
+//         <SubmissionModal
+//           assignment={selectedAssignment}
+//           onClose={() => setSelectedAssignment(null)}
+//           onSubmit={handleAssignmentSubmit}
+//         />
+//       )}
+//     </div>
+//   );
+// }
 
 "use client";
-import React, { useState, useCallback } from "react";
-import { MessageSquare, Bell } from "lucide-react";
+import { useState, memo } from "react";
+import dynamic from "next/dynamic";
 import LogoutConfirmation from "@/components/logout-btn";
-import SubmissionModal from "./students/submissionModal";
-import AssignmentsTab from "./students/assignmentTab";
-import OverviewTab from "./students/overviewTab";
-import MyCoursesTab from "./students/myCourseTab"; // Import MyCoursesTab
-import ProgressTab from "./students/progressTab"; // Import ProgressTab
+import { Bell, MessageSquare } from "lucide-react";
 
-// --- Type Definitions (Added for clarity) ---
-type Assignment = {
-    id: string;
-    title: string;
-    dueDate: string;
-    status: 'pending' | 'submitted' | 'completed';
-    difficulty: string;
-    progress: number;
-    submissionContent: string | null;
-    score?: string;
-};
-
-type User = { name: string; email?: string } | null;
-
-// Mock Data for Assignments (Remains the same)
-const MOCK_ASSIGNMENTS: Assignment[] = [
-  {
-    id: "a1",
-    title: "Build a Todo App",
-    dueDate: "Jan 24, 2025",
-    status: "pending",
-    difficulty: "Medium",
-    progress: 0,
-    submissionContent: null,
-  },
-  {
-    id: "a2",
-    title: "Create REST API",
-    dueDate: "Jan 28, 2025",
-    status: "pending",
-    difficulty: "Hard",
-    progress: 0,
-    submissionContent: null,
-  },
-  {
-    id: "a3",
-    title: "Portfolio Website",
-    dueDate: "Jan 18, 2025",
-    status: "completed",
-    difficulty: "Easy",
-    progress: 100,
-    score: "92%",
-    submissionContent: "Initial commit of portfolio website.",
-  },
-];
-
-// Button Component (Remains the same, but simplified props for brevity)
-const Button = ({
-  children,
-  variant = "default",
-  size = "default",
-  onClick,
-  className = "",
-  disabled,
-}: any) => {
-  // ... (Button implementation remains the same)
-  let baseStyle =
-    "font-medium rounded-lg transition-all duration-200 flex items-center justify-center whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed";
-  let sizeStyle = size === "sm" ? "px-3 py-1.5 text-sm" : "px-4 py-2 text-base";
-  let colorStyle = "";
-  switch (variant) {
-    case "outline":
-      colorStyle =
-        "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50";
-      break;
-    case "destructive":
-      colorStyle = "bg-red-600 text-white hover:bg-red-700";
-      break;
-    case "success":
-      colorStyle = "bg-green-600 text-white hover:bg-green-700";
-      break;
-    default:
-      colorStyle = className.includes("gradient-primary")
-        ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
-        : "bg-indigo-600 text-white hover:bg-indigo-700";
-      break;
-  }
-  return (
-    <button
-      className={`${baseStyle} ${sizeStyle} ${colorStyle} ${className}`}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  );
-};
-
+const OverviewTab = dynamic(() => import("./students/overviewTab"));
+const MyCoursesTab = dynamic(() => import("./students/myCourseTab"));
+const AssignmentsTab = dynamic(() => import("./students/assignmentTab"));
+const ProgressTab = dynamic(() => import("./students/progressTab"));
 
 const TABS = [
-  { value: "overview", label: "Overview" },
-  { value: "courses", label: "My Courses" },
-  { value: "assignments", label: "Assignments" },
-  { value: "progress", label: "Progress" },
+  { id: "overview", label: "Overview", Component: OverviewTab },
+  { id: "courses", label: "Courses", Component: MyCoursesTab },
+  { id: "assignments", label: "Assignments", Component: AssignmentsTab },
+  { id: "progress", label: "Progress", Component: ProgressTab },
 ];
 
-export default function StudentDashboard({ user }: { user: User }) {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [assignments, setAssignments] = useState(MOCK_ASSIGNMENTS);
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
+function StudentDashboard({ user }) {
+  const [tab, setTab] = useState("overview");
 
-  // Function to update an assignment in local state
-  const updateAssignment = useCallback((id: string, updates: Partial<Assignment>) => {
-    setAssignments((prevAssignments) =>
-      prevAssignments.map((assignment) =>
-        assignment.id === id ? { ...assignment, ...updates } : assignment
-      )
-    );
-  }, []);
-
-  // Handle assignment submission from modal
-  const handleAssignmentSubmit = (assignmentId: string, submissionContent: string) => {
-    updateAssignment(assignmentId, {
-      submissionContent,
-      status: "submitted",
-      progress: 100,
-    });
-    setSelectedAssignment(null);
-  };
-  
-  // Conditionally render the active component
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'overview':
-        return <OverviewTab />;
-      case 'courses':
-        // MyCoursesTab is responsible for its own optimized fetching (see below)
-        return <MyCoursesTab />;
-      case 'assignments':
-        return (
-          <AssignmentsTab
-            assignments={assignments}
-            updateAssignment={updateAssignment}
-            // Add setSelectedAssignment={setSelectedAssignment} if AssignmentTab needs to open the modal
-          />
-        );
-      case 'progress':
-        return <ProgressTab assignments={assignments} />;
-      default:
-        return <OverviewTab />;
-    }
-  };
-
+  const ActiveTab = TABS.find(t => t.id === tab)?.Component;
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
+      <header className="bg-white border-b shadow-sm">
+        <div className="flex justify-between max-w-7xl mx-auto px-6 py-4">
+          <h1 className="text-2xl font-bold">Welcome, {user.name}</h1>
 
-      <div className="bg-white border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-800 font-bold text-lg">
-              {user?.name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">
-                Welcome back, {user?.name}!
-              </h1>
-              <p className="text-gray-500 text-sm">{user?.email}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
-              <Bell className="h-4 w-4 mr-2" /> Notifications
-            </Button>
-            <Button variant="outline" size="sm">
-              <MessageSquare className="h-4 w-4 mr-2" /> Support
-            </Button>
+          <div className="flex gap-2">
+            <Bell className="w-5 h-5" />
+            <MessageSquare className="w-5 h-5" />
             <LogoutConfirmation />
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
-          {/* Tabs Header */}
-          <div className="flex justify-start border-b border-gray-200 grid w-full grid-cols-4">
-            {TABS.map((tab) => (
-              <button
-                key={tab.value}
-                className={`px-4 py-3 text-base font-medium transition-colors duration-200 border-b-2 ${
-                  activeTab === tab.value
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-                onClick={() => setActiveTab(tab.value)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Tabs */}
+        <div className="flex gap-6 border-b">
+          {TABS.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`py-2 px-1 font-medium border-b-2 transition ${
+                tab === t.id
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-gray-500"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
 
-          {/* Optimized Tabs Content: Only render the active tab */}
-          <div className="pt-6">
-            {renderTabContent()}
-          </div>
-
+        {/* Tab Content */}
+        <div className="pt-6">
+          {ActiveTab && <ActiveTab user={user} />}
         </div>
       </div>
-
-      {/* Modals */}
-      {selectedAssignment && (
-        <SubmissionModal
-          assignment={selectedAssignment}
-          onClose={() => setSelectedAssignment(null)}
-          onSubmit={handleAssignmentSubmit}
-        />
-      )}
     </div>
   );
 }
+
+export default memo(StudentDashboard);

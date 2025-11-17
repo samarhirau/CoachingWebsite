@@ -30,7 +30,7 @@ export function subscriptionSuccessTemplate() {
               Thank you for subscribing to Upcoder updates. You’re all set to receive the latest courses, coding challenges, and community highlights directly in your inbox.
             </p>
 
-            <a href="https://upcoder.netlify.app"
+            <a href="https://upcoderv1.vercel.app"
               style="display:inline-block; background-color:oklch(0.55 0.15 240); color:#fff;
                      padding:14px 28px; border-radius:8px; font-weight:700; text-decoration:none;
                      box-shadow:0 4px 10px rgba(37,99,235,0.25); transition:all 0.3s ease;">
@@ -68,7 +68,7 @@ export function subscriptionSuccessTemplate() {
               Unsubscribe
             </a>
             •
-            <a href="https://upcoder.netlify.app" style="color:#6366f1; font-size:12px; text-decoration:none; margin-left:10px;">
+            <a href="https://upcoderv1.vercel.app" style="color:#6366f1; font-size:12px; text-decoration:none; margin-left:10px;">
               Visit Website
             </a>
             <p style="color:#9ca3af; font-size:12px; margin-top:16px;">

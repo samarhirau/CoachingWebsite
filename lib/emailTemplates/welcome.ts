@@ -1,5 +1,3 @@
-
-
 export function welcomeTemplate(userName: string) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -26,14 +24,14 @@ export function welcomeTemplate(userName: string) {
               Your account is all set! Start exploring your dashboard and unlock tools that help you grow faster and smarter.
             </p>
 
-            <a href="https://upcoder.netlify.app" 
+            <a href="https://upcoderv1.vercel.app" 
               style="display:inline-block; background-color:oklch(0.55 0.15 240); color:#fff; padding:14px 28px; border-radius:8px; text-decoration:none; font-weight:700; letter-spacing:0.3px; font-size:16px; box-shadow:0 4px 10px rgba(37,99,235,0.25); transition:all 0.3s ease;">
               Go to Dashboard →
             </a>
 
             <p style="color:#6b7280; font-size:14px; line-height:1.6; margin:32px 0 0;">
               Need help? Just reply to this email or visit our 
-              <a href="https://upcoder.netlify.app" style="color:oklch(0.55 0.15 240); text-decoration:none; font-weight:600;">Help Center</a>.
+              <a href="https://upcoderv1.vercel.app" style="color:oklch(0.55 0.15 240); text-decoration:none; font-weight:600;">Help Center</a>.
             </p>
           </td>
         </tr>
@@ -50,7 +48,7 @@ export function welcomeTemplate(userName: string) {
           <td align="center" style="padding:24px 40px 36px 40px; background-color:#f9fafb;">
             <p style="color:#9ca3af; font-size:12px; margin:0;">
               © 2025 <strong>Upcoder</strong>. All rights reserved.<br>
-              Visit us at <a href="https://upcoder.netlify.app" style="color:oklch(0.55 0.15 240);; text-decoration:none;">upcoder.netlify.app</a>
+              Visit us at <a href="https://upcoderv1.vercel.app" style="color:oklch(0.55 0.15 240);; text-decoration:none;">upcoderv1.vercel.app</a>
             </p>
           </td>
         </tr>

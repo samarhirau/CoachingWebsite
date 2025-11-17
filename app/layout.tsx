@@ -14,7 +14,7 @@ import { AuthProvider } from "@/components/auth-provider"
 
 export const metadata: Metadata = {
 
-  metadataBase: new URL("https://upcoder.netlify.app"),
+  metadataBase: new URL("https://upcoderv1.vercel.app"),
 
   title: "Upcoder | Learn, Build & Launch",
   description:
@@ -33,18 +33,18 @@ export const metadata: Metadata = {
    }],
 
   alternates: {
-    canonical: "https://upcoder.netlify.app",
+    canonical: "https://upcoderv1.vercel.app",
   },
 
   openGraph: {
     title: "Upcoder | Learn, Build & Launch",
     description:
       "Join Upcoder to learn by building real projects, get mentorship, and launch your ideas.",
-    url: "https://upcoder.netlify.app",
+    url: "https://upcoderv1.vercel.app",
     siteName: "Upcoder",
     images: [
       {
-        url: "https://upcoder.netlify.app/og-image.png",
+        url: "https://upcoderv1.vercel.app/og-image.png",
         width: 1200,
         height: 630,
         alt: "Upcoder OpenGraph Image",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "Upcoder | Learn, Build & Launch",
     description: "Build real projects. Join a powerful community. Become an Upcoder.",
     creator: "@samar_hirau",
-    images: ["https://upcoder.netlify.app/og-image.png"],
+    images: ["https://upcoderv1.vercel.app/og-image.png"],
   },
 
   robots: {
