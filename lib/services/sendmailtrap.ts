@@ -36,22 +36,30 @@ export async function sendSuccessResetEmail(to: string, userName: string) {
 });
 }
 
-export async function sendNewsletter(
-  recipients: string[],
-) {
-  const htmlContent = newsletterTemplate();
 
-  // Send to each recipient individually (BCC not supported directly in Mailtrap API)
-  for (const to of recipients) {
-    await mailtrapClient.send({
+
+
+export async function sendNewsletter(recipients: string[]) {
+  const to = recipients.map(email => ({ email }));
+
+  try {
+    const result = await mailtrapClient.send({
       from: sender,
-      to: [{ email: to }],
-     subject: "Upcoder Monthly Newsletter",
-     html:htmlContent,
-     category: "Newsletter",
+      to,
+      subject: "Latest Newsletter from Upcoder",
+      html : newsletterTemplate(),
+      category: "Newsletter",
     });
+
+    console.log("Newsletter sent:", result);
+    return result;
+  } catch (err: any) {
+    console.error("Error sending newsletter:", err);
+    throw new Error(err?.message || "Mailtrap send failed");
   }
 }
+
+
 
 export async function sendSubscriptionSuccessEmail(to: string) {
   await mailtrapClient.send({
@@ -63,5 +71,4 @@ export async function sendSubscriptionSuccessEmail(to: string) {
   });
 }
     
-
 

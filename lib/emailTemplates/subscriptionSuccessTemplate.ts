@@ -13,7 +13,7 @@ export function subscriptionSuccessTemplate() {
           <td align="center" 
               style="padding:36px 20px 20px 20px; background:oklch(0.45 0.15 240); color:#fff;">
             <h1 style="font-size:28px; font-weight:900; margin:0;">UPCODER</h1>
-            <p style="font-size:14px; margin:6px 0 0; opacity:0.9;">Subscription Successful ✅</p>
+            <p style="font-size:14px; margin:6px 0 0; opacity:0.9;">Subscription Successful</p>
           </td>
         </tr>
 
@@ -23,7 +23,7 @@ export function subscriptionSuccessTemplate() {
         <tr>
           <td style="padding:40px 40px 20px; text-align:left;">
             <h2 style="font-size:26px; font-weight:800; color:#111827; margin:0 0 16px;">
-              🎉 Welcome, ${name}!
+              🎉 Welcome coder
             </h2>
 
             <p style="font-size:16px; color:#4b5563; line-height:1.7; margin:0 0 24px;">

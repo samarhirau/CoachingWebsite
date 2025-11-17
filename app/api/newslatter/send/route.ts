@@ -8,6 +8,7 @@ export async function POST(req: Request) {
     await connectDB();
 
     const { ids } = await req.json();
+
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json(
         { success: false, message: "No subscribers selected." },
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Find subscribers by _id
+    // Get subscriber emails by _id
     const subscribers = await Newsletter.find({ _id: { $in: ids } }).select("email");
     const emails = subscribers.map((sub) => sub.email);
 
@@ -26,10 +27,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // Send newsletter
+    // Send newsletters via Mailtrap
     await sendNewsletter(emails);
 
-    return NextResponse.json({ success: true, message: "Emails sent successfully." });
+    return NextResponse.json({
+      success: true,
+      message: `Newsletter sent to ${emails.length} subscriber(s).`,
+    });
   } catch (error: any) {
     console.error("Error sending newsletters:", error);
     return NextResponse.json(
