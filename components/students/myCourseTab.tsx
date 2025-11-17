@@ -108,125 +108,58 @@
 
 // export default MyCoursesTab
 
+"use client"
+import useSWR from "swr"
+import { BookOpen, RefreshCcw, Zap } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/components/auth-provider"
+import CourseCard from "./courseCard"
 
-"use client";
+const fetcher = (url: string) =>
+  fetch(url, { credentials: "include" }).then(res => res.json())
 
-import { useAuth } from "@/components/auth-provider";
-import CourseCard from "@/components/students/courseCard";
-import { BookOpen, Zap, RefreshCcw } from "lucide-react";
-import { Card, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
-import useSWR from "swr";
-import { memo } from "react";
-
-type Course = {
-  _id: string;
-  slug: string;
-  title: string;
-  status?: string;
-  price: number;
-  originalPrice?: number;
-  duration?: string;
-  features?: string[];
-  enrollments?: number;
-  rating?: number;
-  progress?: number;
-};
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url, { credentials: "include" });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err?.error || "Failed to fetch courses");
-  }
-  const data = await res.json();
-  return data.enrollments.map((e: any) => ({
-    _id: e.course._id,
-    slug: e.course.slug,
-    title: e.course.title,
-    status: e.course.status || "In Progress",
-    price: e.course.price,
-    originalPrice: e.course.originalPrice,
-    duration: e.course.duration,
-    features: e.course.features,
-    enrollments: e.course.enrollments || 100 + Math.floor(Math.random() * 10),
-    rating: e.course.rating,
-    progress: e.progress || Math.floor(Math.random() * 100),
-  }));
-};
-
-// Memoized course grid to prevent unnecessary re-renders
-const CoursesGrid = memo(({ courses }: { courses: Course[] }) => {
-  return (
-    <div className="grid md:grid-cols-2 gap-6">
-      {courses.map((course) => (
-        <CourseCard key={course._id} course={course} />
-      ))}
-    </div>
-  );
-})
-const SkeletonCourses = () => (
-  <div className="grid md:grid-cols-2 gap-6">
-    {Array.from({ length: 4 }).map((_, i) => (
-      <Card key={i} className="animate-pulse h-48 bg-gray-100" />
-    ))}
-  </div>
-);
-
-const MyCoursesTab = () => {
-  const { user } = useAuth();
-
-  const { data: courses, error, isValidating, mutate } = useSWR(
+export default function MyCoursesTab() {
+  const { user } = useAuth()
+  const { data, isLoading, error, mutate } = useSWR(
     user ? `/api/enrollments?studentId=${user._id}` : null,
     fetcher,
-    { revalidateOnFocus: false, dedupingInterval: 60000 }
-  );
+    { revalidateOnFocus: false }
+  )
+
+  if (isLoading) return <p>Loading...</p>
+  if (error) return <p>Error loading courses</p>
+
+  const courses = data?.enrollments || []
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-800">
-          My Enrolled Courses ({courses?.length || 0})
-        </h2>
+      <div className="flex justify-between">
+        <h2 className="text-2xl font-bold">My Courses ({courses.length})</h2>
         <div className="flex gap-2">
-          <Button
-            onClick={() => mutate()}
-            variant="outline"
-            disabled={isValidating}
-          >
-            <RefreshCcw className="h-4 w-4" />
+          <Button onClick={() => mutate()}>
+            <RefreshCcw className="w-4 h-4" />
           </Button>
-
-          <Button variant="outline">
-            <BookOpen className="h-4 w-4 mr-2" />
-            Explore Catalog
+          <Button>
+            <BookOpen className="w-4 h-4 mr-2" /> Explore Courses
           </Button>
         </div>
       </div>
 
-      {!courses && !error && <SkeletonCourses />}
-
-      {error && <p className="text-red-500">{error.message}</p>}
-
-      {courses && courses.length > 0 ? (
-        <CoursesGrid courses={courses} />
-      ) : courses && courses.length === 0 ? (
-        <Card>
-          <CardContent className="p-6 text-center space-y-3">
-            <Zap className="h-10 w-10 text-indigo-500 mx-auto" />
-            <h3 className="text-xl font-semibold text-gray-800">
-              No Active Courses
-            </h3>
-            <p className="text-gray-500">
-              It looks like you haven't started any courses yet. Enroll in a
-              new course to begin your journey!
-            </p>
-            <Button className="gradient-primary">Explore New Courses</Button>
-          </CardContent>
-        </Card>
-      ) : null}
+      {courses.length ? (
+        <div className="grid md:grid-cols-2 gap-6">
+          {courses.map(c => (
+            <CourseCard key={c.course._id} course={c.course} />
+          ))}
+        </div>
+      ) : (
+        <div className="card text-center p-6">
+          <Zap className="h-10 w-10 text-indigo-500 mx-auto" />
+          <h3 className="text-xl font-semibold">No Active Courses</h3>
+          <p>Enroll to begin learning</p>
+          <Button className="gradient-primary">Explore Courses</Button>
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default MyCoursesTab;
