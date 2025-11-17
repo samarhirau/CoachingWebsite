@@ -1,4 +1,5 @@
 import connectDB from "@/lib/mongoDb";
+import { sendSubscriptionSuccessEmail } from "@/lib/services/sendmailtrap";
 import Newsletter from "@/models/NewsLatter";
 import { NextResponse } from "next/server";
 
@@ -26,6 +27,10 @@ export async function POST(req: Request) {
     }
 
     const newSubscriber = await Newsletter.create({ email });
+
+   await sendSubscriptionSuccessEmail(email).catch((error) => {
+      console.error("Error sending subscription success email:", error);
+    });
 
     return NextResponse.json(
       { message: "Subscribed successfully!", data: newSubscriber },

@@ -3,6 +3,8 @@ import { otpTemplate } from "../emailTemplates/resetotp";
 import { welcomeTemplate } from "../emailTemplates/welcome";
 import { newsletterTemplate } from "../emailTemplates/newslatter";
 import { passwordResetSuccessTemplate  } from "../emailTemplates/resetpasswordsuccess";
+import { subscriptionSuccessTemplate } from "../emailTemplates/subscriptionSuccessTemplate";
+
 
 export async function sendOtpEmail(to: string, otp: string) {
   await mailtrapClient.send({
@@ -10,6 +12,7 @@ export async function sendOtpEmail(to: string, otp: string) {
     to: [{ email: to }],
     subject: "Your OTP Code",
     html: otpTemplate(otp),
+    category: "OTP",
   });
 }
 
@@ -19,6 +22,7 @@ export async function sendWelcomeEmail(to: string, userName: string) {
     to: [{ email: to }],
     subject: "Welcome to Upcoder!",
     html: welcomeTemplate(userName),
+    category: "Welcome",
   });
 }
 
@@ -28,6 +32,7 @@ export async function sendSuccessResetEmail(to: string, userName: string) {
     to: [{ email: to }],
     subject: "Password Reset Successful",
     html: passwordResetSuccessTemplate(userName),
+    category: "PasswordResetSuccess",
 });
 }
 
@@ -42,9 +47,21 @@ export async function sendNewsletter(
       from: sender,
       to: [{ email: to }],
      subject: "Upcoder Monthly Newsletter",
-     html:htmlContent
+     html:htmlContent,
+     category: "Newsletter",
     });
   }
 }
+
+export async function sendSubscriptionSuccessEmail(to: string) {
+  await mailtrapClient.send({
+    from: sender,
+    to: [{ email: to }],
+    subject: "Subscription Successful",
+    html: subscriptionSuccessTemplate(),
+    category: "Subscription",
+  });
+}
+    
 
 

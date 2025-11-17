@@ -2,20 +2,15 @@ import { MailtrapClient } from "mailtrap";
 
 const mailtrapToken = process.env.MAILTRAP_TOKEN;
 if (!mailtrapToken) {
-  throw new Error("Missing required environment variable: MAILTRAP_TOKEN");
-}
-const endpoint = process.env.MAILTRAP_ENDPOINT;
-if (!endpoint) {
-     throw new Error("Missing required environment variable: MAILTRAP_ENDPOINT");
+	throw new Error("Environment variable MAILTRAP_TOKEN is required");
 }
 
 export const mailtrapClient = new MailtrapClient({
-  // endpoint isn't part of the MailtrapClientConfig type, cast to any to allow custom endpoint
-  endpoint: endpoint,
-  token: mailtrapToken,
-} as any);
+	token: mailtrapToken,
+});
 
 export const sender = {
- email: "mailtrap@demomailtrap.com",
+	// email: "mailtrap@demomailtrap.com",
+	email: "hello@sensewqplus.live",
 	name: "Upcoder",
 };

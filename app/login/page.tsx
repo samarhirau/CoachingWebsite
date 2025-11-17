@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -34,6 +34,8 @@ export default function AuthPage() {
   const [otp, setOtp] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [timer, setTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
 
   // ---------------- HANDLERS ----------------
 
@@ -151,7 +153,27 @@ const handleSignup = async (e: React.FormEvent) => {
     } finally {
       setLoading(false)
     }
+    
   }
+
+
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setCanResend(true);
+    }
+  }, [timer]);
+
+  const handleResendClick = () => {
+    handleForgotEmailSubmit(new Event("submit") as any);
+    setTimer(30); 
+    setCanResend(false);
+  };
 
 
 
@@ -184,7 +206,7 @@ const handleSignup = async (e: React.FormEvent) => {
         {/* Left Section */}
         <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-tl from-indigo-500 to-blue-600 p-8 relative">
           {/* <img src="" alt="Learning illustration" className="max-w-md animate-fade-in-up"/> */}
-          <Image src="/Upcoder.png" alt="Learning illustration" width={400} height={400} className="animate-fade-in-up" />
+          <Image src="/Upcoderlogoblack.png" alt="Learning illustration" width={350} height={350} className="animate-fade-in-up" />
           <div className="absolute bottom-8 left-8 text-white text-opacity-80">
             <h2 className="text-3xl font-bold mb-2">Welcome to Upcoder!</h2>
             <p className="text-lg">Your journey to knowledge starts here.</p>
@@ -242,6 +264,16 @@ const handleSignup = async (e: React.FormEvent) => {
             {currentStep === 'verify_otp' && (
               <form onSubmit={handleOtpVerification} className="space-y-4">
                 <Input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} required />
+              
+
+                 <Button
+        variant="link"
+        className="text-sm underline bg-none"
+        onClick={handleResendClick}
+        disabled={!canResend || loading}
+      >
+        {canResend ? "Resend OTP" : `Resend OTP in ${timer}s`}
+      </Button>
                 <Button type="submit" className="w-full" disabled={loading}>{loading ? "Verifying..." : "Verify OTP"}</Button>
               </form>
             )}
