@@ -50,7 +50,7 @@ export async function ModernNavigation() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3">
               <div className="">
-                <img src="/Upcoder.png" alt="Upcoder Logo" className="h-8 w-auto" />
+                <img src="/Upcoderlogoblack.png" alt="Upcoder Logo" className="h-14 w-auto" />
 
               </div>
             </Link>

@@ -9,9 +9,7 @@ const GenericManagementView: React.FC<{ section: string }> = ({ section }) => (
                 <p className="font-semibold text-yellow-800">
                     API Integration Ready:
                 </p>
-                <p className="text-sm text-yellow-700 mt-1">
-                    Here, you would implement the **CRUD logic** for {section.toLowerCase().replace(/ /g, '_')}.
-                </p>
+                
             </div>
         </div>
     </div>

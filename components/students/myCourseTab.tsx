@@ -1,88 +1,70 @@
-import { useEffect } from "react"
-import { useState } from "react"
-import { BookOpen, Zap, RefreshCcw} from "lucide-react"
+"use client"
+import { useEffect, useState } from "react"
+import { BookOpen, Zap, RefreshCcw } from "lucide-react"
 import { Card, CardContent } from "../ui/card"
 import { Button } from "../ui/button"
 import { useAuth } from "@/components/auth-provider"
 import CourseCard from "@/components/students/courseCard"
 
-
 type Course = {
-  _id: string;
-  slug: string;
-  title: string;
-  status?: string;
-  price: number;
-  originalPrice?: number;
-  duration?: string;
-  features?: string[];
-  enrollments?: number;
-  rating?: number;
-  progress?: number;
-};
-
+  _id: string
+  slug: string
+  title: string
+  status?: string
+  price: number
+  originalPrice?: number
+  duration?: string
+  features?: string[]
+  enrollments?: number
+  rating?: number
+  progress?: number
+}
 
 const MyCoursesTab = ({ preloadedCourses = [] }: { preloadedCourses?: Course[] }) => {
-  const [courses, setCourses] = useState<Course[]>(preloadedCourses);
   const { user } = useAuth()
+  const [courses, setCourses] = useState<Course[]>(preloadedCourses)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  
+  const fetchCourses = async () => {
+    if (!user) return
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/enrollments?studentId=${user._id}`, {
+        credentials: "include",
+      })
+      const data = await res.json()
 
+      if (!res.ok) throw new Error(data?.error || "Failed to fetch courses")
 
+      const enrolledCourses: Course[] = data.enrollments.map((e: any) => ({
+        _id: e.course._id,
+        slug: e.course.slug,
+        title: e.course.title,
+        status: e.course.status || "In Progress",
+        price: e.course.price,
+        originalPrice: e.course.originalPrice,
+        duration: e.course.duration,
+        features: e.course.features,
+        enrollments: e.course.enrollments || (100 + Math.floor(Math.random() * 10)),
+        rating: e.course.rating,
+        progress: e.progress || Math.floor(Math.random() * 100),
+      }))
+
+      setCourses(enrolledCourses)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    if (!user) return
-
-    const fetchCourses = async () => {
-      setLoading(true)
-      try {
-        const res = await fetch(`/api/enrollments?studentId=${user._id}`, {
-          credentials: "include",
-        })
-        const data = await res.json()
-        console.log("Fetched enrollments:", data)
-
-        if (!res.ok) throw new Error(data?.error || "Failed to fetch courses")
-
-        const enrolledCourses: Course[] = data.enrollments.map((e: any) => ({
-          _id: e.course._id,
-          slug : e.course.slug,
-          title: e.course.title,
-          status: e.course.status || "In Progress",
-          price: e.course.price,
-          originalPrice: e.course.originalPrice,
-          duration: e.course.duration,
-          features: e.course.features,
-          enrollments: e.course.enrollments || ( 100 + Math.floor(Math.random() * 10)),
-            rating: e.course.rating ,
-          progress: e.progress || Math.floor(Math.random() * 100), // Random progress for demo
-        }))
-
-        setCourses(enrolledCourses)
-      } catch (err: any) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchCourses()
   }, [user])
 
   if (loading) return <p>Loading your courses...</p>
   if (error) return <p className="text-red-500">{error}</p>
-
-function mutate() {
-    setLoading(true)
-    setError("")
-    setTimeout(() => {
-      setLoading(false)
-    }, 1000)
-
-  
-}
 
   return (
     <div className="space-y-6">
@@ -91,15 +73,15 @@ function mutate() {
           My Enrolled Courses ({courses.length})
         </h2>
         <div className="flex gap-2">
-        <Button onClick={() => mutate()} variant="outline">
-          <RefreshCcw/>
-        </Button>
-     
-        <Button variant="outline">
-          <BookOpen className="h-4 w-4 mr-2" />
-          Explore Catalog
-        </Button>
-           </div>
+          <Button onClick={fetchCourses} variant="outline">
+            <RefreshCcw className="h-4 w-4" />
+          </Button>
+
+          <Button variant="outline">
+            <BookOpen className="h-4 w-4 mr-2" />
+            Explore Catalog
+          </Button>
+        </div>
       </div>
 
       {courses.length > 0 ? (

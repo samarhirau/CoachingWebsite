@@ -129,12 +129,13 @@ if (loading) return <SkeletonDashboard />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-800 font-bold text-lg">
-              {user.name.charAt(0).toUpperCase()}
+              {user?.name.charAt(0).toUpperCase()}
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-800">
-                Welcome back, {user.name}!
+                Welcome back, {user?.name}!
               </h1>
+              <p className="text-gray-500 text-sm">{user?.email}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
