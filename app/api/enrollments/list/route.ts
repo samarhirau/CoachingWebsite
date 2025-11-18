@@ -52,6 +52,7 @@ import Enrollment from "@/models/Enrollment";
 
 
 import "@/models/Course";
+export const dynamic = "force-dynamic";
 
 
 export async function GET(req: Request) {
