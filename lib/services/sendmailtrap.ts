@@ -1,7 +1,7 @@
 import { mailtrapClient, sender } from "./mailserviceconfig";
 import { otpTemplate } from "../emailTemplates/resetotp";
 import { welcomeTemplate } from "../emailTemplates/welcome";
-import { newsletterTemplate } from "../emailTemplates/newslatter";
+import { newsletterTemplate } from "../emailTemplates/newsletterTemplate";
 import { passwordResetSuccessTemplate  } from "../emailTemplates/resetpasswordsuccess";
 import { subscriptionSuccessTemplate } from "../emailTemplates/subscriptionSuccessTemplate";
 

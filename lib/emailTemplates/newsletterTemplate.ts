@@ -1,4 +1,4 @@
-export function Newslatter() {
+export function newsletterTemplate() {
   return `<!DOCTYPE html>
 <html lang="en">
   <body style="margin:0; padding:0; background-color:#f4f5f7; font-family:'Segoe UI', Arial, sans-serif;">
