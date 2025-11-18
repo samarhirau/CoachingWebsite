@@ -27,6 +27,7 @@ interface EnrollmentModalProps {
     maxStudents: number
     rating: number
     duration: string
+    couponCode: { code: string; discount: number }[]
     features: string[]
   }
 }
@@ -36,15 +37,16 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
   const { user, loading: authLoading } = useAuth()
 
   const [formData, setFormData] = useState({
-     firstName: user?.name?.split(" ")[0] || "",
-    lastName: user?.name?.split(" ")[1] || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
     education: "",
     experience: "",
     motivation: "",
     paymentPlan: "full",
     agreeTerms: false,
+    couponCode: "",
   })
   const [couponStatus, setCouponStatus] = useState<"initial" | "valid" | "invalid">("initial")
   const [appliedDiscount, setAppliedDiscount] = useState(0)
@@ -72,17 +74,6 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
   }
   return true
 }
-
-useEffect(() => {
-  const script = document.createElement("script");
-  script.src = "https://checkout.razorpay.com/v1/checkout.js";
-  script.async = true;
-  document.body.appendChild(script);
-  return () => {
-    document.body.removeChild(script);
-  };
-}, []);
-
 
 
 
@@ -129,6 +120,8 @@ const priceNumber = useMemo(() => {
 
    
 
+  const codeInput = formData.couponCode.trim().toUpperCase();
+  const coupon = course?.couponCode?.find(c => c.code.toUpperCase() === codeInput);
 
   if (coupon) {
     setAppliedDiscount(coupon.discount);
@@ -157,41 +150,7 @@ const priceNumber = useMemo(() => {
 
 
 
-// const handleSubmit = async (e: React.FormEvent) => {
-//   e.preventDefault();
-//   setLoading(true);
-//   setError("");
 
-//   if (!user?._id || !course?._id) {
-//     toast.error("Please wait... User or course not loaded yet.");
-//     setLoading(false);
-//     return;
-//   }
-
-//   try {
-//     const response = await fetch("/api/enrollments", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       credentials: "include",
-//       body: JSON.stringify({
-//         studentId: user._id,
-//         courseId: course._id,
-//         formData,
-//       }),
-//     });
-
-//     const data = await response.json();
-//     if (!response.ok) throw new Error(data?.message || "Server error");
-
-//     toast.success("Enrollment successful!");
-//     onClose();
-//   } catch (err: any) {
-//     toast.error("Enrollment failed: " + (err.message || "Server error"));
-//     setError(err.message);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -205,64 +164,24 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 
   try {
-    // 1️⃣ Create Razorpay order
-    const orderRes = await fetch("/api/razorpay", {
+    const response = await fetch("/api/enrollments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "order", amount: discountedPrice }),
+      credentials: "include",
+      body: JSON.stringify({
+        studentId: user._id,
+        courseId: course._id,
+        formData,
+      }),
     });
-    const { order } = await orderRes.json();
 
-    // 2️⃣ Setup Razorpay checkout
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: "INR",
-      name: "Upcoder",
-      description: course?.title,
-      order_id: order.id,
-      prefill: {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        contact: formData.phone,
-      },
-      handler: async (response: any) => {
-        // 3️⃣ Verify payment
-        const verifyRes = await fetch("/api/razorpay", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: "verify", ...response }),
-        });
-        const verifyData = await verifyRes.json();
+    const data = await response.json();
+    if (!response.ok) throw new Error(data?.message || "Server error");
 
-        if (verifyData.success) {
-          // 4️⃣ Store enrollment only after payment success
-          await fetch("/api/enrollments", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              studentId: user._id,
-              courseId: course._id,
-              formData,
-              paymentId: response.razorpay_payment_id,
-            }),
-          });
-
-          toast.success("Payment Successful! Enrollment confirmed.");
-          onClose();
-        } else {
-          toast.error("Payment verification failed.");
-        }
-      },
-      theme: { color: "#6366f1" },
-    };
-
-    const rzp = new (window as any).Razorpay(options);
-    rzp.open();
+    toast.success("Enrollment successful!");
+    onClose();
   } catch (err: any) {
-    console.error(err);
-    toast.error("Payment failed. Try again.");
+    toast.error("Enrollment failed: " + (err.message || "Server error"));
     setError(err.message);
   } finally {
     setLoading(false);
@@ -354,7 +273,11 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
             <div>
               <Label>Phone</Label>
-              <Input value={formData.phone} onChange={(e) => handleInputChange("phone", e.target.value)}  required/>
+              <Input value={formData.phone} 
+              onChange={(e) => handleInputChange("phone", e.target.value)}  
+              readOnly={!!user?.phone}
+              className={user?.phone ? "bg-gray-100 cursor-not-allowed" : ""}
+              />
             </div>
             <div>
               <Label>Education</Label>
@@ -401,6 +324,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             <div>
               <Label>Coupon Code</Label>
               <div className="flex gap-2">
+                <Input value={formData.couponCode} onChange={(e) => handleInputChange("couponCode", e.target.value)} />
                 <Button onClick={handleCouponApply}>Apply</Button>
               </div>
               {couponStatus === "valid" && <p className="text-green-500">Coupon Applied!</p>}
@@ -449,7 +373,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </Button>
         <Button
   onClick={step === 3 ? handleSubmit : handleNext}
-  disabled={!isStepValid() ||  loading || !course?._id || !user?._id}
+  disabled={!isStepValid() || !user?._id || !course?._id || loading}
 >
   {loading ? "Processing..." : step === 3 ? "Complete Enrollment" : "Next"}
 </Button>

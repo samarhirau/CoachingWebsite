@@ -1,115 +1,130 @@
-import { CardContent } from "../ui/card";
-import { Card } from "../ui/card";
+"use client";
+
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "../ui/card";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Progress } from "../ui/progress";
-import { Clock, Users, Star, Play, ShieldCheck, ArrowRight, CheckCircle } from "lucide-react";
+import { Clock, Users, Star, CheckCircle, ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-const CourseCard = ({ course }) => {
-    let buttonText, buttonVariant, buttonIcon, progressColor, topBorderColor;
+interface Module {
+  name: string;
+  completed?: boolean;
+}
 
-    switch (course.status) {
-        case "In Progress":
-            buttonText = "Continue Course";
-            buttonVariant = "default";
-            buttonIcon = <Play className="h-4 w-4 mr-2" />;
-            progressColor = "bg-indigo-600";
-            topBorderColor = "border-t-4 border-indigo-600";
-            break;
-        case "Completed":
-            buttonText = "View Certificate";
-            buttonVariant = "outline";
-            buttonIcon = <ShieldCheck className="h-4 w-4 mr-2" />;
-            progressColor = "bg-green-600";
-            topBorderColor = "border-t-4 border-green-600";
-            break;
-        case "Not Started":
-        default:
-            buttonText = course.price !== "N/A" ? "Enroll Now" : "Start Course";
-            buttonVariant = "default";
-            buttonIcon = <ArrowRight className="h-4 w-4 ml-2" />;
-            progressColor = "bg-gray-300";
-            topBorderColor = "border-t-4 border-gray-300";
-            break;
-    }
+interface Course {
+  title: string;
+  slug: string;
+  description?: string;
+  duration: string;
+  type?: string | "Free";
+  progress?: number;
+  status?: "In Progress" | "Completed" | "Not Started";
+  popular?: boolean;
+  enrollments?: number;
+  rating?: number;
+  modules?: Module[];
+}
 
-    const enrollButtonClass = course.status === "Not Started" 
-        ? "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white" 
-        : "";
+interface CourseCardStudentProps {
+  course: Course;
+}
 
-    return (
-        <Card className={`shadow-xl hover:shadow-2xl transition-shadow duration-300 ${topBorderColor}`}>
-            <CardContent className="p-6 space-y-4">
-               
-                <h3 className="text-xl font-bold min-h-[3rem] text-gray-800">{course.title}</h3>
+const CourseCardStudent: React.FC<CourseCardStudentProps> = ({ course }) => {
+  const isCompleted = course.status === "Completed";
 
-                {/* Meta Info: Duration, Enrollment, Rating */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4 text-indigo-500" />
-                        <span>{course.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4 text-indigo-500" />
-                        <span>{course.enrollments} enrolled</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                        <span>{course.rating}</span>
-                    </div>
-                </div>
+  const modules = (course.modules || []).map((module) => ({
+    ...module,
+    completed: module.completed ?? Math.random() > 0.5,
+  }));
 
-                <hr className="my-3 border-t border-gray-100" />
+  return (
+    <Card className="relative hover:shadow-xl transition-shadow rounded-2xl border border-gray-100 overflow-hidden">
+      {/* Popular Badge */}
+      {course.popular && (
+        <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-3 py-1 rounded-full text-xs">
+          Most Popular
+        </Badge>
+      )}
 
-                {/* What You'll Learn Section */}
-        
-<div>
-  <h4 className="font-semibold mb-2 text-gray-700">What you'll learn:</h4>
-  <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-    {(course.features || []).map((item, index) => (
-      <li key={index} className="flex items-center gap-2 text-gray-500">
-        <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
-        {item}
-      </li>
-    ))}
-  </ul>
-</div>
+      {/* Card Header */}
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between mb-2">
+          {course.type && <Badge variant="secondary">{course.type}</Badge>}
+          <div className="flex items-center gap-1 text-sm text-gray-500">
+            <Clock className="h-4 w-4" /> {course.duration}
+          </div>
+        </div>
 
+        <CardTitle className="text-xl font-bold">{course.title}</CardTitle>
+        {course.description && (
+          <CardDescription className="text-gray-600 text-sm">{course.description}</CardDescription>
+        )}
+      </CardHeader>
 
-                <div className="pt-4">
-                    {/* Progress Bar for enrolled courses */}
-                    {(course.status === "In Progress" || course.status === "Completed") && (
-                        <div className="mb-4">
-                            <div className="flex justify-between items-center mb-1 text-sm font-medium">
-                                <span className="font-semibold">{course.status}</span>
-                                <span className={`font-bold ${course.status === "In Progress" ? "text-indigo-600" : "text-green-600"}`}>{course.progress}%</span>
-                            </div>
-                            <Progress value={course.progress} className="h-2" indicatorClassName={progressColor} />
-                        </div>
-                    )}
+      {/* Card Content */}
+      <CardContent className="space-y-4">
+        {/* Enrollments & Rating */}
+        <div className="flex items-center gap-4 text-xs text-gray-500 font-medium">
+          <div className="flex items-center gap-1">
+            <Users className="h-3.5 w-3.5 text-indigo-500" /> {course.enrollments || 0}
+          </div>
+          <div className="flex items-center gap-1">
+            <Star className="h-3.5 w-3.5 text-yellow-400" /> {course.rating || 0}
+          </div>
+        </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex space-x-3">
-                        {/* Primary Action Button */}
-                        <Button 
-                            className={enrollButtonClass}
-                            variant={buttonVariant}
-                        >
-                          <Link href={course.status === "Not Started" ? `/${course.slug}/enroll` : `course/${course.slug}/`} className="flex items-center">
-                            {buttonIcon}
-                            {buttonText}
-                            </Link>
-                        </Button>
+        {/* Progress Bar */}
+        {(course.status === "In Progress" || isCompleted) && (
+          <div>
+            <div className="flex justify-between text-xs font-medium text-gray-600 mb-1">
+              <span>{course.status}</span>
+              <span>{course.progress || 0}%</span>
+            </div>
+            <div className="h-2 w-full bg-gray-200 rounded-full">
+              <div
+                className={`h-full rounded-full ${isCompleted ? "bg-green-500" : "bg-indigo-500"}`}
+                style={{ width: `${course.progress || 0}%`, transition: "width 0.5s ease-in-out" }}
+              />
+            </div>
+          </div>
+        )}
 
-                        {/* Secondary 'Learn More' Button */}
-                          <Button  variant="outline" className="flex-1 bg-transparent">
-                      <Link href={`/courses/${course.slug}`}>Learn More</Link>
-                    </Button>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-    );
+        {/* Modules List */}
+        {modules.length > 0 && (
+          <div>
+            <h4 className="font-semibold text-gray-700 mb-2">Modules:</h4>
+            <ul className="space-y-1 text-sm text-gray-600">
+              {modules.map((module, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  {module.completed ? (
+                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                  )}
+                  {module.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Action Button */}
+        <Button
+          className={`w-full flex items-center justify-center gap-2 mt-2 ${
+            isCompleted ? "bg-green-600 hover:bg-green-700" : "bg-indigo-600 hover:bg-indigo-700"
+          } text-white`}
+        >
+          <Link
+            href={`/course/${course.slug}`}
+            className="flex items-center gap-2 w-full justify-center"
+          >
+            {isCompleted ? "View Certificate" : "Continue Course"}{" "}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
+  );
 };
 
-export default CourseCard;
+export default CourseCardStudent;

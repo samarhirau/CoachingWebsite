@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const enrollmentSchema = new mongoose.Schema({
-  studentId: { type: String, required: true },
+  studentId: { type: String, required: true ,index: true},
    courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
     formData: {
       firstName: String,
@@ -17,6 +17,10 @@ const enrollmentSchema = new mongoose.Schema({
     },
 });
 
+//  Prevent duplicate enrollments
+enrollmentSchema.index({ studentId: 1, courseId: 1 }, { unique: true });
+
 const Enrollment = mongoose.models.Enrollment || mongoose.model("Enrollment", enrollmentSchema);
 
 export default Enrollment;
+
