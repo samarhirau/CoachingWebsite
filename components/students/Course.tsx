@@ -1,115 +1,200 @@
-import { CardContent } from "../ui/card";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Progress } from "../ui/progress";
-import { Clock, Users, Star, Play, ShieldCheck, ArrowRight, CheckCircle } from "lucide-react";
+// "use client";
+
+// import { Badge } from "@/components/ui/badge";
+// import { Card, CardContent } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { ArrowRight, Clock, Star, PlayCircle } from "lucide-react";
+// import Link from "next/link";
+
+// type Props = {
+//   course: {
+//     _id: string;
+//     slug: string;
+//     title: string;
+//     duration?: string;
+//     rating?: number;
+//     progress?: number;
+//     status?: string;
+//     features?: string[];
+//   };
+// };
+
+// export const CourseCard = ({ course }: Props) => {
+//   const progress = course.progress || 0;
+
+//   return (
+//     <Card className="overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 rounded-2xl">
+//       <div className="p-5 space-y-4">
+//         <div className="flex justify-between items-start">
+//           <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
+//             {course.title}
+//           </h3>
+//           {course.status && (
+//             <Badge variant="secondary" className="text-xs px-2 py-1">
+//               {course.status}
+//             </Badge>
+//           )}
+//         </div>
+
+//         <div className="flex justify-between text-sm text-gray-500">
+//           <div className="flex items-center gap-1">
+//             <Clock className="h-4 w-4" />
+//             {course.duration || "Self-paced"}
+//           </div>
+//           {course.rating && (
+//             <div className="flex items-center gap-1">
+//               <Star className="h-4 w-4 text-yellow-500" />
+//               {course.rating}
+//             </div>
+//           )}
+//         </div>
+
+//         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+//           <div
+//             className="h-full bg-indigo-500 transition-all duration-300"
+//             style={{ width: `${progress}%` }}
+//           />
+//         </div>
+
+//         <div className="text-sm font-medium text-gray-700">
+//           Progress: {progress}%
+//         </div>
+
+//         {course.features && (
+//           <div className="flex flex-wrap gap-2">
+//             {course.features.slice(0, 3).map((f, i) => (
+//               <Badge key={i} variant="outline" className="text-xs">
+//                 {f}
+//               </Badge>
+//             ))}
+//           </div>
+//         )}
+
+//         <Link href={`/course/${course.slug}`}>
+//           <Button className="w-full rounded-xl gradient-primary flex items-center gap-2">
+//             Continue Learning
+//             <PlayCircle className="h-4 w-4" />
+//           </Button>
+//         </Link>
+//       </div>
+//     </Card>
+//   );
+// };
+
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Clock, Star, PlayCircle } from "lucide-react";
 import Link from "next/link";
 
-const CourseCard = ({ course }) => {
-    let buttonText, buttonVariant, buttonIcon, progressColor, topBorderColor;
+type Props = {
+  course: {
+    _id: string;
+    slug: string;
+    title: string;
+    duration?: string;
+    rating?: number;
+    progress?: number;
+    status?: string;
+    category?: string;
+    features?: string[];
+    timeline?: { _id: string; month: string; focus?: string }[];
+  };
+};
 
-    switch (course.status) {
-        case "In Progress":
-            buttonText = "Continue Course";
-            buttonVariant = "default";
-            buttonIcon = <Play className="h-4 w-4 mr-2" />;
-            progressColor = "bg-indigo-600";
-            topBorderColor = "border-t-4 border-indigo-600";
-            break;
-        case "Completed":
-            buttonText = "View Certificate";
-            buttonVariant = "outline";
-            buttonIcon = <ShieldCheck className="h-4 w-4 mr-2" />;
-            progressColor = "bg-green-600";
-            topBorderColor = "border-t-4 border-green-600";
-            break;
-        case "Not Started":
-        default:
-            buttonText = course.price !== "N/A" ? "Enroll Now" : "Start Course";
-            buttonVariant = "default";
-            buttonIcon = <ArrowRight className="h-4 w-4 ml-2" />;
-            progressColor = "bg-gray-300";
-            topBorderColor = "border-t-4 border-gray-300";
-            break;
-    }
+export const CourseCard = ({ course }: Props) => {
+  const progress = course.progress || 0;
 
-    const enrollButtonClass = course.status === "Not Started" 
-        ? "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white" 
-        : "";
+  const categoryColorMap: Record<string, string> = {
+    Marketing: "bg-orange-100 text-orange-700",
+    Design: "bg-pink-100 text-pink-700",
+    Programming: "bg-emerald-100 text-emerald-700",
+    Business: "bg-blue-100 text-blue-700",
+  };
 
-    return (
-        <Card className={`shadow-xl hover:shadow-2xl transition-shadow duration-300 ${topBorderColor}`}>
-            <CardContent className="p-6 space-y-4">
-               
-                <h3 className="text-xl font-bold min-h-[3rem] text-gray-800">{course.title}</h3>
+  const categoryStyle =
+    categoryColorMap[course.category || ""] ||
+    "bg-gray-100 text-gray-600";
 
-                {/* Meta Info: Duration, Enrollment, Rating */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4 text-indigo-500" />
-                        <span>{course.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4 text-indigo-500" />
-                        <span>{course.enrollments} enrolled</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                        <span>{course.rating}</span>
-                    </div>
-                </div>
+  return (
+    <Card className="rounded-3xl border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col">
+      <CardContent className="flex flex-col p-6 gap-5 flex-1">
 
-                <hr className="my-3 border-t border-gray-100" />
+        {course.category && (
+          <Badge
+            className={`rounded-full px-4 py-1 text-xs font-semibold tracking-wide ${categoryStyle}`}
+          >
+            {course.category}
+          </Badge>
+        )}
 
-                {/* What You'll Learn Section */}
-        
-<div>
-  <h4 className="font-semibold mb-2 text-gray-700">What you'll learn:</h4>
-  <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-    {(course.features || []).map((item, index) => (
-      <li key={index} className="flex items-center gap-2 text-gray-500">
-        <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
-        {item}
-      </li>
-    ))}
-  </ul>
+        <h3 className="font-semibold text-lg md:text-xl text-gray-900 leading-tight line-clamp-2">
+          {course.title}
+        </h3>
+
+        <div className="flex justify-between text-sm text-gray-500">
+          <div className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            {course.duration || "Self-paced"}
+          </div>
+
+          {course.rating && (
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 text-yellow-500" />
+              {course.rating}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
+  <div className="flex justify-between text-sm font-medium text-gray-700">
+    <span>Progress</span>
+    <span>{progress}%</span>
+  </div>
+
+  <div className="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+    <div
+      className="absolute top-0 left-0 h-full gradient-primary rounded-full transition-all duration-[1200ms] ease-out"
+      style={{ width: `${progress}%` }}
+    />
+
+    {/* Progress text in bar */}
+    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-white drop-shadow-sm">
+      {progress > 8 && `${progress}%`}
+    </span>
+  </div>
+
+  {/* Optional label */}
+  <p className="text-xs text-gray-500 mt-1">
+    {progress >= 100 ? "Completed 🎉" : "Keep going!"}
+  </p>
 </div>
 
 
-                <div className="pt-4">
-                    {/* Progress Bar for enrolled courses */}
-                    {(course.status === "In Progress" || course.status === "Completed") && (
-                        <div className="mb-4">
-                            <div className="flex justify-between items-center mb-1 text-sm font-medium">
-                                <span className="font-semibold">{course.status}</span>
-                                <span className={`font-bold ${course.status === "In Progress" ? "text-indigo-600" : "text-green-600"}`}>{course.progress}%</span>
-                            </div>
-                            <Progress value={course.progress} className="h-2" indicatorClassName={progressColor} />
-                        </div>
-                    )}
+        {/* Timeline */}
+        <div className="space-y-3 flex-1">
+          {course.timeline?.slice(0, 4).map((item, idx) => (
+            <div key={item._id} className="relative pl-5">
+              <div className="absolute left-0 top-1.5 h-2 w-2 rounded-full bg-primary"></div>
+              {idx !== course.timeline.length - 1 && (
+                <div className="absolute left-[3px] top-3 w-[2px] h-11 bg-primary"></div>
+              )}
+              <p className="text-sm font-semibold text-gray-800">{item.month}</p>
+              <p className="text-xs text-gray-500">{item.focus}</p>
+            </div>
+          ))}
+        </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex space-x-3">
-                        {/* Primary Action Button */}
-                        <Button 
-                            className={enrollButtonClass}
-                            variant={buttonVariant}
-                        >
-                          <Link href={course.status === "Not Started" ? `/${course.slug}/enroll` : `course/${course.slug}/`} className="flex items-center">
-                            {buttonIcon}
-                            {buttonText}
-                            </Link>
-                        </Button>
-
-                        {/* Secondary 'Learn More' Button */}
-                          <Button  variant="outline" className="flex-1 bg-transparent">
-                      <Link href={`/courses/${course.slug}`}>Learn More</Link>
-                    </Button>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-    );
+        {/* Button always at bottom */}
+        <Link href={`/course/${course.slug}`} className="mt-auto">
+          <Button className="w-full rounded-xl flex items-center justify-center gap-2 bg-primary  py-5 text-base font-medium transition">
+            <PlayCircle className="h-5 w-5" />
+            Continue Learning
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  );
 };
-
-export default CourseCard;

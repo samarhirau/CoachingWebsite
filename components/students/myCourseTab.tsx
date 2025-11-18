@@ -129,7 +129,7 @@ import { Button } from "../ui/button";
 import { useAuth } from "@/components/auth-provider";
 import { Skeleton } from "../ui/skeleton";
 import useSWR from "swr";
-import CourseCard from "./Course";
+import {CourseCard} from "@/components/students/Course";
 
 type Course = {
   _id: string;
@@ -140,9 +140,11 @@ type Course = {
   originalPrice?: number;
   duration?: string;
   features?: string[];
+  timeline?: string[];
   enrollments?: number;
   rating?: number;
   progress?: number;
+
 };
 
 const fetcher = (url: string) =>
@@ -165,6 +167,7 @@ const MyCoursesTab = () => {
     originalPrice: course.originalPrice,
     duration: course.duration,
     features: course.features,
+    timeline: course.timeline,
     enrollments: course.maxStudents || 100,
     rating: course.rating,
     progress: Math.floor(Math.random() * 100),
@@ -192,7 +195,7 @@ const MyCoursesTab = () => {
       </div>
 
       {courses.length > 0 ? (
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:grid-cols-2">
           {courses.map((course) => (
             <CourseCard key={course._id} course={course} />
           ))}

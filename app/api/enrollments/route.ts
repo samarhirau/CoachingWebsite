@@ -75,6 +75,8 @@
 //   }
 // }
 
+
+
 import { NextResponse } from "next/server"
 import connectDB from "@/lib/mongoDb"
 import Enrollment from "@/models/Enrollment"
@@ -98,18 +100,21 @@ export async function POST(req: Request) {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     )
 
+
+       const existingEnrollment = await Enrollment.findOne({
+      studentId,
+      courseId,
+    });
+
+    if (existingEnrollment) {
+      return NextResponse.json({ message: "Already enrolled in this course" }, { status: 400 });
+    }
     return NextResponse.json({
       success: true,
       message: "Enrolled successfully",
       enrollment,
     })
   } catch (err: any) {
-    if (err.code === 11000) {
-      return NextResponse.json(
-        { success: false, error: "Already enrolled" },
-        { status: 409 }
-      )
-    }
 
     console.error("Enrollment Error:", err)
     return NextResponse.json(
