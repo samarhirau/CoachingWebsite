@@ -68,10 +68,12 @@ export const metadata: Metadata = {
   },
 
   category: "technology",
-  themeColor: "#ffffff",
 };
 
 
+export const viewport = {
+  themeColor: "#ffffff",
+};
 
 export default function RootLayout({
   children,
