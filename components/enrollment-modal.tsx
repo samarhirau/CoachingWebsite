@@ -90,6 +90,15 @@ useEffect(() => {
 }, [user]);
 
 
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+  script.async = true;
+  document.body.appendChild(script);
+}, []);
+
+
+
 const originalPriceNumber = useMemo(() => {
   if (!course?.originalPrice) return 0
   const value = typeof course.originalPrice === "string" ? course.originalPrice : course.originalPrice.toString()
@@ -152,41 +161,65 @@ const priceNumber = useMemo(() => {
 
 
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
 
-  if (!user?._id || !course?._id) {
-    toast.error("Please wait... User or course not loaded yet.");
-    setLoading(false);
-    return;
-  }
+const handleSubmit = async () => {
+  setLoading(true);
 
   try {
-    const response = await fetch("/api/enrollments", {
+    const studentId = user?._id;
+    const courseId = course?._id;
+    const amount = Math.round(discountedPrice);
+
+    if (!studentId || !courseId) {
+      setError("Missing student or course information.");
+      setLoading(false);
+      return;
+    }
+
+    const res = await fetch("/api/cashfree/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify({
-        studentId: user._id,
-        courseId: course._id,
+        studentId,
+        courseId,
+        amount,
         formData,
       }),
     });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data?.message || "Server error");
+    const data = await res.json();
 
-    toast.success("Enrollment successful!");
-    onClose();
-  } catch (err: any) {
-    toast.error("Enrollment failed: " + (err.message || "Server error"));
-    setError(err.message);
+    if (!data.paymentSessionId) {
+      alert("Payment failed: paymentSessionId missing");
+      return;
+    }
+
+    // Use window global for SDK instance (script is appended in useEffect)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const CashfreeConstructor = (window as any).Cashfree;
+    if (!CashfreeConstructor) {
+      alert("Payment SDK not loaded");
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const cashfree = new CashfreeConstructor({ mode: "sandbox" });
+
+    // Open checkout popup
+    cashfree.checkout({
+      paymentSessionId: data.paymentSessionId,
+      redirectTarget: "_self", // stay on site
+    });
+  } catch (err) {
+    console.error("Payment error:", err);
+    alert("Payment failed, check console");
   } finally {
     setLoading(false);
   }
 };
+
+
 
 
 

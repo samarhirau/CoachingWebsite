@@ -15,6 +15,9 @@ const enrollmentSchema = new mongoose.Schema({
       agreeTerms: Boolean,
       couponCode: String,
     },
+  amount: { type: Number, required: true },
+     paymentId: String,
+  paymentStatus: { type: String, default: "pending" }
 });
 
 //  Prevent duplicate enrollments
