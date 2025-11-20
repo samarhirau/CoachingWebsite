@@ -17,7 +17,6 @@ const enrollmentSchema = new mongoose.Schema({
     },
   amount: { type: Number, required: true },
      paymentId: String,
-  // paymentStatus: { type: String, default: "pending" }
   paymentStatus: {
   type: String,
   enum: ["pending", "paid", "failed"],
@@ -32,4 +31,8 @@ enrollmentSchema.index({ studentId: 1, courseId: 1 }, { unique: true });
 const Enrollment = mongoose.models.Enrollment || mongoose.model("Enrollment", enrollmentSchema);
 
 export default Enrollment;
+
+
+
+
 

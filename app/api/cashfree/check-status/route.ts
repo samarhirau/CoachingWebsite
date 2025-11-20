@@ -9,8 +9,6 @@ import Enrollment from "@/models/Enrollment";
 import Payment from "@/models/Payment";
 import "@/models/Course";
 
-
-
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: { url: string | URL }) {
@@ -24,16 +22,19 @@ export async function GET(req: { url: string | URL }) {
       return NextResponse.json({ success: false, message: "orderId missing" });
     }
 
-    // 1️⃣ Fetch enrollment from DB
-    const enrollment = await Enrollment.findById(orderId).populate("courseId");
-    if (!enrollment) {
-      return NextResponse.json({ success: false, message: "Enrollment not found" });
+    // 1️⃣ Find payment first
+    const payment = await Payment.findOne({ orderId }).populate({
+      path: "enrollment",
+      populate: { path: "courseId" }
+    });
+
+    if (!payment) {
+      return NextResponse.json({ success: false, message: "Payment not found" });
     }
 
-    // 2️⃣ Fetch payment info from DB
-    const payment = await Payment.findOne({ enrollment: enrollment._id });
+    const enrollment = payment.enrollment;
 
-    // 3️⃣ Optional: Get Cashfree order status
+    // 2️⃣ Optional: Get Cashfree order status
     let cfStatus = null;
     try {
       const cfResponse = await axios.get(`https://sandbox.cashfree.com/pg/orders/${orderId}`, {
@@ -52,7 +53,7 @@ export async function GET(req: { url: string | URL }) {
       success: true,
       payment: {
         orderId: orderId,
-        paymentId: payment?.transactionId || null,
+        paymentId: payment.transactionId || null,
         orderStatus: enrollment.paymentStatus || (cfStatus?.order_status ?? "pending"),
         orderAmount: enrollment.amount,
         paymentSessionId: cfStatus?.payment_session_id || null,
@@ -61,12 +62,9 @@ export async function GET(req: { url: string | URL }) {
         courseName: enrollment.courseId?.title || "Course",
       },
     });
+
   } catch (err: any) {
     console.error("Check status error:", err.response?.data || err.message);
     return NextResponse.json({ success: false, error: err.response?.data || err.message });
   }
 }
-
-
-
-

@@ -1,101 +1,4 @@
 
-// import { NextRequest, NextResponse } from "next/server";
-// import connectDB from "@/lib/mongoDb";
-// import Enrollment from "@/models/Enrollment";
-// import Payment from "@/models/Payment";
-// import axios from "axios";
-
-// export async function POST(req: NextRequest) {
-//   await connectDB();
-
-//   try {
-//     const { studentId, courseId, amount, formData } = await req.json();
-
-
-//     const existing = await Enrollment.findOne({ studentId, courseId });
-
-// if (existing) {
-//   return NextResponse.json(
-//     {
-//       success: false,
-//       alreadyEnrolled: true,
-//       enrollmentId: existing._id,
-//       message: "You are already enrolled in this course."
-//     },
-//     { status: 200 }
-//   );
-// }
-
-//     // 1. Create enrollment
-//     const enrollment = await Enrollment.create({
-//       studentId,
-//       courseId,
-//       formData,
-//       amount,
-//     });
-
-
-
-//      const payment = await Payment.create({
-//       student: studentId,
-//       course: courseId,
-//       amount: amount,
-//       // paymentMethod: formData.paymentMethod || "card",
-//       status: "pending",
-//       enrollment: enrollment._id,
-//     });
-
-//     await payment.save();
-
-//     // 2. Create Cashfree Order (returns payment_link)
-//     const response = await axios.post(
-//       "https://sandbox.cashfree.com/pg/orders",
-//       {
-//         order_id: enrollment._id.toString(),
-//         order_amount: amount,
-//         order_currency: "INR",
-
-//         customer_details: {
-//           customer_id: studentId,
-//           customer_name: `${formData.firstName} ${formData.lastName}`,
-//           customer_email: formData.email,
-//           customer_phone: formData.phone,
-//         },
-
-//         order_meta: {
-//           return_url: `${process.env.NEXTAUTH_URL}/payment-status?order_id={order_id}`,
-//           notify_url: `${process.env.NEXTAUTH_URL}/api/cashfree/payment-callback`,
-//         },
-//       },
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//           "x-api-version": "2023-08-01",
-//           "x-client-id": process.env.CASHFREE_APP_ID!,
-//           "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
-//         },
-//       }
-//     );
-
-      
-
-//     // 3. MUST return payment_link for redirect flow
-//     return NextResponse.json({
-//       success: true,
-//       orderId: response.data.order_id,
-//       paymentLink: response.data.payment_link,
-//       paymentSessionId: response.data.payment_session_id,
-//     });
-
-//   } catch (err: any) {
-//     console.error("Cashfree Error:", err.response?.data || err.message);
-//     return NextResponse.json(
-//       { error: err.response?.data || err.message },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 
 
 
@@ -110,6 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import Enrollment from "@/models/Enrollment";
 import Payment from "@/models/Payment";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   await connectDB();
@@ -118,32 +22,24 @@ export async function POST(req: NextRequest) {
     const { studentId, courseId, amount, formData } = await req.json();
 
     if (!studentId || !courseId || !amount) {
-      return NextResponse.json(
-        { success: false, message: "Missing required fields" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 });
     }
 
-    // 1️⃣ Check existing enrollment
+    console.log("[ENROLL] studentId:", studentId, "courseId:", courseId);
+
+    // Check if enrollment exists
     let enrollment = await Enrollment.findOne({ studentId, courseId });
 
-    if (enrollment) {
-      // Check if payment was successful
-      const paidPayment = await Payment.findOne({
-        enrollment: enrollment._id,
-        status: "success",
+    if (enrollment && enrollment.paymentStatus === "paid") {
+      return NextResponse.json({
+        success: false,
+        alreadyEnrolled: true,
+        message: "You are already enrolled and payment is completed.",
+        enrollmentId: enrollment._id,
       });
+    }
 
-      if (paidPayment) {
-        return NextResponse.json({
-          success: false,
-          alreadyEnrolled: true,
-          message: "You are already enrolled and payment is completed.",
-          enrollmentId: enrollment._id,
-        });
-      }
-    } else {
-      // Create enrollment if it doesn't exist
+    if (!enrollment) {
       enrollment = await Enrollment.create({
         studentId,
         courseId,
@@ -151,18 +47,28 @@ export async function POST(req: NextRequest) {
         amount,
         paymentStatus: "pending",
       });
+      console.log("[ENROLL] Created new enrollment:", enrollment._id);
+    } else {
+      // Retry after failed payment
+      enrollment.paymentStatus = "pending";
+      await enrollment.save();
+      console.log("[ENROLL] Retrying enrollment:", enrollment._id);
     }
 
-    // 2️⃣ Create a new pending payment
+    // Unique orderId for this payment
+    const orderId = uuidv4();
+    console.log("[PAYMENT] Creating payment with orderId:", orderId);
+
     const payment = await Payment.create({
       student: studentId,
       course: courseId,
       amount,
       status: "pending",
       enrollment: enrollment._id,
+      orderId,
     });
 
-    // 3️⃣ Create Cashfree order
+    // Cashfree order creation
     const cfResponse = await fetch("https://sandbox.cashfree.com/pg/orders", {
       method: "POST",
       headers: {
@@ -172,7 +78,7 @@ export async function POST(req: NextRequest) {
         "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
       },
       body: JSON.stringify({
-        order_id: enrollment._id.toString(),
+        order_id: orderId,
         order_amount: amount,
         order_currency: "INR",
         customer_details: {
@@ -181,14 +87,15 @@ export async function POST(req: NextRequest) {
           customer_email: formData.email,
           customer_phone: formData.phone,
         },
-          order_meta: {
-            return_url: `${process.env.NEXTAUTH_URL}/payment-status?order_id={order_id}`,
-          notify_url: `${process.env.NEXTAUTH_URL}/api/cashfree/payment-callback`,
-}
+        order_meta: {
+          return_url: `https://uncolourable-transparish-brigette.ngrok-free.dev/payment-status?order_id={order_id}`,
+          notify_url: `https://uncolourable-transparish-brigette.ngrok-free.dev/api/cashfree/payment-callback`,
+        },
       }),
     });
 
     const data = await cfResponse.json();
+    console.log("[CF ORDER] Response:", data);
 
     return NextResponse.json({
       success: true,
@@ -203,5 +110,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
-
-
