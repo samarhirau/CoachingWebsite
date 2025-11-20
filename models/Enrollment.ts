@@ -17,7 +17,13 @@ const enrollmentSchema = new mongoose.Schema({
     },
   amount: { type: Number, required: true },
      paymentId: String,
-  paymentStatus: { type: String, default: "pending" }
+  // paymentStatus: { type: String, default: "pending" }
+  paymentStatus: {
+  type: String,
+  enum: ["pending", "paid", "failed"],
+  default: "pending"
+}
+
 });
 
 //  Prevent duplicate enrollments

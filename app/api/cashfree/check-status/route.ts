@@ -1,94 +1,46 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import connectDB from "@/lib/mongoDb";
-// import Enrollment from "@/models/Enrollment";
+
 // import axios from "axios";
+// import { NextResponse } from "next/server";
 
-// export async function GET(req: NextRequest) {
-//   await connectDB();
-
-//   const orderId = req.nextUrl.searchParams.get("orderId");
-
-//   if (!orderId)
-//     return NextResponse.json({ success: false, message: "orderId missing" });
-
+// export async function GET(req: { url: string | URL; }) {
 //   try {
-//     // Get payment status from Cashfree
+//     const { searchParams } = new URL(req.url);
+//     const orderId = searchParams.get("orderId");
+
+//     if (!orderId) {
+//       return NextResponse.json({ success: false, message: "orderId missing" });
+//     }
+
 //     const response = await axios.get(
 //       `https://sandbox.cashfree.com/pg/orders/${orderId}`,
 //       {
 //         headers: {
-//           "x-client-id": process.env.CASHFREE_APP_ID!,
-//           "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
-//           "x-api-version": "2023-08-01",
+//           "x-client-id": process.env.CASHFREE_APP_ID,
+//           "x-client-secret": process.env.CASHFREE_SECRET_KEY,
+//           "x-api-version": "2022-09-01",
 //         },
 //       }
 //     );
 
-//     const order = response.data;
-
-//     // Update DB
-//     await Enrollment.findByIdAndUpdate(orderId, {
-//       paymentStatus: order.order_status,
-//     });
+//     const data = response.data;
 
 //     return NextResponse.json({
 //       success: true,
-//       orderStatus: order.order_status,
+//       payment: {
+//         orderId: data.order_id,
+//         orderStatus: data.order_status,
+//         orderAmount: data.order_amount,
+//         paymentSessionId: data.payment_session_id,
+//       },
 //     });
-//   } catch (err: any) {
-//     console.log(err.response?.data || err.message);
+//   } catch (err) {
+//     console.log(err);
 //     return NextResponse.json({ success: false });
 //   }
 // }
 
 
 
-// import axios from "axios";
-
-// export async function GET(req: Request) {
-//   try {
-//     const { searchParams } = new URL(req.url);
-//     const orderId = searchParams.get("orderId");
-
-//     if (!orderId) {
-//       return Response.json(
-//         { success: false, message: "orderId missing" },
-//         { status: 400 }
-//       );
-//     }
-
-//     const cashfreeRes = await axios.get(
-//       `https://sandbox.cashfree.com/pg/orders/${orderId}`,
-//       {
-//         headers: {
-//           "x-client-id": process.env.CASHFREE_APP_ID!,
-//           "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
-//           "x-api-version": "2023-08-01",
-//         },
-//       }
-//     );
-
-//     return Response.json({
-//       success: true,
-//           payment: {
-//             orderId: cashfreeRes.data.order_id,
-//                orderStatus: cashfreeRes.data.order_status,
-//                orderAmount: cashfreeRes.data.order_amount,
-//                paymentSessionId: cashfreeRes.data.payment_session_id,
-
-//           }
-      
-//     });
-//   } catch (err: any) {
-//     return Response.json(
-//       {
-//         success: false,
-//         error: err?.response?.data || err.message,
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
 
 
 
@@ -97,10 +49,19 @@
 
 
 
+
+
+// app/api/cashfree/check-status/route.ts
 import axios from "axios";
 import { NextResponse } from "next/server";
+import connectDB from "@/lib/mongoDb";
+import Enrollment from "@/models/Enrollment";
+import Payment from "@/models/Payment";
+import "@/models/Course";
 
-export async function GET(req: { url: string | URL; }) {
+export async function GET(req: { url: string | URL }) {
+  await connectDB();
+
   try {
     const { searchParams } = new URL(req.url);
     const orderId = searchParams.get("orderId");
@@ -109,30 +70,49 @@ export async function GET(req: { url: string | URL; }) {
       return NextResponse.json({ success: false, message: "orderId missing" });
     }
 
-    const response = await axios.get(
-      `https://sandbox.cashfree.com/pg/orders/${orderId}`,
-      {
+    // 1️⃣ Fetch enrollment from DB
+    const enrollment = await Enrollment.findById(orderId).populate("courseId");
+    if (!enrollment) {
+      return NextResponse.json({ success: false, message: "Enrollment not found" });
+    }
+
+    // 2️⃣ Fetch payment info from DB
+    const payment = await Payment.findOne({ enrollment: enrollment._id });
+
+    // 3️⃣ Optional: Get Cashfree order status
+    let cfStatus = null;
+    try {
+      const cfResponse = await axios.get(`https://sandbox.cashfree.com/pg/orders/${orderId}`, {
         headers: {
-          "x-client-id": process.env.CASHFREE_APP_ID,
-          "x-client-secret": process.env.CASHFREE_SECRET_KEY,
+          "x-client-id": process.env.CASHFREE_APP_ID!,
+          "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
           "x-api-version": "2022-09-01",
         },
-      }
-    );
-
-    const data = response.data;
+      });
+      cfStatus = cfResponse.data;
+    } catch (err) {
+      console.warn("Cashfree API fetch failed, using DB status only");
+    }
 
     return NextResponse.json({
       success: true,
       payment: {
-        orderId: data.order_id,
-        orderStatus: data.order_status,
-        orderAmount: data.order_amount,
-        paymentSessionId: data.payment_session_id,
+        orderId: orderId,
+        paymentId: payment?.transactionId || null,
+        orderStatus: enrollment.paymentStatus || (cfStatus?.order_status ?? "pending"),
+        orderAmount: enrollment.amount,
+        paymentSessionId: cfStatus?.payment_session_id || null,
+        studentName: enrollment.formData?.firstName + " " + enrollment.formData?.lastName,
+        studentEmail: enrollment.formData?.email,
+        courseName: enrollment.courseId?.title || "Course",
       },
     });
-  } catch (err) {
-    console.log(err);
-    return NextResponse.json({ success: false });
+  } catch (err: any) {
+    console.error("Check status error:", err.response?.data || err.message);
+    return NextResponse.json({ success: false, error: err.response?.data || err.message });
   }
 }
+
+
+
+

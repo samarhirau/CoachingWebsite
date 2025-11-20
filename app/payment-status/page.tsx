@@ -147,23 +147,17 @@
 
 
 
-
-
-
-
-
-
 "use client";
 
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import Confetti from "react-confetti";
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { Button } from "@/components/ui/button";
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function PaymentSuccess() {
-  const [orderId, setOrderId] = useState(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -174,24 +168,19 @@ export default function PaymentSuccess() {
 
   const { data, error, isLoading } = useSWR(
     orderId ? `/api/cashfree/check-status?orderId=${orderId}` : null,
-    fetcher
+    fetcher,
+    { refreshInterval: 5000 } // optional polling every 5s
   );
 
-  if (!orderId)
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <p className="text-xl font-semibold">Loading...</p>
-      </div>
-    );
-
-  if (isLoading)
+  if (!orderId || isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
         <p className="text-xl font-semibold">Checking Payment...</p>
       </div>
     );
+  }
 
-  if (error || !data?.success)
+  if (error || !data?.success) {
     return (
       <div className="h-screen flex items-center justify-center text-center">
         <div>
@@ -200,66 +189,89 @@ export default function PaymentSuccess() {
         </div>
       </div>
     );
+  }
 
   const payment = data.payment;
 
-  // -------------------------
-  // ⭐ PDF GENERATOR FUNCTION
-  // -------------------------
-const generatePDF = async () => {
-  // Dummy details (safe even if real data not available)
-  const dummy = {
-    orderId: "ORDER_123456",
-    paymentId: "PAY_987654",
-    studentName: "Samar Hirau",
-    studentEmail: "samrhirau@gmail.com",
-    courseName: "Full Stack Development",
-    amount: "4999",
-    paymentDate: new Date().toLocaleString(),
+  // Generate PDF receipt
+  const generatePDF = async () => {
+    const { jsPDF } = await import("jspdf");
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Payment Receipt", 20, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Order ID: ${payment.orderId}`, 20, 40);
+    doc.text(`Payment ID: ${payment.paymentId || "N/A"}`, 20, 50);
+    doc.text(`Name: ${payment.studentName}`, 20, 60);
+    doc.text(`Email: ${payment.studentEmail}`, 20, 70);
+    doc.text(`Course: ${payment.courseName}`, 20, 80);
+    doc.text(`Amount Paid: ₹${payment.orderAmount}`, 20, 90);
+    doc.text(`Payment Status: ${payment.orderStatus}`, 20, 100);
+    doc.text(`Date: ${new Date().toLocaleString()}`, 20, 110);
+
+    doc.save("receipt.pdf");
   };
 
-  const { jsPDF } = await import("jspdf");
-  const doc = new jsPDF();
-
-  doc.setFontSize(18);
-  doc.text("Payment Receipt", 20, 20);
-
-  doc.setFontSize(12);
-  doc.text(`Order ID: ${dummy.orderId}`, 20, 40);
-  doc.text(`Payment ID: ${dummy.paymentId}`, 20, 50);
-  doc.text(`Name: ${dummy.studentName}`, 20, 60);
-  doc.text(`Email: ${dummy.studentEmail}`, 20, 70);
-  doc.text(`Course: ${dummy.courseName}`, 20, 80);
-  doc.text(`Amount Paid: ₹${dummy.amount}`, 20, 90);
-  doc.text(`Payment Date: ${dummy.paymentDate}`, 20, 100);
-
-  doc.save("receipt.pdf");
-};
-
-
+  const statusColor =
+    payment.orderStatus?.toLowerCase() === "paid"
+      ? "green-600"
+      : payment.orderStatus?.toLowerCase() === "pending"
+      ? "yellow-600"
+      : "red-600";
 
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center gap-4">
-      <Confetti width={window.innerWidth} height={window.innerHeight} />
+      {payment.orderStatus?.toLowerCase() === "paid" && (
+        <Confetti width={window.innerWidth} height={window.innerHeight} />
+      )}
 
-      <h1 className="text-4xl font-bold text-green-600">Payment Successful 🎉</h1>
-      <p className="text-gray-600 text-lg">You are now enrolled.</p>
+      <h1 className={`text-4xl font-bold text-${statusColor}`}>
+        {payment.orderStatus === "paid"
+          ? "Payment Successful 🎉"
+          : payment.orderStatus === "pending"
+          ? "Payment Pending ⏳"
+          : "Payment Failed ❌"}
+      </h1>
+      <p className="text-gray-600 text-lg">Your enrollment status is updated.</p>
 
       <div className="mt-6 w-[380px] bg-white shadow-xl rounded-xl p-6 text-left space-y-2">
         <h3 className="text-xl font-semibold">Payment Details</h3>
-
-        <p><strong>Order ID:</strong> {payment?.orderId}</p>
-        <p><strong>Amount:</strong> ₹{payment?.orderAmount}</p>
-        <p><strong>Status:</strong> {payment?.orderStatus}</p>
+        <p>
+          <strong>Order ID:</strong> {payment.orderId}
+        </p>
+        <p>
+          <strong>Payment ID:</strong> {payment.paymentId || "N/A"}
+        </p>
+        <p>
+          <strong>Amount:</strong> ₹{payment.orderAmount}
+        </p>
+        <p>
+          <strong>Status:</strong>{" "}
+          <span className={`font-semibold text-${statusColor}`}>
+            {payment.orderStatus}
+          </span>
+        </p>
+        <p>
+          <strong>Course:</strong> {payment.courseName}
+        </p>
       </div>
 
-      {/* 📄 Download PDF Receipt Button */}
-      <button
+      <Button
         onClick={generatePDF}
-        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-md transition-all"
+        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-md"
       >
         Download Receipt (PDF)
-      </button>
+      </Button>
+
+      <Button
+        variant="success"
+        className="mt-4"
+        onClick={() => (window.location.href = "/dashboard")}
+      >
+        Go to Dashboard
+      </Button>
     </div>
   );
 }

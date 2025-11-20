@@ -1,41 +1,46 @@
+
+
+
+
 // app/api/cashfree/payment-callback/route.ts
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import Enrollment from "@/models/Enrollment";
-import { NextRequest, NextResponse } from "next/server";
 import Payment from "@/models/Payment";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   await connectDB();
 
-  const url = new URL(req.url);
-  const orderId = url.searchParams.get("orderId");
-  const orderStatus = url.searchParams.get("order_status");
-  const transactionId = url.searchParams.get("transaction_id");
+  try {
+    const data = await req.json();
+    console.log("Webhook payload:", data);
 
-  if (!orderId) return NextResponse.redirect("/error");
+    const orderId = data.data.order.order_id;
+    const paymentStatus = data.data.payment.payment_status;
+    const transactionId = data.data.payment.cf_payment_id;
+    const paymentTime = data.data.payment.payment_time;
 
-  const enrollment = await Enrollment.findById(orderId);
-  if (!enrollment) return NextResponse.redirect("/error");
+    // 1️⃣ Find enrollment by order_id (which is enrollment._id)
+    const enrollment = await Enrollment.findById(orderId);
+    if (!enrollment) return NextResponse.json({ success: false, message: "Enrollment not found" }, { status: 404 });
 
-  enrollment.paymentStatus = orderStatus || "pending";
-  enrollment.paymentId = transactionId || "";
-  
-  await enrollment.save();
+    // 2️⃣ Update enrollment
+    enrollment.paymentStatus = paymentStatus === "SUCCESS" ? "paid" : "failed";
+    enrollment.paymentId = transactionId;
+    await enrollment.save();
 
-     const payment = await Payment.create({
-      student: enrollment.student,
-      course: enrollment.course,
-      amount: (enrollment.amount ?? 0),
-      paymentMethod: url.searchParams.get("payment_method") || "card",
-      status: orderStatus || "success",
-      paidAt: new Date(),
-      cashfreeOrderId: orderId,
-      cashfreePaymentId: transactionId || ""
-    });
+    // 3️⃣ Update payment
+    const payment = await Payment.findOne({ enrollment: enrollment._id });
+    if (payment) {
+      payment.status = paymentStatus === "SUCCESS" ? "success" : "failed";
+      payment.transactionId = transactionId;
+      payment.paidAt = paymentStatus === "SUCCESS" ? new Date(paymentTime) : null;
+      await payment.save();
+    }
 
-    await payment.save();
-
-
-
-  return NextResponse.redirect(`/success?enrollmentId=${enrollment._id}`);
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    console.error("Webhook Error:", err.message || err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+  }
 }

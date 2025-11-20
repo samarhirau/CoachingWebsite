@@ -162,6 +162,60 @@ const priceNumber = useMemo(() => {
 
 
 
+// const handleSubmit = async () => {
+//   setLoading(true);
+
+//   try {
+//     const studentId = user?._id;
+//     const courseId = course?._id;
+//     const amount = Math.round(discountedPrice);
+
+//     if (!studentId || !courseId) {
+//       setError("Missing student or course information.");
+//       setLoading(false);
+//       return;
+//     }
+
+//     const res = await fetch("/api/cashfree/create-order", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         studentId,
+//         courseId,
+//         amount,
+//         formData,
+//       }),
+//     });
+
+//     const data = await res.json();
+
+//     if (!data.paymentSessionId) {
+//       toast.error("Payment failed: paymentSessionId missing");
+//       return;
+//     }
+
+ 
+//     const CashfreeConstructor = (window as any).Cashfree;
+//     if (!CashfreeConstructor) {
+//       alert("Payment SDK not loaded");
+//       return;
+//     }
+   
+//     const cashfree = new CashfreeConstructor({ mode: "sandbox" });
+
+//     // Open checkout popup
+//     cashfree.checkout({
+//       paymentSessionId: data.paymentSessionId,
+//       redirectTarget: "_self", // stay on site
+//     });
+//   } catch (err) {
+//     console.error("Payment error:", err);
+//     alert("Payment failed, check console");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
 const handleSubmit = async () => {
   setLoading(true);
 
@@ -179,38 +233,31 @@ const handleSubmit = async () => {
     const res = await fetch("/api/cashfree/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        studentId,
-        courseId,
-        amount,
-        formData,
-      }),
+      body: JSON.stringify({ studentId, courseId, amount, formData }),
     });
 
     const data = await res.json();
 
     if (!data.paymentSessionId) {
-      alert("Payment failed: paymentSessionId missing");
+      toast.error(data.message || "Payment failed. Try again.");
+      setLoading(false);
       return;
     }
 
-    // Use window global for SDK instance (script is appended in useEffect)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const CashfreeConstructor = (window as any).Cashfree;
     if (!CashfreeConstructor) {
       alert("Payment SDK not loaded");
+      setLoading(false);
       return;
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+
     const cashfree = new CashfreeConstructor({ mode: "sandbox" });
 
-    // Open checkout popup
     cashfree.checkout({
       paymentSessionId: data.paymentSessionId,
-      redirectTarget: "_self", // stay on site
+      redirectTarget: "_self",
     });
+
   } catch (err) {
     console.error("Payment error:", err);
     alert("Payment failed, check console");
@@ -218,7 +265,6 @@ const handleSubmit = async () => {
     setLoading(false);
   }
 };
-
 
 
 
