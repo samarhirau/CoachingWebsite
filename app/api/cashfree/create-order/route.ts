@@ -88,8 +88,8 @@ export async function POST(req: NextRequest) {
           customer_phone: formData.phone,
         },
         order_meta: {
-          return_url: `process.env.NEXTAUTH_URL/payment-status?order_id={order_id}`,
-          notify_url: `process.env.NEXTAUTH_URL/api/cashfree/payment-callback`,
+          return_url: `${process.env.NEXTAUTH_URL}/payment-status?order_id={order_id}`,
+          notify_url: `${process.env.NEXTAUTH_URL}/api/cashfree/payment-callback`,
         },
       }),
     });
