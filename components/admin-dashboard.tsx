@@ -1,9 +1,12 @@
+
 "use client"
 import React, { useState, useMemo, useCallback, Suspense, lazy } from 'react'
+import useSWR from 'swr' // 🌟 New: Import useSWR for data fetching and caching
 import {
   Home, Users, BookOpen, DollarSign, ListChecks, Mail, BarChart, Zap, GraduationCap, Mail as MailIcon, Bell, ChevronsDown, ChevronsUp, Trash2, Edit
 } from 'lucide-react'
 
+// --- Lazy Loaded Components ---
 const QuickActionListView = lazy(() => import('@/components/admin/quickActionView'))
 const NewsletterListView = lazy(() => import('@/components/admin/newsletterListView'))
 const GenericManagementView = lazy(() => import('@/components/admin/genericManagementView'))
@@ -17,6 +20,10 @@ const AddAssignmentForm = lazy(() => import('./admin/addAssignmentForm'))
 const ReviewAssignmentsView = lazy(() => import('./admin/reviewAssignmentsView'))
 const FeesReceiptView = lazy(() => import('./admin/feesRecipView'))
 
+
+
+
+// --- Interfaces (Definitions remain the same) ---
 interface Student {
   id: number
   rollNo: string
@@ -42,27 +49,6 @@ interface Course {
   image: string
 }
 
-interface FeesReceiptItem {
-  id: number
-  feesType: 'Annual Fees' | 'Tuition Fees'
-  frequency: 'Monthly' | 'Yearly'
-  invoiceNumber: string
-  date: string
-  amount: number
-}
-
-interface FeesCollectionItem {
-  id: number
-  rollNo: string
-  studentName: string
-  invoiceNumber: string
-  feesType: 'Library' | 'Tuition' | 'Annual'
-  paymentType: 'Cash' | 'Credit Card' | 'Cheque'
-  status: 'Paid' | 'Pending' | 'Unpaid'
-  date: string
-  amount: number
-}
-
 interface DashboardStats {
   title: string
   value: number
@@ -71,81 +57,15 @@ interface DashboardStats {
   prefix?: string
 }
 
-interface AssignmentSubmission {
-  studentId: number
-  studentName: string
-  submittedDate: string
-  fileUrl: string
-  status: 'Submitted' | 'Graded' | 'Missing'
-  grade?: number | string
-  comments?: string
-}
+// --- SWR Fetcher and Custom Hooks (Performance Improvement) ---
+const fetcher = (url: string) => fetch(url).then(res => res.json())
 
-interface Assignment {
-  id: number
-  title: string
-  course: string
-  dueDate: string
-  description: string
-  submissions: AssignmentSubmission[]
-}
+// Custom hooks to manage fetching and caching
+const useStudents = () => useSWR<Student[]>('/api/students?limit=5', fetcher, { fallbackData: [] });
+const useCourses = () => useSWR<Course[]>('/api/courses', fetcher, { fallbackData: [] });
+const useAssignments = () => useSWR<any[]>('/api/assignments', fetcher, { fallbackData: [] });
 
-const initialStudentList: Student[] = [
-  { id: 1, rollNo: '01', name: 'Tiger Nixon', education: 'M.COM., P.H.D.', mobile: '123 456 7890', email: 'info@example.com', admissionDate: '2011/04/25', status: 'Checkin', assignedProfessor: 'Airi Satou', subject: 'Commerce', fees: '120$', profileImage: 'https://placehold.co/150x150/4f46e5/ffffff?text=TN' },
-  { id: 2, rollNo: '02', name: 'Garrett Winters', education: 'B.COM., M.COM.', mobile: '987 654 3210', email: 'info@example.com', admissionDate: '2011/07/25', status: 'Pending', assignedProfessor: 'Angelica Ramos', subject: 'Mechanical', fees: '120$', profileImage: 'https://placehold.co/150x150/28a745/ffffff?text=GW' },
-  { id: 3, rollNo: '03', name: 'Ashton Cox', education: 'B.COM., M.COM.', mobile: '(123) 4567 890', email: 'info@example.com', admissionDate: '2009/12/02', status: 'Canceled', assignedProfessor: 'Ashton Cox', subject: 'Science', fees: '520$', profileImage: 'https://placehold.co/150x150/ffc107/333333?text=AC' },
-  { id: 4, rollNo: '04', name: 'Cedric Kelly', education: 'B.A., B.C.A.', mobile: '123 456 7890', email: 'info@example.com', admissionDate: '2012/03/29', status: 'Checkin', assignedProfessor: 'Cara Stevens', subject: 'Arts', fees: '220$', profileImage: 'https://placehold.co/150x150/17a2b8/ffffff?text=CK' },
-  { id: 5, rollNo: '05', name: 'Airi Satou', education: 'B.A., B.C.A.', mobile: '987 654 3210', email: 'info@example.com', admissionDate: '2008/11/28', status: 'Checkin', assignedProfessor: 'Bruno Nash', subject: 'Maths', fees: '130$', profileImage: 'https://placehold.co/150x150/dc3545/ffffff?text=AS' },
-  { id: 6, rollNo: '06', name: 'Brielle Williamson', education: 'B.COM., M.COM.', mobile: '123 456 7890', email: 'info@example.com', admissionDate: '2012/12/02', status: 'Checkin', assignedProfessor: 'Michelle House', subject: 'Physics', fees: '150$', profileImage: 'https://placehold.co/150x150/6f42c1/ffffff?text=BW' },
-]
-
-const initialFeesCollectionList: FeesCollectionItem[] = [
-  { id: 1, rollNo: '01', studentName: 'Tiger Nixon', invoiceNumber: '#54805', feesType: 'Library', paymentType: 'Cash', status: 'Paid', date: '2011/04/25', amount: 120.0 },
-  { id: 2, rollNo: '02', studentName: 'Garrett Winters', invoiceNumber: '#54687', feesType: 'Library', paymentType: 'Credit Card', status: 'Pending', date: '2011/07/25', amount: 120.0 },
-  { id: 3, rollNo: '03', studentName: 'Ashton Cox', invoiceNumber: '#35672', feesType: 'Tuition', paymentType: 'Cash', status: 'Paid', date: '2009/12/02', amount: 520.0 },
-  { id: 4, rollNo: '04', studentName: 'Cedric Kelly', invoiceNumber: '#57984', feesType: 'Annual', paymentType: 'Credit Card', status: 'Paid', date: '2012/03/29', amount: 280.0 },
-  { id: 5, rollNo: '05', studentName: 'Airi Satou', invoiceNumber: '#12453', feesType: 'Library', paymentType: 'Cheque', status: 'Pending', date: '2008/11/28', amount: 130.0 },
-  { id: 6, rollNo: '06', studentName: 'Brielle Williamson', invoiceNumber: '#59723', feesType: 'Tuition', paymentType: 'Cash', status: 'Paid', date: '2012/12/02', amount: 120.0 },
-  { id: 7, rollNo: '07', studentName: 'Herrod Chandler', invoiceNumber: '#98726', feesType: 'Tuition', paymentType: 'Credit Card', status: 'Unpaid', date: '2012/08/06', amount: 120.0 },
-  { id: 8, rollNo: '08', studentName: 'Rhona Davidson', invoiceNumber: '#98721', feesType: 'Library', paymentType: 'Cheque', status: 'Unpaid', date: '2010/10/14', amount: 120.0 },
-]
-
-const initialCourseList: Course[] = [
-  { id: 1, name: 'When is the Best Time to Take an Education Course?', code: 'EC001', duration: '12 Months', professor: 'Jack Ronan', studentsCount: 450, image: 'https://placehold.co/400x200/007bff/ffffff?text=Course+1' },
-  { id: 2, name: 'Education Courses: A Guide to Unlocking Your Potential', code: 'EC002', duration: '12 Months', professor: 'Jimmy Morris', studentsCount: 210, image: 'https://placehold.co/400x200/28a745/ffffff?text=Course+2' },
-  { id: 3, name: 'A Comprehensive Guide to Taking an Education Course', code: 'EC003', duration: '12 Months', professor: 'Konne Backfield', studentsCount: 115, image: 'https://placehold.co/400x200/ffc107/333333?text=Course+3' },
-]
-
-const initialFeesReceipt: FeesReceiptItem[] = [
-  { id: 1, feesType: 'Annual Fees', frequency: 'Monthly', invoiceNumber: '#54820', date: '8 August 2021', amount: 999.0 },
-  { id: 2, feesType: 'Annual Fees', frequency: 'Yearly', invoiceNumber: '#54310', date: '7 August 2021', amount: 3000.0 },
-  { id: 3, feesType: 'Tuition Fees', frequency: 'Monthly', invoiceNumber: '#24315', date: '6 August 2021', amount: 499.0 },
-  { id: 4, feesType: 'Tuition Fees', frequency: 'Yearly', invoiceNumber: '#32541', date: '5 August 2021', amount: 3999.0 },
-]
-
-const initialAssignmentList: Assignment[] = [
-  {
-    id: 1,
-    title: 'React Component Lifecycle',
-    course: 'Advanced Web Dev',
-    dueDate: '2024-11-15',
-    description: 'Explain the three phases of the component lifecycle in a 500-word essay.',
-    submissions: [
-      { studentId: 1, studentName: 'Tiger Nixon', submittedDate: '2024-11-10', fileUrl: '#', status: 'Submitted', grade: undefined },
-      { studentId: 4, studentName: 'Cedric Kelly', submittedDate: '2024-11-14', fileUrl: '#', status: 'Submitted', grade: undefined },
-      { studentId: 3, studentName: 'Ashton Cox', submittedDate: '2024-11-12', fileUrl: '#', status: 'Graded', grade: 88, comments: 'Good structure, but missed a point on unmounting.' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'History of the Roman Empire',
-    course: 'Ancient History 101',
-    dueDate: '2024-12-01',
-    description: 'Research and report on the causes of the decline of the Western Roman Empire.',
-    submissions: [{ studentId: 2, studentName: 'Garrett Winters', submittedDate: '2024-11-05', fileUrl: '#', status: 'Submitted', grade: undefined }],
-  },
-]
-
+// --- Component Data/Structure ---
 const menuStructure = [
   { title: 'Dashboard', section: 'dashboard', icon: Home, submenu: [] },
   { title: 'Students', section: 'students', icon: Users, submenu: ['All Students', 'Add Student', 'Edit Student'] },
@@ -157,6 +77,7 @@ const menuStructure = [
   { title: 'Quick Actions', section: 'quick-actions', icon: Zap, submenu: [] },
 ]
 
+// --- StatCard Component (Memoized) ---
 const StatCard: React.FC<{ stat: DashboardStats }> = React.memo(({ stat }) => {
   const Icon = stat.icon
   return (
@@ -176,6 +97,7 @@ const StatCard: React.FC<{ stat: DashboardStats }> = React.memo(({ stat }) => {
   )
 })
 
+// --- SidebarLink Component (Memoized) ---
 const SidebarLink: React.FC<{
   title: string
   section: string
@@ -220,11 +142,12 @@ const SidebarLink: React.FC<{
   )
 })
 
+// --- DashboardOverview Component (Memoized) ---
 const DashboardOverview: React.FC<{ stats: DashboardStats[]; studentList: Student[] }> = React.memo(({ stats, studentList }) => (
   <div className="p-6">
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {stats.map((stat, index) => (
-        <StatCard key={index} stat={stat} />
+        <StatCard key={stat.title} stat={stat} /> 
       ))}
     </div>
 
@@ -257,163 +180,172 @@ const DashboardOverview: React.FC<{ stats: DashboardStats[]; studentList: Studen
       </div>
     </div>
 
-    <div className="mt-8 bg-white p-6 rounded-xl shadow-lg">
-      <h3 className="text-xl font-semibold mb-4 text-gray-800">New Student List (Latest Admissions)</h3>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              {['Roll No.', 'Name', 'Professor', 'Admit Date', 'Status', 'Fees'].map(header => (
-                <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{header}</th>
-              ))}
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {studentList.slice(-3).map(student => (
-              <tr key={student.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.rollNo}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.assignedProfessor}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.admissionDate}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    student.status === 'Checkin' ? 'bg-green-100 text-green-800' : student.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {student.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.fees}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-indigo-600 hover:text-indigo-900 mr-3"><Edit className="w-4 h-4" /></button>
-                  <button className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button>
+<div className="bg-white shadow-sm rounded-xl overflow-hidden">
+  { 
+     studentList.length === 0 ? (
+    <div className="text-center py-12 text-gray-500">
+      <p className="text-lg font-medium">No students found</p>
+      <p className="text-sm">Try changing search or filters</p>
+    </div>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50 text-gray-600 uppercase text-xs tracking-wide">
+          <tr>
+            <th className="px-6 py-3 text-left">Roll No.</th>
+            <th className="px-6 py-3 text-left">Name</th>
+            <th className="px-6 py-3 text-left">Email</th>
+            <th className="px-6 py-3 text-left">Phone</th>
+            <th className="px-6 py-3 text-left">Registered</th>
+            <th className="px-6 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody className="divide-y divide-gray-200 bg-white">
+          {studentList
+            .slice(-8) 
+            .map((student: any) => (
+              <tr key={student._id} className="hover:bg-gray-50">
+                <td className="px-6 py-4">up{shortId(student._id)}</td>
+                <td className="px-6 py-4">{student.name}</td>
+                <td className="px-6 py-4">{student.email}</td>
+                <td className="px-6 py-4">{student.phone || "-"}</td>
+                <td className="px-6 py-4">{new Date(student.createdAt).toLocaleDateString()}</td>
+                <td className="px-6 py-4 flex space-x-2">
+                  <button title="Edit" className="text-blue-500 hover:text-blue-700">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button title="Delete" className="text-red-500 hover:text-red-700">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </td>
               </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
+  )}
+</div>
+
+
   </div>
 ))
 
+// --- Main AdminDashboard Component ---
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard')
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [studentList, setStudentList] = useState<Student[]>(initialStudentList)
-  const [assignmentList, setAssignmentList] = useState<Assignment[]>(initialAssignmentList)
-  const courseList = useMemo(() => initialCourseList, [])
-
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+
+
+  // Example total fees calculation (could be fetched from an API)
+const { data: feesData = [] } = useSWR<{ amount: number }[]>('/api/fees?limit=1000', fetcher, { fallbackData: [] });
+
+  const { data: studentList = [], isLoading: studentsLoading } = useStudents();
+  const { data: assignmentList = [], isLoading: assignmentsLoading } = useAssignments();
+  const { data: courseList = [], isLoading: coursesLoading } = useCourses();
+  
+  // Handlers wrapped in useCallback to prevent unnecessary re-renders in children
   const handleToggleMenu = useCallback((section: string) => setOpenMenu(prev => (prev === section ? null : section)), [])
   const handleSetSection = useCallback((s: string) => setActiveSection(s), [])
+const totalFees = useMemo(() => feesData.reduce((sum, fee) => sum + fee.amount, 0), [feesData]);
+  // Dynamic stats wrapped in useMemo to only recalculate when dependencies change
+const dynamicStatsData = useMemo(() => [
+  { title: 'Total Students', value: studentList.length, icon: Users, color: 'bg-indigo-500' },
+  { title: 'Total Assignments', value: assignmentList.length, icon: ListChecks, color: 'bg-yellow-500' },
+  { title: 'Total Courses', value: courseList.length, icon: BookOpen, color: 'bg-green-500' },
+  { title: 'Fees Collection', value: totalFees, icon: DollarSign, color: 'bg-red-500', prefix: '$' },
+], [studentList.length, assignmentList.length, courseList.length, totalFees]);
 
-  const addAssignment = useCallback((newAssignment: Omit<Assignment, 'id' | 'submissions'>) => {
-    setAssignmentList(prev => {
-      const id = prev.length > 0 ? Math.max(...prev.map(a => a.id)) + 1 : 1
-      return [...prev, { ...newAssignment, id, submissions: [] }]
-    })
-  }, [])
-
-  const gradeSubmission = useCallback((assignmentId: number, studentId: number, grade: number | string, comments: string) => {
-    setAssignmentList(prev => prev.map(assignment => {
-      if (assignment.id === assignmentId) {
-        return {
-          ...assignment,
-          submissions: assignment.submissions.map(sub => (sub.studentId === studentId ? { ...sub, status: 'Graded', grade, comments } : sub)),
-        }
-      }
-      return assignment
-    }))
-  }, [])
-
-  const dynamicStatsData = useMemo<DashboardStats[]>(() => [
-    { title: 'Total Students', value: studentList.length, icon: Users, color: 'bg-indigo-500' },
-    { title: 'Total Assignments', value: assignmentList.length, icon: ListChecks, color: 'bg-yellow-500' },
-    { title: 'Total Courses', value: courseList.length, icon: BookOpen, color: 'bg-green-500' },
-    { title: 'Fees Collection', value: 25160, icon: DollarSign, color: 'bg-red-500', prefix: '$' },
-  ], [studentList.length, assignmentList.length, courseList.length])
-
+  // Content rendering logic wrapped in useCallback
   const renderContent = useCallback(() => {
+    // Show a loading state if the critical dashboard data is still loading
+    if (studentsLoading || coursesLoading || assignmentsLoading) {
+        if (activeSection === 'dashboard') {
+            return <div className="p-6 text-center text-indigo-600 text-xl font-semibold">Loading Dashboard Data...</div>;
+        }
+    }
+    
     switch (activeSection) {
       case 'dashboard':
         return <DashboardOverview stats={dynamicStatsData} studentList={studentList} />
       case 'students/All Students':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading Students View...</div>}>
             <AllStudentsView />
           </Suspense>
         )
       case 'students/Add Student':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading Form...</div>}>
             <AddStudentForm />
           </Suspense>
         )
       case 'students/Edit Student':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading Form...</div>}>
             <EditStudentForm />
           </Suspense>
         )
       case 'courses/All Courses':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
-            <AllCoursesView data={courseList} />
+          <Suspense fallback={<div>Loading Courses View...</div>}>
+            {/* Pass courseList directly to AllCoursesView (assuming it accepts data prop) */}
+            <AllCoursesView data={courseList} /> 
           </Suspense>
         )
       case 'courses/Add Course':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading Form...</div>}>
             <AddCourseForm />
           </Suspense>
         )
       case 'courses/Edit Course':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading View...</div>}>
             <GenericManagementView section="Edit Course" />
           </Suspense>
         )
       case 'assignments/Add Assignment':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
-            <AddAssignmentForm courses={courseList} onAdd={addAssignment} />
+          <Suspense fallback={<div>Loading Form...</div>}>
+            <AddAssignmentForm  />
           </Suspense>
         )
       case 'assignments/Review Assignments':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ReviewAssignmentsView assignments={assignmentList} onGrade={gradeSubmission} />
+          <Suspense fallback={<div>Loading View...</div>}>
+            <ReviewAssignmentsView  />
           </Suspense>
         )
       case 'fees/Fees Collection':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
-            <FeesCollectionView data={initialFeesCollectionList} />
+          <Suspense fallback={<div>Loading View...</div>}>
+            <FeesCollectionView />
           </Suspense>
         )
       case 'fees/Fees Receipt':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
-            <FeesReceiptView data={initialFeesReceipt} />
+          <Suspense fallback={<div>Loading View...</div>}>
+            <FeesReceiptView />
           </Suspense>
         )
       case 'Newslatter':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading View...</div>}>
             <NewsletterListView />
           </Suspense>
         )
       case 'quick-actions':
         return (
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading View...</div>}>
             <QuickActionListView />
           </Suspense>
         )
       default:
         return <div>404: Page Not Found</div>
     }
-  }, [activeSection, assignmentList, courseList, addAssignment, gradeSubmission, studentList, dynamicStatsData])
+  }, [activeSection, studentList, courseList, studentsLoading, coursesLoading, assignmentsLoading])
 
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans">
@@ -466,3 +398,13 @@ export default function AdminDashboard() {
     </div>
   )
 }
+
+function shortId(_id: any) {
+  return _id.toString().slice(-5);
+}
+
+
+
+
+
+

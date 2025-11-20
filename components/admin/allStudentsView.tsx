@@ -1,41 +1,64 @@
 
 
+
+
+
+
+
 "use client";
 import { use, useEffect, useState } from "react";
 import { Trash2, Edit, Loader2 } from "lucide-react";
 
 export default function StudentsPage() {
+  // Initialize total to 0 to prevent issues with Math.ceil(undefined / limit)
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(0); // <-- Safe initialization
   const [loading, setLoading] = useState(true);
 
-  const fetchStudents = async () => {
-    setLoading(true);
+
+
+
+const fetchStudents = async () => {
+  setLoading(true);
+  try {
     const res = await fetch(`/api/students?search=${search}&limit=${limit}&page=${page}`);
+    if (!res.ok) throw new Error(`API failed with status ${res.status}`);
     const data = await res.json();
-    setStudents(data.users);
-    setTotal(data.total);
-    setLoading(false);
-  };
+    console.log("API response:", data);
 
-const shortId = (id: string) => id.slice(-8);
+    // data is already an array
+    setStudents(data || []);
+    setTotal(data.length || 0);
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    setStudents([]);
+    setTotal(0);
+  }
+  setLoading(false);
+};
 
 
-  useEffect(() => { fetchStudents(); }, [search, page, limit]);
 
-  const totalPages = Math.ceil(total / limit);
+  const shortId = (id: string) => id.slice(-8);
 
+  // Re-fetch data whenever search, page, or limit changes
+  useEffect(() => { 
+    fetchStudents(); 
+  }, [search, page, limit]);
 
- 
+  // Polling mechanism every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       fetchStudents();
     }, 5000);
     return () => clearInterval(interval);
   }, [search, page, limit]);
+
+  // totalPages calculation now safe because total is initialized to 0
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -72,6 +95,7 @@ const shortId = (id: string) => id.slice(-8);
                   <th className="px-6 py-3 text-left">Email</th>
                   <th className="px-6 py-3 text-left">Phone</th>
                   <th className="px-6 py-3 text-left">Registered</th>
+                  <th className="px-6 py-3 text-left">Actions</th>
                 </tr>
               </thead>
 
@@ -83,8 +107,13 @@ const shortId = (id: string) => id.slice(-8);
                     <td className="px-6 py-4">{student.email}</td>
                     <td className="px-6 py-4">{student.phone || "-"}</td>
                     <td className="px-6 py-4">{new Date(student.createdAt).toLocaleDateString()}</td>
-                    <td className="px-6 py-4">
-                     
+                    <td className="px-6 py-4 flex space-x-2">
+                       <button title="Edit" className="text-blue-500 hover:text-blue-700">
+                         <Edit className="w-4 h-4" />
+                       </button>
+                       <button title="Delete" className="text-red-500 hover:text-red-700">
+                         <Trash2 className="w-4 h-4" />
+                       </button>
                     </td>
                   </tr>
                 ))}
@@ -107,7 +136,8 @@ const shortId = (id: string) => id.slice(-8);
           entries
         </div>
 
-        {totalPages > 1 && (
+        {/* FIX: Ensure total > 0 before checking totalPages to prevent rendering issues */}
+        {total > 0 && totalPages > 1 && (
           <div className="flex gap-2">
             <button
               disabled={page === 1}
@@ -131,3 +161,10 @@ const shortId = (id: string) => id.slice(-8);
     </div>
   );
 }
+
+
+
+
+
+
+
