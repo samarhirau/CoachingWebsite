@@ -8,10 +8,11 @@ import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react"
 import { useAuth } from "@/components/auth-provider" 
 
 
+
 export async function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false)
   // CRITICAL: Destructure 'isLoggedIn' and 'loading' for reliable checks
-  const { isLoggedIn , user} = useAuth();
+  const { isLoggedIn , user ,loading} = useAuth();
 
 
   return (
@@ -114,12 +115,15 @@ export async function ModernNavigation() {
               </Button>
             {
                await isLoggedIn()  && user ? (
-                  <Button size="sm" className="gradient-primary">
+                  <Button size="sm" className="gradient-primary"
+                   disabled={loading} >
                 <Link href="/dashboard">
                 My Courses</Link>
               </Button>
               ) : (
-                <Button size="sm" className="gradient-primary">
+                <Button size="sm" className="gradient-primary"
+                disabled={loading}
+                >
                 <Link href="/login">
                 Login / Register</Link>
               </Button>
