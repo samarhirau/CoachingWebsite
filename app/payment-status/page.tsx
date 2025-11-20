@@ -1,150 +1,5 @@
 
 
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import Confetti from "react-confetti";
-
-// export default function PaymentStatusPage() {
-//   const [status, setStatus] = useState<"loading" | "success" | "failed">("loading");
-//   const [message, setMessage] = useState("");
-
-//   useEffect(() => {
-//     const url = new URL(window.location.href);
-//     const orderId = url.searchParams.get("order_id");
-
-//     if (!orderId) {
-//       setStatus("failed");
-//       setMessage("Order ID missing.");
-//       return;
-//     }
-
-//     async function checkStatus() {
-//       try {
-//         const res = await fetch(`/api/cashfree/check-status?orderId=${orderId}`);
-//         const data = await res.json();
-
-//         if (data.success) {
-//           setStatus("success");
-//           setMessage("Payment Successful! You are now enrolled.");
-//         } else {
-//           setStatus("failed");
-//           setMessage("Payment Failed or Pending.");
-//         }
-//       } catch {
-//         setStatus("failed");
-//         setMessage("Something went wrong.");
-//       }
-//     }
-
-//     checkStatus();
-//   }, []);
-
-//   return (
-//     <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#f7f9fc] to-[#e9f0ff] relative overflow-hidden">
-
-//       {/* Confetti on success */}
-//       {status === "success" && <Confetti numberOfPieces={200} gravity={0.2} />}
-
-//       <div
-//         className={`
-//           w-[420px] p-10 rounded-3xl shadow-2xl backdrop-blur-lg
-//           transition-all duration-500 border border-white/30
-//           ${status === "success" ? "bg-white/40 animate-scaleIn" : ""}
-//           ${status === "loading" ? "bg-white/30" : ""}
-//           ${status === "failed" ? "bg-white/40 animate-shake" : ""}
-//         `}
-//       >
-//         {/* Loading */}
-//         {status === "loading" && (
-//           <div className="flex flex-col items-center">
-//             <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
-//             <h2 className="text-xl font-semibold mt-4">Checking Payment...</h2>
-//             <p className="text-gray-500 mt-2">Please wait</p>
-//           </div>
-//         )}
-
-//         {/* Success */}
-//         {status === "success" && (
-//           <div className="text-center">
-//             <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-//               <svg className="w-12 h-12 text-primarh animate-pop" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                 <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-//               </svg>
-//             </div>
-
-//             <h2 className="text-3xl font-bold text-primary">Payment Successful 🎉</h2>
-//             <p className="text-gray-700 mt-3">{message}</p>
-
-//             <button
-//               onClick={() => (window.location.href = "/dashboard")}
-//               className="mt-6 px-6 py-3 rounded-xl bg-primary text-white shadow-lg hover:scale-105 transition-all"
-//             >
-//               Continue
-//             </button>
-//           </div>
-//         )}
-
-//         {/* Failed */}
-//         {status === "failed" && (
-//           <div className="text-center">
-//             <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-//               <svg className="w-12 h-12 text-red-600 animate-pop" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                 <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-//               </svg>
-//             </div>
-
-//             <h2 className="text-3xl font-bold text-red-600">Payment Failed ❌</h2>
-//             <p className="text-gray-700 mt-3">{message}</p>
-
-//             <button
-//               onClick={() => (window.location.href = "/courses")}
-//               className="mt-6 px-6 py-3 rounded-xl bg-red-600 text-white shadow-lg hover:scale-105 transition-all"
-//             >
-//               Try Again
-//             </button>
-//           </div>
-//         )}
-//       </div>
-
-//       {/* Animations */}
-//       <style jsx global>{`
-//         .animate-scaleIn {
-//           animation: scaleIn 0.6s ease forwards;
-//         }
-//         @keyframes scaleIn {
-//           0% { transform: scale(0.8); opacity: 0; }
-//           100% { transform: scale(1); opacity: 1; }
-//         }
-
-//         .animate-pop {
-//           animation: pop 0.5s ease forwards;
-//         }
-//         @keyframes pop {
-//           0% { transform: scale(0.3); opacity: 0; }
-//           100% { transform: scale(1); opacity: 1; }
-//         }
-
-//         .animate-shake {
-//           animation: shake 0.4s ease-in-out;
-//         }
-//         @keyframes shake {
-//           0%, 100% { transform: translateX(0); }
-//           20% { transform: translateX(-6px); }
-//           40% { transform: translateX(6px); }
-//           60% { transform: translateX(-4px); }
-//           80% { transform: translateX(4px); }
-//         }
-//       `}</style>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
 
 
 "use client";
@@ -193,26 +48,125 @@ export default function PaymentSuccess() {
 
   const payment = data.payment;
 
+  console.log("Payment Data:", payment);
+
   // Generate PDF receipt
+  // const generatePDF = async () => {
+  //   const { jsPDF } = await import("jspdf");
+  //   const doc = new jsPDF();
+
+  //   doc.setFontSize(18);
+  //   doc.text("Payment Receipt", 20, 20);
+
+  //   doc.setFontSize(12);
+  //   doc.text(`Order ID: ${payment.orderId}`, 20, 40);
+  //   doc.text(`Payment ID: ${payment.paymentId || "N/A"}`, 20, 50);
+  //   doc.text(`Name: ${payment.studentName}`, 20, 60);
+  //   doc.text(`Email: ${payment.studentEmail}`, 20, 70);
+  //   doc.text(`Course: ${payment.courseName}`, 20, 80);
+  //   doc.text(`Amount Paid: ₹${payment.orderAmount}`, 20, 90);
+  //   doc.text(`Payment Status: ${payment.orderStatus}`, 20, 100);
+  //   doc.text(`Date: ${new Date().toLocaleString()}`, 20, 110);
+
+  //   doc.save("receipt.pdf");
+  // };
+
   const generatePDF = async () => {
-    const { jsPDF } = await import("jspdf");
-    const doc = new jsPDF();
+  const { jsPDF } = await import("jspdf");
+  const autoTable = (await import("jspdf-autotable")).default;
 
-    doc.setFontSize(18);
-    doc.text("Payment Receipt", 20, 20);
+  const doc = new jsPDF();
 
-    doc.setFontSize(12);
-    doc.text(`Order ID: ${payment.orderId}`, 20, 40);
-    doc.text(`Payment ID: ${payment.paymentId || "N/A"}`, 20, 50);
-    doc.text(`Name: ${payment.studentName}`, 20, 60);
-    doc.text(`Email: ${payment.studentEmail}`, 20, 70);
-    doc.text(`Course: ${payment.courseName}`, 20, 80);
-    doc.text(`Amount Paid: ₹${payment.orderAmount}`, 20, 90);
-    doc.text(`Payment Status: ${payment.orderStatus}`, 20, 100);
-    doc.text(`Date: ${new Date().toLocaleString()}`, 20, 110);
+  // ============================
+  // HEADER SECTION
+  // ============================
+  doc.setFontSize(20);
+  doc.setTextColor(30, 30, 30);
+  doc.text("Invoice / Fees Receipt", 14, 20);
 
-    doc.save("receipt.pdf");
-  };
+  doc.setFontSize(10);
+  doc.text(`Date: ${new Date().toLocaleDateString()}`, 160, 20);
+  doc.setTextColor(255, 165, 0);
+  doc.text(`Status: ${payment.orderStatus}`, 160, 26);
+  doc.setTextColor(0, 0, 0);
+
+  // ============================
+  // BILLING INFO
+  // ============================
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Billed From: Upcoder (Admin)", 14, 40);
+  doc.text("Billed To: Student", 120, 40);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+
+  // LEFT SIDE
+  doc.text("Upcoder Education", 14, 50);
+  doc.text("#8801 Address Line, City", 14, 56);
+  doc.text("Email: info@upcoder.creater", 14, 62);
+  doc.text("Phone: +91 123 456 7890", 14, 68);
+
+  // RIGHT SIDE
+  doc.text(payment.studentName || "Student", 120, 50);
+  doc.text("#8901 Address Line, City", 120, 56);
+  doc.text(`Email: ${payment.studentEmail}`, 120, 62);
+  doc.text("Phone: +91 098 765 4321", 120, 68);
+
+  // ============================
+  // PAYMENT TABLE
+  // ============================
+
+  const tableData = [
+    ["1", "Course Fees", "One-Time", payment.orderId, new Date().toDateString(), `₹${payment.orderAmount}`],
+  ];
+
+  autoTable(doc, {
+    startY: 80,
+    head: [
+      ["#", "FEES TYPE", "FREQUENCY", "INVOICE NO.", "DATE", "AMOUNT"]
+    ],
+    body: tableData,
+    theme: "grid",
+    styles: { fontSize: 10 },
+    headStyles: {
+      fillColor: [245, 245, 245],
+      textColor: 20,
+      fontStyle: "bold"
+    }
+  });
+
+  let finalY = (doc as any).lastAutoTable.finalY + 10;
+
+  // ============================
+  // TOTAL SECTION
+  // ============================
+  doc.setFont("helvetica", "bold");
+  doc.text("Subtotal:", 140, finalY);
+  doc.text(`₹${payment.orderAmount}`, 180, finalY, { align: "right" });
+
+  doc.setFont("helvetica", "normal");
+  doc.text("Discount (0%):", 140, finalY + 8);
+  doc.text(`₹0.00`, 180, finalY + 8, { align: "right" });
+
+  doc.text("VAT (10%):", 140, finalY + 16);
+  doc.text(`₹${(payment.orderAmount * 0.1).toFixed(2)}`, 180, finalY + 16, { align: "right" });
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(30, 30, 200);
+  doc.text("Total Due:", 140, finalY + 30);
+  doc.text(
+    `₹${(payment.orderAmount * 1.1).toFixed(2)}`,
+    180,
+    finalY + 30,
+    { align: "right" }
+  );
+
+  // Save file
+  doc.save("Fees_Receipt.pdf");
+};
+
 
   const statusColor =
     payment.orderStatus?.toLowerCase() === "paid"
@@ -271,7 +225,37 @@ export default function PaymentSuccess() {
         onClick={() => (window.location.href = "/dashboard")}
       >
         Go to Dashboard
+
       </Button>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
