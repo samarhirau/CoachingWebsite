@@ -59,6 +59,10 @@ import Enrollment from "@/models/Enrollment";
 import Payment from "@/models/Payment";
 import "@/models/Course";
 
+
+
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: { url: string | URL }) {
   await connectDB();
 

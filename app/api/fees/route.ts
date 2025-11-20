@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import Payment from "@/models/Payment";
 
+
+
+export const dynamic = 'force-dynamic'; 
+
+
 export const GET = async (req: NextRequest) => {
   await connectDB();
 
