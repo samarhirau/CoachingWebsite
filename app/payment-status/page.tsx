@@ -112,19 +112,22 @@ export default function PaymentSuccess() {
   doc.text("#8901 Address Line, City", 120, 56);
   doc.text(`Email: ${payment.studentEmail}`, 120, 62);
   doc.text("Phone: +91 098 765 4321", 120, 68);
+  doc.text(`Invoice No: ${payment.orderId}`, 120, 74);
+
+  
 
   // ============================
   // PAYMENT TABLE
   // ============================
 
   const tableData = [
-    ["1", "Course Fees", "One-Time", payment.orderId, new Date().toDateString(), `₹${payment.orderAmount}`],
+    ["1", "Course Fees",payment.courseName , payment.orderId, new Date().toDateString(), `₹${payment.orderAmount}`],
   ];
 
   autoTable(doc, {
     startY: 80,
     head: [
-      ["#", "FEES TYPE", "FREQUENCY", "INVOICE NO.", "DATE", "AMOUNT"]
+      ["#", "FEES TYPE", "COURSE NAME", "INVOICE NO.", "DATE", "AMOUNT"]
     ],
     body: tableData,
     theme: "grid",
