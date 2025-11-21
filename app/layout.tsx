@@ -4,9 +4,9 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Suspense } from "react"
 import "./globals.css"
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ToastProvider } from "@/components/toastProvider"
 import { AuthProvider } from "@/components/auth-provider"
+import SpeedInsightsClient from "@/components/speed-insights"
 
 
 
@@ -88,7 +88,7 @@ export default function RootLayout({
        
           <AuthProvider>
           <Suspense fallback={null}>{children}</Suspense>
-           <SpeedInsights />
+           <SpeedInsightsClient />
           <ToastProvider />
         </AuthProvider>
       </body>
