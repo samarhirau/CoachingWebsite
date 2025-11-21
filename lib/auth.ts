@@ -32,18 +32,30 @@ export async function comparePassword(password: string, hash: string): Promise<b
   return bcrypt.compare(password, hash)
 }
 
-export async function getServerSession(): Promise<JWTPayload | null> {
-  // console.log("getServerSession called")
-  const cookieStore =  cookies()
-  const token = cookieStore.get("auth-token")?.value
+// export async function getServerSession(): Promise<JWTPayload | null> {
+//   // console.log("getServerSession called")
+//   const cookieStore =  cookies()
+//   const token = cookieStore.get("auth-token")?.value
 
-  // console.log("Auth token from cookie:", token)
+//   // console.log("Auth token from cookie:", token)
 
-  if (!token) return null
+//   if (!token) return null
 
-  return verifyToken(token)
+//   return verifyToken(token)
+// }
+
+
+export async function getServerSession() {
+  const token = cookies().get("token")?.value;
+  if (!token) return null;
+
+  try {
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    return decoded; // contains userId
+  } catch {
+    return null;
+  }
 }
-
 
 
 

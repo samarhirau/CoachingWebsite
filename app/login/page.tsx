@@ -182,14 +182,24 @@ const handleSignup = async (e: React.FormEvent) => {
 
   const renderSocialLogin = () => (
     <div className="mt-4 flex space-x-2">
-     <Button
+     {/* <Button
         variant="outline"
         className="w-full flex items-center justify-center gap-2"
      
       >
         <FcGoogle size={20} />
         Continue with Google
-      </Button>
+      </Button> */}
+
+      <Button
+  variant="outline"
+  className="w-full flex items-center justify-center gap-2"
+  onClick={() => window.location.href = "/api/auth/google"}
+>
+  <FcGoogle size={20} />
+  Continue with Google
+</Button>
+
 
     
       {/* <Button variant="outline" className="w-full flex items-center justify-center gap-2">
