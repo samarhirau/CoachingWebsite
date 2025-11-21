@@ -88,9 +88,9 @@ export default function RootLayout({
        
           <AuthProvider>
           <Suspense fallback={null}>{children}</Suspense>
-           <SpeedInsightsClient />
           <ToastProvider />
         </AuthProvider>
+        <SpeedInsightsClient />
       </body>
     </html>
   )
