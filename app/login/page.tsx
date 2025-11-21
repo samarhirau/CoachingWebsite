@@ -37,14 +37,80 @@ export default function AuthPage() {
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
 
+
+
+
+
+
+
+
+
+
+  
+  // ---------------- VALIDATIONS ----------------
+
+  function validateFullName(name: string) {
+    const trimmed = name.trim()
+
+    // Must have 2 words minimum
+    const words = trimmed.split(" ").filter(Boolean)
+    if (words.length < 2) {
+      return "Please enter full name (first & last name)."
+    }
+
+    // Each word min 2 letters, only alphabets
+    for (const word of words) {
+      if (!/^[A-Za-z]{2,}$/.test(word)) {
+        return "Full name must contain only alphabets, 2+ letters each."
+      }
+    }
+
+    return null
+  }
+
+  function validatePhone(phone: string) {
+    if (!phone) return null // optional
+    if (!/^[0-9]{10}$/.test(phone)) {
+      return "Phone number must be 10 digits (optional field)."
+    }
+    return null
+  }
+
+
+
   // ---------------- HANDLERS ----------------
 
 
 const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+
+
+
+
+
+    // Validate name
+    const nameError = validateFullName(signupName)
+    if (nameError) {
+      toast.error(nameError)
+      return
+    }
+
+    // Validate optional phone
+    const phoneError = validatePhone(signupPhone)
+    if (phoneError) {
+      toast.error(phoneError)
+      return
+    }
+
+
     setLoading(true)
     try {
-      const newUser = await register(signupEmail, signupPassword, signupName, signupPhone)
+      const newUser = await register(
+        signupEmail, 
+        signupPassword, 
+        signupName, 
+        signupPhone || ""
+      )
       toast.success("Account created successfully!")
       if (newUser?.role === 'admin') {
         router.push("/admin")
@@ -182,14 +248,7 @@ const handleSignup = async (e: React.FormEvent) => {
 
   const renderSocialLogin = () => (
     <div className="mt-4 flex space-x-2">
-     {/* <Button
-        variant="outline"
-        className="w-full flex items-center justify-center gap-2"
-     
-      >
-        <FcGoogle size={20} />
-        Continue with Google
-      </Button> */}
+  
 
       <Button
   variant="outline"
@@ -201,10 +260,6 @@ const handleSignup = async (e: React.FormEvent) => {
 </Button>
 
 
-    
-      {/* <Button variant="outline" className="w-full flex items-center justify-center gap-2">
-        Continue with GitHub
-      </Button> */}
     </div>
   )
 
@@ -247,7 +302,7 @@ const handleSignup = async (e: React.FormEvent) => {
               <form onSubmit={handleSignup} className="space-y-4">
                 <Input type="text" placeholder="Full Name" value={signupName} onChange={(e) => setSignupName(e.target.value)} required />
                 <Input type="email" placeholder="Email Address" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
-                <Input type="tel" placeholder="Phone Number" value={signupPhone} onChange={(e) => setSignupPhone(e.target.value)}  required/>
+                <Input type="tel" placeholder="Phone Number ( Optional )" value={signupPhone} onChange={(e) => setSignupPhone(e.target.value)}/>
                 <Input type="password" placeholder="Password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
                 <Button type="submit" className="w-full" disabled={loading}>{loading ? "Creating..." : "Create Account"}</Button>
                 {renderSocialLogin()}
@@ -301,3 +356,13 @@ const handleSignup = async (e: React.FormEvent) => {
     </main>
   )
 }
+
+
+
+
+
+
+
+
+
+

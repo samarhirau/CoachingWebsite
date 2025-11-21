@@ -59,7 +59,7 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
       formData.firstName.trim() !== "" &&
       formData.lastName.trim() !== "" &&
       formData.email.trim() !== "" &&
-      formData.phone.trim() !== "" &&
+     isValidIndianNumber(formData.phone) &&
       formData.education.trim() !== ""
     )
   }
@@ -120,6 +120,12 @@ const priceNumber = useMemo(() => {
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
+
+
+  const isValidIndianNumber = (num: string) => {
+  const regex = /^[6-9]\d{9}$/;
+  return regex.test(num);
+};
 
 
 
@@ -351,13 +357,19 @@ const handleSubmit = async () => {
   />
             </div>
             <div>
-              <Label>Phone</Label>
-              <Input value={formData.phone} 
-              onChange={(e) => handleInputChange("phone", e.target.value)}  
-              readOnly={!!user?.phone}
-              className={user?.phone ? "bg-gray-100 cursor-not-allowed" : ""}
-              />
-            </div>
+  <Label>Phone</Label>
+  <Input
+    value={formData.phone}
+    onChange={(e) => handleInputChange("phone", e.target.value)}
+    readOnly={!!user?.phone}
+    className={user?.phone ? "bg-gray-100 cursor-not-allowed" : ""}
+  />
+
+  {!isValidIndianNumber(formData.phone) && formData.phone.length > 0 && (
+    <p className="text-red-500 text-sm mt-1">Enter a valid 10-digit Indian number starting with 6–9</p>
+  )}
+</div>
+
             <div>
               <Label>Education</Label>
               <Select onValueChange={(v) => handleInputChange("education", v)} required>
