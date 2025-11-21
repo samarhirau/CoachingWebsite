@@ -39,22 +39,44 @@ export async function sendSuccessResetEmail(to: string, userName: string) {
 
 
 
+// export async function sendNewsletter(recipients: string[]) {
+//   const to = recipients.map(email => ({ email }));
+
+//   try {
+//     const result = await mailtrapClient.send({
+//       from: sender,
+//       to,
+//       subject: "Latest Newsletter from Upcoder",
+//       html : newsletterTemplate(),
+//       category: "Newsletter",
+//     });
+
+//     console.log("Newsletter sent:", result);
+//     return result;
+//   } catch (err: any) {
+//     console.error("Error sending newsletter:", err);
+//     throw new Error(err?.message || "Mailtrap send failed");
+//   }
+// }
+
+
 export async function sendNewsletter(recipients: string[]) {
-  const to = recipients.map(email => ({ email }));
-
   try {
-    const result = await mailtrapClient.send({
-      from: sender,
-      to,
-      subject: "Latest Newsletter from Upcoder",
-      html : newsletterTemplate(),
-      category: "Newsletter",
-    });
+    await Promise.all(
+      recipients.map(email =>
+        mailtrapClient.send({
+          from: sender,
+          to: [{ email }],
+          subject: "Latest Newsletter from Upcoder",
+          html: newsletterTemplate(),
+          category: "Newsletter",
+        })
+      )
+    );
 
-    console.log("Newsletter sent:", result);
-    return result;
+    return { success: true };
   } catch (err: any) {
-    console.error("Error sending newsletter:", err);
+    console.error("Newsletter send error:", err);
     throw new Error(err?.message || "Mailtrap send failed");
   }
 }
