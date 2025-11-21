@@ -1,51 +1,100 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/mongoDb";
+// export const dynamic = "force-dynamic";
+
+// import { NextResponse } from "next/server";
+// import connectDb from "@/lib/mongoDb";
+// import Payment from "@/models/Payment";
+
+// export async function GET(request: Request) {
+//   await connectDb();
+
+//   const { searchParams } = new URL(request.url);
+//   const limit = parseInt(searchParams.get("limit") || "100");
+//   const search = searchParams.get("search") || "";
+
+//   const query: any = {};
+
+//   if (search) {
+//     query.$or = [
+//       { orderId: { $regex: search, $options: "i" } },
+//       { transactionId: { $regex: search, $options: "i" } },
+//       { "student.email": { $regex: search, $options: "i" } }
+//     ];
+//   }
+
+//   const payments = await Payment.find(query)
+//     .populate("student", "email")
+//     .populate("course", "title")
+//     .limit(limit)
+//     .sort({ createdAt: -1 })
+//     .lean();
+
+//   return NextResponse.json(payments);
+// }
+export const dynamic = "force-dynamic";
+
+import { NextResponse } from "next/server";
+import connectDb from "@/lib/mongoDb";
 import Payment from "@/models/Payment";
 
+export async function GET(request: Request) {
+  await connectDb();
 
+  const { searchParams } = new URL(request.url);
+  const limit = parseInt(searchParams.get("limit") || "100");
+  const search = searchParams.get("search") || "";
 
-export const dynamic = 'force-dynamic'; 
+  const match: any = {};
 
-
-export const GET = async (req: NextRequest) => {
-  await connectDB();
-
-  try {
-    const { search, limit } = Object.fromEntries(req.nextUrl.searchParams.entries());
-    const limitNum = limit ? parseInt(limit, 10) : 10;
-
-    const payments = await Payment.find(
-      search
-        ? {
-            $or: [
-              { transactionId: { $regex: search, $options: "i" } },
-              { status: { $regex: search, $options: "i" } },
-            ],
-          }
-        : {}
-    )
-      .populate("student", "name rollNo")
-      .populate("course", "name")
-      .sort({ createdAt: -1 })
-      .limit(limitNum);
-
-    const data = payments.map((p) => ({
-      id: p._id.toString(),
-      rollNo: (p.student as any)?.rollNo || "N/A",
-      studentName: (p.student as any)?.name || "N/A",
-      invoiceNumber: p.transactionId || "N/A",
-      feesType: (p.course as any)?.name || "Tuition",
-      paymentType: "Online", // or from model if you add field
-      status: p.status === "success" ? "Paid" : p.status === "pending" ? "Pending" : "Unpaid",
-      date: p.paidAt
-        ? new Date(p.paidAt).toLocaleDateString()
-        : new Date(p.createdAt).toLocaleDateString(),
-      amount: p.amount,
-    }));
-
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  if (search) {
+    match.$or = [
+      { orderId: { $regex: search, $options: "i" } },
+      { transactionId: { $regex: search, $options: "i" } },
+      { "studentData.email": { $regex: search, $options: "i" } },
+      { "courseData.title": { $regex: search, $options: "i" } },
+      { "courseData.name": { $regex: search, $options: "i" } }
+    ];
   }
-};
+
+  const payments = await Payment.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "student",
+        foreignField: "_id",
+        as: "studentData"
+      }
+    },
+    { $unwind: "$studentData" },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "course",
+        foreignField: "_id",
+        as: "courseData"
+      }
+    },
+    { $unwind: "$courseData" },
+    {
+      $match: match
+    },
+    {
+      $project: {
+        orderId: 1,
+        transactionId: 1,
+        amount: 1,
+        status: 1,
+        createdAt: 1,
+        studentEmail: "$studentData.email",
+        courseTitle: { $ifNull: ["$courseData.title", "$courseData.name"] }
+      }
+    },
+    {
+      $sort: { createdAt: -1 }
+    },
+    {
+      $limit: limit
+    }
+  ]);
+
+  return NextResponse.json(payments);
+}

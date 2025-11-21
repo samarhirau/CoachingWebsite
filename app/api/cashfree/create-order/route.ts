@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Unique orderId for this payment
-    const orderId = uuidv4();
+    const orderId = uuidv4().replace(/-/g, "").slice(0, 10);
     console.log("[PAYMENT] Creating payment with orderId:", orderId);
 
     const payment = await Payment.create({

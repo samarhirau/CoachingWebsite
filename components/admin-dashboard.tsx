@@ -239,7 +239,7 @@ export default function AdminDashboard() {
 
 
   // Example total fees calculation (could be fetched from an API)
-const { data: feesData = [] } = useSWR<{ amount: number }[]>('/api/fees?limit=1000', fetcher, { fallbackData: [] });
+// const { data: feesData = [] } = useSWR<{ amount: number }[]>('/api/fees?limit=1000', fetcher, { fallbackData: [] });
 
   const { data: studentList = [], isLoading: studentsLoading } = useStudents();
   const { data: assignmentList = [], isLoading: assignmentsLoading } = useAssignments();
@@ -248,14 +248,14 @@ const { data: feesData = [] } = useSWR<{ amount: number }[]>('/api/fees?limit=10
   // Handlers wrapped in useCallback to prevent unnecessary re-renders in children
   const handleToggleMenu = useCallback((section: string) => setOpenMenu(prev => (prev === section ? null : section)), [])
   const handleSetSection = useCallback((s: string) => setActiveSection(s), [])
-const totalFees = useMemo(() => feesData.reduce((sum, fee) => sum + fee.amount, 0), [feesData]);
+// const totalFees = useMemo(() => feesData.reduce((sum, fee) => sum + fee.amount, 0), [feesData]);
   // Dynamic stats wrapped in useMemo to only recalculate when dependencies change
 const dynamicStatsData = useMemo(() => [
   { title: 'Total Students', value: studentList.length, icon: Users, color: 'bg-indigo-500' },
   { title: 'Total Assignments', value: assignmentList.length, icon: ListChecks, color: 'bg-yellow-500' },
   { title: 'Total Courses', value: courseList.length, icon: BookOpen, color: 'bg-green-500' },
-  { title: 'Fees Collection', value: totalFees, icon: DollarSign, color: 'bg-red-500', prefix: '$' },
-], [studentList.length, assignmentList.length, courseList.length, totalFees]);
+  { title: 'Fees Collection', value: "55", icon: DollarSign, color: 'bg-red-500', prefix: '$' },
+], [studentList.length, assignmentList.length, courseList.length, ]);
 
   // Content rendering logic wrapped in useCallback
   const renderContent = useCallback(() => {
