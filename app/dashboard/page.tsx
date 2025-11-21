@@ -96,7 +96,7 @@ export default function DashboardPage() {
             )}
             {tab.value === "progress" && <ProgressTab assignments={assignments} />}
             {tab.value === "courses" && (
-              <MyCoursesTab />
+              <MyCoursesTab refreshFlag={false} />
             )}
             {tab.value === "overview" && <OverviewTab />}
           </div>
