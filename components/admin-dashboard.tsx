@@ -1,4 +1,5 @@
 
+
 "use client"
 import React, { useState, useMemo, useCallback, Suspense, lazy } from 'react'
 import useSWR from 'swr' // 🌟 New: Import useSWR for data fetching and caching
@@ -11,14 +12,14 @@ const QuickActionListView = lazy(() => import('@/components/admin/quickActionVie
 const NewsletterListView = lazy(() => import('@/components/admin/newsletterListView'))
 const GenericManagementView = lazy(() => import('@/components/admin/genericManagementView'))
 const AllStudentsView = lazy(() => import('@/components/admin/allStudentsView'))
-const AddStudentForm = lazy(() => import('./admin/addStudentForm'))
-const EditStudentForm = lazy(() => import('./admin/editstudentForm'))
-const FeesCollectionView = lazy(() => import('./admin/feesCollectionView'))
-const AllCoursesView = lazy(() => import('./admin/allCourseView'))
-const AddCourseForm = lazy(() => import('./admin/addCourseForm'))
-const AddAssignmentForm = lazy(() => import('./admin/addAssignmentForm'))
-const ReviewAssignmentsView = lazy(() => import('./admin/reviewAssignmentsView'))
-const FeesReceiptView = lazy(() => import('./admin/feesRecipView'))
+const AddStudentForm = lazy(() => import('@/components/admin/addStudentForm'))
+const EditStudentForm = lazy(() => import('@/components/admin/editstudentForm'))
+const FeesCollectionView = lazy(() => import('@/components/admin/feesCollectionView'))
+const AllCoursesView = lazy(() => import('@/components/admin/allCourseView'))
+const AddCourseForm = lazy(() => import('@/components/admin/addCourseForm'))
+const AddAssignmentForm = lazy(() => import('@/components/admin/addAssignmentForm'))
+const ReviewAssignmentsView = lazy(() => import('@/components/admin/reviewAssignmentsView'))
+const FeesReceiptView = lazy(() => import('@/components/admin/feesRecipView'))
 
 
 
@@ -61,7 +62,7 @@ interface DashboardStats {
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
 // Custom hooks to manage fetching and caching
-const useStudents = () => useSWR<Student[]>('/api/students?limit=5', fetcher, { fallbackData: [] });
+const useStudents = () => useSWR<Student[]>('/api/students', fetcher, { fallbackData: [] });
 const useCourses = () => useSWR<Course[]>('/api/courses', fetcher, { fallbackData: [] });
 const useAssignments = () => useSWR<any[]>('/api/assignments', fetcher, { fallbackData: [] });
 
@@ -203,7 +204,7 @@ const DashboardOverview: React.FC<{ stats: DashboardStats[]; studentList: Studen
 
         <tbody className="divide-y divide-gray-200 bg-white">
           {studentList
-            .slice(-8) 
+          .slice(0, 8) 
             .map((student: any) => (
               <tr key={student._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">up{shortId(student._id)}</td>
@@ -236,6 +237,7 @@ export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard')
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+const [pageTitle, setPageTitle] = useState("Dashboard");
 
 
   // Example total fees calculation (could be fetched from an API)
@@ -247,7 +249,12 @@ export default function AdminDashboard() {
   
   // Handlers wrapped in useCallback to prevent unnecessary re-renders in children
   const handleToggleMenu = useCallback((section: string) => setOpenMenu(prev => (prev === section ? null : section)), [])
-  const handleSetSection = useCallback((s: string) => setActiveSection(s), [])
+  // const handleSetSection = useCallback((s: string) => setActiveSection(s), [])
+  const handleSetSection = useCallback((s: string) => {
+  setActiveSection(s);
+  setPageTitle(s.split("/").pop() || "Dashboard");
+}, []);
+
 // const totalFees = useMemo(() => feesData.reduce((sum, fee) => sum + fee.amount, 0), [feesData]);
   // Dynamic stats wrapped in useMemo to only recalculate when dependencies change
 const dynamicStatsData = useMemo(() => [
@@ -380,7 +387,9 @@ const dynamicStatsData = useMemo(() => [
             </svg>
           </button>
 
-          <h2 className="text-2xl font-semibold text-gray-800 hidden sm:block">{activeSection.split('/').pop() || 'Dashboard'}</h2>
+<h2 className="text-2xl font-semibold text-gray-800 hidden sm:block">
+  {pageTitle}
+</h2>
 
           <div className="flex items-center space-x-4">
             <input type="search" placeholder="Search..." className="px-4 py-2 border border-gray-300 rounded-full focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 w-32 sm:w-64" />

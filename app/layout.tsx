@@ -2,10 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
-import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ToastProvider } from "@/components/toastProvider"
 import { AuthProvider } from "@/components/auth-provider"
 
@@ -89,7 +88,7 @@ export default function RootLayout({
        
           <AuthProvider>
           <Suspense fallback={null}>{children}</Suspense>
-          <Analytics />
+           <SpeedInsights />
           <ToastProvider />
         </AuthProvider>
       </body>
