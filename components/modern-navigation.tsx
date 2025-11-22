@@ -27,7 +27,7 @@ export async function ModernNavigation() {
             </div>
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4" />
-              <span>support@Upcoder.com</span>
+              <span>support@Upcoders.vercel.app</span>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-4">
@@ -66,7 +66,7 @@ export async function ModernNavigation() {
                 Courses
               </Link>
               
-              <div className="relative group">
+              {/* <div className="relative group">
                 <button className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium">
                   
                   <span>Center</span>
@@ -92,11 +92,11 @@ export async function ModernNavigation() {
                     Internship Programs
                   </Link>
                 </div>
-              </div>
-              <Link href="/gallery" className="text-foreground hover:text-primary transition-colors">
+              </div> */}
+              {/* <Link href="/gallery" className="text-foreground hover:text-primary transition-colors">
                 
                   <span>Gallery</span>
-              </Link>
+              </Link> */}
               <Link href="/blog" className="text-foreground hover:text-primary transition-colors">
                 Blog
               </Link>
@@ -110,9 +110,9 @@ export async function ModernNavigation() {
 
             {/* Action Buttons */}
             <div className="hidden md:flex items-center gap-3">
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 Free Demo
-              </Button>
+              </Button> */}
             {
                await isLoggedIn()  && user ? (
                   <Button size="sm" className="gradient-primary"

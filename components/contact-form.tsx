@@ -134,7 +134,6 @@ export function ContactForm() {
                           <SelectItem value="course-info">Course Information</SelectItem>
                           <SelectItem value="enrollment">Enrollment Process</SelectItem>
                           <SelectItem value="pricing">Pricing & Payment</SelectItem>
-                          <SelectItem value="placement">Job Placement</SelectItem>
                           <SelectItem value="technical">Technical Support</SelectItem>
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
@@ -142,21 +141,19 @@ export function ContactForm() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="course">Interested Course</Label>
-                    <Select onValueChange={(value) => handleInputChange("course", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a course" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full-stack">Full Stack Web Development</SelectItem>
-                        <SelectItem value="data-science">Data Science & AI</SelectItem>
-                        <SelectItem value="mobile">Mobile App Development</SelectItem>
-                        <SelectItem value="devops">DevOps & Cloud Computing</SelectItem>
-                        <SelectItem value="not-sure">Not sure yet</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                 <div className="space-y-2">
+  <Label htmlFor="course">Interested Course</Label>
+  <Select onValueChange={(value) => handleInputChange("course", value)}>
+    <SelectTrigger>
+      <SelectValue placeholder="I haven't decided yet" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="not-decided">I haven't decided yet</SelectItem>
+      <SelectItem value="general-inquiry">General Inquiry</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
 
                   <div className="space-y-2">
                     <Label htmlFor="message">Message *</Label>

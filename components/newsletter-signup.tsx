@@ -48,10 +48,10 @@ export function NewsletterSignup() {
     }
   }
 
-  const benefits = [
-    { icon: Gift, text: "Exclusive course discounts" },
-    { icon: TrendingUp, text: "Industry insights & trends" },
-    { icon: Users, text: "Community events & workshops" },
+   const benefits = [
+    { icon: Gift, text: "Exclusive course discounts starting ₹29" },
+    { icon: TrendingUp, text: "Coding tips & industry insights" },
+    { icon: Users, text: "Access to Upcoder community events" },
   ]
 
   return (
@@ -66,10 +66,10 @@ export function NewsletterSignup() {
                     <Mail className="h-8 w-8 text-primary" />
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                    Stay Updated with <span className="text-gradient">Upcoder</span>
+                    Join the <span className="text-gradient">Upcoder Newsletter</span>
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Join 5,000+ students and professionals who receive our weekly newsletter with coding tips, career advice, and exclusive course updates.
+                    Stay updated with coding tips, career advice, and exclusive offers on our ₹29 beginner-friendly courses.
                   </p>
                 </div>
 
@@ -144,5 +144,4 @@ export function NewsletterSignup() {
     </section>
   )
 }
-
 

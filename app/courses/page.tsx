@@ -691,7 +691,7 @@ export default function CoursesPage() {
                     </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid md:grid-cols-3 gap-8">
                     {/* Skeleton Loader: Show if we are loading the initial set (offset 0) */}
                     {(loading && courses.length === 0) ? (
                         Array.from({ length: 4 }).map((_, idx) => (
