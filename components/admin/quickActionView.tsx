@@ -27,7 +27,6 @@ const QuickActionListView: React.FC = () => {
   const fetchActions = useCallback(async (opts?: { silent?: boolean }) => {
     try {
       if (!opts?.silent) setLoading(true);
-      // cancel any previous request
       fetchSignalRef.current?.abort();
       const ctrl = new AbortController();
       fetchSignalRef.current = ctrl;
@@ -38,10 +37,8 @@ const QuickActionListView: React.FC = () => {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data?.message || "Failed to load");
 
-      // use status from DB (don't overwrite)
       setActions(Array.isArray(data.data) ? data.data : []);
       setTotalPages(data.pagination?.totalPages ?? 1);
     } catch (err: any) {
@@ -55,18 +52,15 @@ const QuickActionListView: React.FC = () => {
   useEffect(() => {
     fetchActions();
     return () => {
-      // cleanup abort when unmounting
       fetchSignalRef.current?.abort();
     };
-  }, [fetchActions, pathname]); // pathname ensures route changes re-fetch
+  }, [fetchActions, pathname]);
 
-  // Re-fetch when tab/window gets focus (helps when layout keeps component mounted)
   useEffect(() => {
     const onFocus = () => fetchActions({ silent: true });
     const onVisibility = () => {
       if (document.visibilityState === "visible") fetchActions({ silent: true });
     };
-
     window.addEventListener("focus", onFocus);
     document.addEventListener("visibilitychange", onVisibility);
 
@@ -99,11 +93,14 @@ const QuickActionListView: React.FC = () => {
 
       toast.success(data.message || "Processed");
 
-      // update local state: prefer marking processed (so UI shows it immediately)
-      setActions((prev) =>
-        prev.map((it) => (selected.has(it._id) ? { ...it, status: "processed" } : it))
-      );
+      setActions((prev) => prev.filter((it) => !selected.has(it._id)));
       setSelected(new Set());
+
+      try {
+        await fetch("/api/quick-action/cleanup", { method: "POST" });
+      } catch {
+        console.warn("Cleanup API failed");
+      }
     } catch (err) {
       toast.error("Processing failed");
     } finally {
@@ -111,62 +108,64 @@ const QuickActionListView: React.FC = () => {
     }
   };
 
-  const onRefreshClick = () => {
-    // explicit refresh (re-fetch from server)
-    fetchActions();
-  };
+  const onRefreshClick = () => fetchActions();
 
-  if (loading) return <p className="p-6">Loading actions...</p>;
+  if (loading) return <p className="p-6 text-gray-600">Loading actions...</p>;
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-3xl font-bold text-gray-800">Quick Actions</h2>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onRefreshClick}
-            className="px-4 py-2 bg-gray-200 rounded"
-            aria-label="Refresh actions"
-          >
-            Refresh
-          </button>
-        </div>
+        <button
+          onClick={onRefreshClick}
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition"
+        >
+          🔄 Refresh
+        </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg overflow-x-auto p-4">
+      <div className="bg-white rounded-xl shadow-lg overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-100">
             <tr>
-              <th className="p-3">Select</th>
-              <th className="p-3">User</th>
-              <th className="p-3">Action</th>
-              <th className="p-3">Created At</th>
-              <th className="p-3">Status</th>
+              <th className="p-3 text-left">Select</th>
+              <th className="p-3 text-left">User</th>
+              <th className="p-3 text-left">Action</th>
+              <th className="p-3 text-left">Created At</th>
+              <th className="p-3 text-left">Status</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {actions.map((item) => (
-              <tr key={item._id} className="border-b">
+              <tr
+                key={item._id}
+                className="hover:bg-gray-50 transition cursor-pointer"
+              >
                 <td className="p-3">
                   <input
                     type="checkbox"
                     checked={selected.has(item._id)}
                     onChange={() => toggleSelect(item._id)}
                     disabled={item.status === "processed"}
+                    className="w-5 h-5 accent-green-500"
                   />
                 </td>
                 <td className="p-3">
-                  <div>{item.userId?.name ?? "Unknown"}</div>
+                  <div className="font-medium text-gray-800">{item.userId?.name ?? "Unknown"}</div>
                   <div className="text-sm text-gray-500">{item.userId?.email ?? "-"}</div>
                 </td>
-                <td className="p-3 font-medium">{item.name}</td>
-                <td className="p-3 text-gray-500">{new Date(item.createdAt).toLocaleString()}</td>
+                <td className="p-3 font-medium text-gray-700">{item.name}</td>
+                <td className="p-3 text-gray-500 text-sm">{new Date(item.createdAt).toLocaleString()}</td>
                 <td className="p-3">
                   {item.status === "processed" ? (
-                    <span className="text-green-600 font-semibold">Processed</span>
+                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                      Processed
+                    </span>
                   ) : (
-                    <span className="text-yellow-600 font-semibold">Pending</span>
+                    <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                      Pending
+                    </span>
                   )}
                 </td>
               </tr>
@@ -174,21 +173,23 @@ const QuickActionListView: React.FC = () => {
           </tbody>
         </table>
 
-        {actions.length === 0 && <p className="mt-4 text-gray-500">No actions found</p>}
+        {actions.length === 0 && (
+          <p className="mt-4 text-center text-gray-500 py-4">No actions found</p>
+        )}
 
         <div className="flex justify-between items-center mt-4">
-          <div>
+          <div className="flex gap-2">
             <button
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
               disabled={page === 1}
-              className="px-4 py-2 bg-gray-200 rounded"
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition disabled:opacity-50"
             >
               Prev
             </button>
             <button
               onClick={() => setPage((p) => p + 1)}
               disabled={page >= totalPages}
-              className="ml-2 px-4 py-2 bg-gray-200 rounded"
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition disabled:opacity-50"
             >
               Next
             </button>
@@ -197,7 +198,7 @@ const QuickActionListView: React.FC = () => {
           <button
             onClick={processActions}
             disabled={processing || selected.size === 0}
-            className={`px-6 py-2 rounded text-white ${
+            className={`px-6 py-2 rounded-lg text-white font-semibold transition ${
               processing ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
             }`}
           >

@@ -20,7 +20,7 @@ const AddCourseForm = lazy(() => import('@/components/admin/addCourseForm'))
 const AddAssignmentForm = lazy(() => import('@/components/admin/addAssignmentForm'))
 const ReviewAssignmentsView = lazy(() => import('@/components/admin/reviewAssignmentsView'))
 const FeesReceiptView = lazy(() => import('@/components/admin/feesRecipView'))
-
+const  ContactListView = lazy(() => import ('@/components/admin/contactListView' ))
 
 
 
@@ -76,6 +76,7 @@ const menuStructure = [
   { title: 'Reports', section: 'reports', icon: BarChart, submenu: [] },
   { title: 'Newslatter', section: 'Newslatter', icon: MailIcon, submenu: [] },
   { title: 'Quick Actions', section: 'quick-actions', icon: Zap, submenu: [] },
+  { title: 'Contacts', section: 'Contacts', icon: Zap, submenu: [] },
 ]
 
 // --- StatCard Component (Memoized) ---
@@ -347,6 +348,12 @@ const dynamicStatsData = useMemo(() => [
         return (
           <Suspense fallback={<div>Loading View...</div>}>
             <QuickActionListView />
+          </Suspense>
+        )
+      case 'Contacts':
+        return (
+          <Suspense fallback={<div>Loading View...</div>}>
+            <ContactListView />
           </Suspense>
         )
       default:
