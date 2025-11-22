@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
         "x-api-version": "2023-08-01",
         "x-client-id": process.env.CASHFREE_APP_ID!,
         "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
+          "x-request-id": uuidv4(),
       },
       body: JSON.stringify({
         order_id: orderId,
