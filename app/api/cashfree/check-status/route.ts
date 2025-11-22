@@ -1,5 +1,7 @@
-
-
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 // app/api/cashfree/check-status/route.ts
 import axios from "axios";
@@ -9,7 +11,7 @@ import Enrollment from "@/models/Enrollment";
 import Payment from "@/models/Payment";
 import "@/models/Course";
 
-export const dynamic = 'force-dynamic';
+
 
 export async function GET(req: { url: string | URL }) {
   await connectDB();
