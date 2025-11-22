@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Cashfree order creation
-    const cfResponse = await fetch("https://sandbox.cashfree.com/pg/orders", {
+    const cfResponse = await fetch("https://api.cashfree.com/pg/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

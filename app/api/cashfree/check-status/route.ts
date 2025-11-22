@@ -39,7 +39,7 @@ export async function GET(req: { url: string | URL }) {
     // 2️⃣ Optional: Get Cashfree order status
     let cfStatus = null;
     try {
-      const cfResponse = await axios.get(`https://sandbox.cashfree.com/pg/orders/${orderId}`, {
+      const cfResponse = await axios.get(`https://api.cashfree.com/pg/orders/${orderId}`, {
         headers: {
           "x-client-id": process.env.CASHFREE_APP_ID!,
           "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
