@@ -12,25 +12,64 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+
   async headers() {
     return [
+      // Cache static assets for 1 year
       {
-        source: "/(.*)", // sab routes ke liye
+        source: "/_next/static/(.*)",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable", // long-term caching
+            value: "public, max-age=31536000, immutable",
           },
           {
             key: "X-Frame-Options",
-            value: "SAMEORIGIN", // best practice
+            value: "SAMEORIGIN",
           },
           {
             key: "X-Content-Type-Options",
-            value: "nosniff", // best practice
+            value: "nosniff",
           },
         ],
       },
+      // No caching for HTML pages
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+        ],
+      },
+      // No caching for API routes
+      {
+        source: "/api/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+        ],
+      },
+  
     ]
   },
 }
