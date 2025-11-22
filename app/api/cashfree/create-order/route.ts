@@ -68,7 +68,6 @@ export async function POST(req: NextRequest) {
         "x-api-version": "2023-08-01",
         "x-client-id": process.env.CASHFREE_APP_ID!,
         "x-client-secret": process.env.CASHFREE_SECRET_KEY!,
-          "x-request-id": uuidv4(),
       },
       body: JSON.stringify({
         order_id: orderId,
@@ -81,8 +80,8 @@ export async function POST(req: NextRequest) {
           customer_phone: formData.phone,
         },
         order_meta: {
-          return_url: `${process.env.NEXTAUTH_URL}/payment-status?order_id={order_id}`,
-          notify_url: `${process.env.NEXTAUTH_URL}/api/cashfree/payment-callback`,
+          return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-status?order_id={order_id}`,
+          notify_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/cashfree/payment-callback`,
         },
       }),
     });
