@@ -1,3 +1,10 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
+
+
+
+
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import CourseProgress, { ICourseProgress } from "@/models/CourseProgress";
