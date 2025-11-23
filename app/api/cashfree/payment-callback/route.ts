@@ -58,80 +58,64 @@
 
 
 
-// app/api/cashfree/webhook/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import Payment from "@/models/Payment";
 import Enrollment from "@/models/Enrollment";
+import connectDB from "@/lib/mongoDb";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  try {
-    const rawBody = await req.text();
-    const timestamp = req.headers.get("x-webhook-timestamp") || "";
-    const signature = req.headers.get("x-webhook-signature") || "";
+  const rawBody = await req.text();
+  const timestamp = req.headers.get("x-webhook-timestamp") || "";
+  const signature = req.headers.get("x-webhook-signature") || "";
 
-    // Generate expected signature
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.CASHFREE_WEBHOOK_SECRET!)
-      .update(timestamp + rawBody)
-      .digest("base64");
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.CASHFREE_WEBHOOK_SECRET!)
+    .update(timestamp + rawBody)
+    .digest("base64");
 
-    if (expectedSignature !== signature) {
-      return NextResponse.json({ success: false, message: "Invalid signature" }, { status: 401 });
-    }
-
-    // Verified payload
-    const payload = JSON.parse(rawBody);
-    console.log("Webhook verified:", payload);
-
-    // TODO: Handle payment / refund / subscription events
-    const orderId = payload?.data?.order?.order_id;
-    const paymentStatus = payload?.data?.payment?.payment_status;
-    const transactionId = payload?.data?.payment?.cf_payment_id;
-    const paymentTime = payload?.data?.payment?.payment_time;
-    
-    // Webhook को तुरंत Ack करने के लिए early exit
-    if (payload.type === 'ORDER_CREATED') {
-         return NextResponse.json({ success: true, message: "Order created acknowledged" });
-    }
-
-    if (!orderId || !paymentStatus) {
-       console.error("Missing critical data in payload:", { orderId, paymentStatus });
-       return NextResponse.json({ success: false, message: "Missing order_id or payment_status" }, { status: 400 });
-    }
-    
-    // 5. Database अपडेट लॉजिक
-    const payment = await Payment.findOne({ orderId });
-    if (!payment) {
-        console.error("Payment record not found for:", orderId);
-        // Cashfree को success response देना बेहतर है ताकि वे retry न करें
-        return NextResponse.json({ success: true, message: "Order processed before or not found" }, { status: 200 });
-    }
-
-    // केवल तभी अपडेट करें जब वर्तमान status 'pending' हो
-    if (payment.status !== 'pending') {
-        return NextResponse.json({ success: true, message: "Payment already processed" }, { status: 200 });
-    }
-
-    const isSuccess = paymentStatus === "SUCCESS";
-    payment.status = isSuccess ? "success" : "failed";
-    payment.transactionId = transactionId;
-    payment.paidAt = isSuccess ? new Date(paymentTime) : null;
-    await payment.save();
-
-    // Enrollment status अपडेट करें
-    const enrollment = await Enrollment.findById(payment.enrollment);
-    if (enrollment) {
-      enrollment.paymentStatus = isSuccess ? "paid" : "failed";
-      enrollment.paymentId = transactionId;
-      await enrollment.save();
-    }
-
-    // 6. Cashfree को success response दें
-    return NextResponse.json({ success: true, message: "Webhook processed successfully" });
-
-  } catch (err: any) {
-    console.error("Webhook Error:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+  if (expectedSignature !== signature) {
+    return NextResponse.json({ success: false, message: "Invalid signature" }, { status: 401 });
   }
+
+  // ✅ Turant acknowledge
+  const response = NextResponse.json({ success: true, message: "Webhook received" });
+
+  // Background processing without delaying response
+  (async () => {
+    try {
+      await connectDB();
+      const payload = JSON.parse(rawBody);
+
+      const orderId = payload?.data?.order?.order_id;
+      const paymentStatus = payload?.data?.payment?.payment_status;
+      const transactionId = payload?.data?.payment?.cf_payment_id;
+      const paymentTime = payload?.data?.payment?.payment_time;
+
+      if (!orderId || !paymentStatus) return;
+
+      const payment = await Payment.findOne({ orderId });
+      if (!payment || payment.status !== "pending") return;
+
+      const isSuccess = paymentStatus === "SUCCESS";
+      payment.status = isSuccess ? "success" : "failed";
+      payment.transactionId = transactionId;
+      payment.paidAt = isSuccess ? new Date(paymentTime) : null;
+      await payment.save();
+
+      const enrollment = await Enrollment.findById(payment.enrollment);
+      if (enrollment) {
+        enrollment.paymentStatus = isSuccess ? "paid" : "failed";
+        enrollment.paymentId = transactionId;
+        await enrollment.save();
+      }
+    } catch (err) {
+      console.error("Webhook background processing error:", err);
+    }
+  })();
+
+  return response;
 }
