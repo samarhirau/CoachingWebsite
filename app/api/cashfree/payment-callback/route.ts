@@ -50,20 +50,43 @@
 //     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
 //   }
 // }
+
+
+
+
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import Enrollment from "@/models/Enrollment";
 import Payment from "@/models/Payment";
 
+function verifySignature(rawBody: string, signature: string) {
+  const secret = process.env.CASHFREE_WEBHOOK_SECRET!;
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(rawBody)
+    .digest("hex");
+
+  return expected === signature;
+}
+
 export async function POST(req: NextRequest) {
   await connectDB();
 
   try {
-    const payload = await req.json();
-    console.log("Webhook payload:", payload);
+    const rawBody = await req.text(); // use raw text
+    const signature = req.headers.get("x-webhook-signature");
+
+    if (!verifySignature(rawBody, signature || "")) {
+      console.log("❌ Invalid signature");
+      return NextResponse.json({ success: false, message: "Invalid signature" }, { status: 401 });
+    }
+
+    const payload = JSON.parse(rawBody);
+    console.log("✅ Verified Webhook Payload:", payload);
 
     const orderId = payload?.data?.order?.order_id;
     const paymentStatus = payload?.data?.payment?.payment_status;
