@@ -174,7 +174,7 @@ export async function POST(req: NextRequest) {
         },
         order_meta: {
           return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-status?order_id={order_id}`,
-          notify_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/cashfree/webhook`,
+          notify_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/cashfree/payment-callback`,
         },
       }),
     });
