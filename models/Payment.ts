@@ -5,7 +5,7 @@ const paymentSchema = new mongoose.Schema({
   course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
   amount: { type: Number, required: true },
 
-  status: { type: String, enum: ["pending", "success", "failed"], default: "pending" },
+  status: { type: String, enum: ["pending", "success", "failed" ,"refunded"], default: "pending" },
   paidAt: { type: Date },
   enrollment: { type: mongoose.Schema.Types.ObjectId, ref: "Enrollment" },
   transactionId: { type: String },  

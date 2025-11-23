@@ -1,4 +1,4 @@
-
+// app/api/razorpay/webhook/route.ts
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import connectDB from "@/lib/mongoDb";
@@ -54,6 +54,17 @@ export async function POST(req: Request) {
         await payment.save();
 
         await Enrollment.findByIdAndUpdate(payment.enrollment, { paymentStatus: "failed" });
+      }
+    } else if (event.event === "refund.processed") {
+      const { payment_id, id: refundId } = event.payload.refund.entity;
+
+      const payment = await Payment.findOne({ transactionId: payment_id });
+      if (payment) {
+        payment.status = "refunded";
+        payment.refundId = refundId;
+        await payment.save();
+
+        await Enrollment.findByIdAndUpdate(payment.enrollment, { paymentStatus: "refunded" });
       }
     }
 
