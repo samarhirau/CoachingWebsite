@@ -601,80 +601,94 @@ export function EnrollmentModal({ isOpen, onClose, course }: EnrollmentModalProp
     );
 
   // ------------------ Razorpay Checkout ------------------
+const loadRazorpayScript = () =>
+  new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
 
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
-    const loadRazorpayScript = () =>
-    new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
+  const res = await loadRazorpayScript();
+  if (!res) return alert("Razorpay SDK failed to load.");
 
+  try {
+    const orderRes = await fetch("/api/razorpay/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        studentId: user._id,
+        courseId: course._id,
+        amount: discountedPrice,
+        formData,
+      }),
+    }).then((res) => res.json());
 
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    if (!orderRes.success) throw new Error(orderRes.message || "Order creation failed");
 
-    const res = await loadRazorpayScript();
-    if (!res) return alert("Razorpay SDK failed to load.");
+    // ✅ Razorpay QR disabled version
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: orderRes.order.amount,
+      currency: orderRes.order.currency,
+      name: "Upcoder",
+      description: course.title,
+      order_id: orderRes.order.id,
 
-    try {
-      // 1️⃣ Create order on backend
-      const orderRes = await fetch("/api/razorpay/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentId: user._id,
-          courseId: course._id,
-          amount: discountedPrice ,
-          formData,
-        }),
-      }).then((res) => res.json());
+      handler: async (response: any) => {
+        const verifyRes = await fetch("/api/razorpay/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...response,
+            enrollmentId: orderRes.enrollment._id,
+          }),
+        }).then((res) => res.json());
 
-      if (!orderRes.success) throw new Error(orderRes.message || "Order creation failed");
+        if (verifyRes.success) {
+          window.location.href = `/payment-status?order_id=${response.razorpay_order_id}`;
+        } else {
+          alert("Payment verification failed");
+        }
+      },
 
-      // 2️⃣ Open Razorpay checkout
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: orderRes.order.amount,
-        currency: orderRes.order.currency,
-        name: "Upcoder",
-        description: course.title,
-        order_id: orderRes.order.id,
-        handler: async (response: any) => {
-          // 3️⃣ Verify payment
-          const verifyRes = await fetch("/api/razorpay/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...response, enrollmentId: orderRes.enrollment._id }),
-          }).then((res) => res.json());
+      prefill: {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        contact: formData.phone,
+      },
 
-          if (verifyRes.success) {
-            window.location.href = `/payment-status?order_id=${response.razorpay_order_id}`;
-          } else {
-            alert("Payment verification failed");
-          }
-        },
-        prefill: {
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          contact: formData.phone,
-        },
-        theme: { color: "#3399cc" },
-      };
+      //  🚫 Disable QR, Allow UPI Intent Only
+      method: {
+        upi: true,
+        card: true,
+        netbanking: true,
+        wallet: false,
+        emi: false,
+      },
 
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (err: any) {
-      console.error(err);
-      alert(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+      upi: {
+        method: ["upi_intent"], // only intent, NO QR
+      },
+
+      theme: { color: "#3399cc" },
+    };
+
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
+  } catch (err: any) {
+    console.error(err);
+    alert(err.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 
   return (

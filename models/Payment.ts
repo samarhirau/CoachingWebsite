@@ -9,7 +9,7 @@ const paymentSchema = new mongoose.Schema({
   paidAt: { type: Date },
   enrollment: { type: mongoose.Schema.Types.ObjectId, ref: "Enrollment" },
   transactionId: { type: String },  
-orderId : { type: String, required: true, unique: true }, 
+orderId : { type: String, required: true }, 
 failureReason: { type: String },
 failureDescription: { type: String },
   createdAt: { type: Date, default: Date.now }

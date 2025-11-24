@@ -1,156 +1,137 @@
+    // import { NextResponse } from "next/server";
+    // import crypto from "crypto";
+    // import connectDB from "@/lib/mongoDb";
+    // import Enrollment from "@/models/Enrollment";
+    // import Payment from "@/models/Payment";
 
+    // export const dynamic = "force-dynamic";
 
+    // export async function POST(req: Request) {
+    //   await connectDB();
 
+    //   const rawBody = await req.text();
+    //   const signature = req.headers.get("x-razorpay-signature");
 
+    //   const expected = crypto
+    //     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
+    //     .update(rawBody)
+    //     .digest("hex");
 
+    //   if (expected !== signature) {
+    //     return NextResponse.json({ success: false, message: "Invalid signature" }, { status: 400 });
+    //   }
 
-// import { NextResponse } from "next/server";
-// import crypto from "crypto";
-// import connectDB from "@/lib/mongoDb";
-// import Enrollment from "@/models/Enrollment";
-// import Payment from "@/models/Payment";
+    //   const event = JSON.parse(rawBody);
+    //   const type = event.event;
 
-// export const dynamic = "force-dynamic";
+    //   const payment = event.payload.payment?.entity;
+    //   const order = event.payload.order?.entity;
 
-// export async function POST(req: Request) {
-//   await connectDB();
+    //   const orderId = payment?.order_id || order?.id;
+    //   const paymentId = payment?.id;
 
-//   const rawBody = await req.text();
-//   const signature = req.headers.get("x-razorpay-signature") || "";
+    //   if (!orderId) return NextResponse.json({ success: true });
 
-//   // Verify webhook signature using live webhook secret
-//   const generated_signature = crypto
-//     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-//     .update(rawBody)
-//     .digest("hex");
+    //   // 1️⃣ PAYMENT SUCCESS (captured)
+    //   if (type === "payment.captured") {
+    //     await Enrollment.findOneAndUpdate({ orderId }, { paymentStatus: "paid" });
+    //     await Payment.findOneAndUpdate(
+    //       { orderId },
+    //       { status: "success", transactionId: paymentId, paidAt: new Date() }
+    //     );
+    //     return NextResponse.json({ success: true });
+    //   }
 
-//   if (generated_signature !== signature) {
-//     // Log the invalid signature attempt for security review
-//     console.error("Invalid Razorpay Webhook Signature Received!");
-//     return NextResponse.json({ success: false, message: "Invalid signature" }, { status: 400 });
-//   }
+    //   // 2️⃣ BACKUP SUCCESS
+    //   if (type === "order.paid") {
+    //     await Enrollment.findOneAndUpdate({ orderId }, { paymentStatus: "paid" });
+    //     await Payment.findOneAndUpdate(
+    //       { orderId },
+    //       { status: "success", paidAt: new Date() }
+    //     );
+    //     return NextResponse.json({ success: true });
+    //   }
 
-//   const event = JSON.parse(rawBody);
+    //   // 3️⃣ FAILURE
+    //   if (type === "payment.failed") {
+    //     await Enrollment.findOneAndUpdate({ orderId }, { paymentStatus: "failed" });
+    //     await Payment.findOneAndUpdate(
+    //       { orderId },
+    //       { status: "failed", transactionId: paymentId }
+    //     );
+    //     return NextResponse.json({ success: true });
+    //   }
 
-//   try {
-//     if (event.event === "payment.captured") {
-//       const { order_id, id: paymentId } = event.payload.payment.entity;
+    //   return NextResponse.json({ success: true });
+    // }
+    // working code above
 
-//       const payment = await Payment.findOne({ orderId: order_id });
-//       if (payment) {
-//         payment.status = "paid";
-//         payment.transactionId = paymentId;
-//         payment.paidAt = new Date();
-//         // Clear any previous error/failure details
-//         payment.failureReason = undefined; 
-//         payment.failureDescription = undefined;
-//         await payment.save();
-
-//         await Enrollment.findByIdAndUpdate(payment.enrollment, { paymentStatus: "paid" });
-//       }
-//     } else if (event.event === "payment.failed") {
-//       const { order_id, id: paymentId, error_code, error_description } = event.payload.payment.entity;
-      
-//       const payment = await Payment.findOne({ orderId: order_id });
-//       if (payment) {
-//         payment.status = "failed";
-//         payment.transactionId = paymentId;
-        
-//         // --- LOGGING THE FAILURE REASON FOR DIAGNOSIS ---
-//         payment.failureReason = error_code || "UNKNOWN_ERROR";
-//         payment.failureDescription = error_description || "No description provided by Razorpay.";
-//         console.error(`Payment Failed for Order ${order_id}: ${payment.failureReason} - ${payment.failureDescription}`);
-//         // ------------------------------------------------
-        
-//         await payment.save();
-
-//         await Enrollment.findByIdAndUpdate(payment.enrollment, { paymentStatus: "failed" });
-//       }
-//     } else if (event.event === "refund.processed") {
-//       const { payment_id, id: refundId } = event.payload.refund.entity;
-
-//       const payment = await Payment.findOne({ transactionId: payment_id });
-//       if (payment) {
-//         payment.status = "refunded";
-//         payment.refundId = refundId;
-//         await payment.save();
-
-//         await Enrollment.findByIdAndUpdate(payment.enrollment, { paymentStatus: "refunded" });
-//       }
-//     }
-
-//     return NextResponse.json({ success: true });
-//   } catch (err: any) {
-//     console.error("Webhook handling error:", err);
-//     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
-//   }
-// }
-
-
-
-
-
-// app/api/razorpay/webhook/route.ts
-import { NextResponse } from "next/server";
+    import { NextResponse } from "next/server";
 import crypto from "crypto";
 import connectDB from "@/lib/mongoDb";
 import Enrollment from "@/models/Enrollment";
 import Payment from "@/models/Payment";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export async function POST(req: Request) {
   await connectDB();
 
   const rawBody = await req.text();
-  const signature = req.headers.get("x-razorpay-signature");
+  const receivedSignature = req.headers.get("x-razorpay-signature") || "";
 
-  const expected = crypto
+  const expectedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
     .update(rawBody)
     .digest("hex");
 
-  if (expected !== signature) {
+  if (expectedSignature !== receivedSignature) {
+    console.warn("Invalid webhook signature");
     return NextResponse.json({ success: false, message: "Invalid signature" }, { status: 400 });
   }
 
   const event = JSON.parse(rawBody);
   const type = event.event;
 
-  // Extract IDs safely
-  const payment = event.payload.payment?.entity;
-  const order = event.payload.order?.entity;
+  // fetch orderId safely from payload
+  const paymentEntity = event.payload?.payment?.entity;
+  const orderEntity = event.payload?.order?.entity;
 
-  const orderId = payment?.order_id || order?.id;
-  const paymentId = payment?.id;
+  const orderId = paymentEntity?.order_id || orderEntity?.id;
+  const paymentId = paymentEntity?.id;
 
-  // SUCCESS CASE 1 (Primary)
-  if (type === "payment.captured") {
-    await Enrollment.findOneAndUpdate({ orderId }, { paymentStatus: "paid" });
-    await Payment.findOneAndUpdate(
-      { orderId },
-      { status: "success", transactionId: paymentId }
-    );
+  if (!orderId) return NextResponse.json({ success: true });
+
+  // find payment by orderId (we upserted it on create-order)
+  const paymentDoc = await Payment.findOne({ orderId });
+
+  // If payment record not found, nothing to update (safe exit)
+  if (!paymentDoc) {
+    console.log("Webhook: no Payment doc for orderId", orderId);
     return NextResponse.json({ success: true });
   }
 
-  // SUCCESS CASE 2 (Backup)
-  if (type === "order.paid") {
-    await Enrollment.findOneAndUpdate({ orderId }, { paymentStatus: "paid" });
+  const enrollmentId = paymentDoc.enrollment;
+
+  // SUCCESS: payment captured or order paid
+  if (type === "payment.captured" || type === "order.paid") {
     await Payment.findOneAndUpdate(
       { orderId },
-      { status: "success" }
+      { status: "success", transactionId: paymentId || paymentDoc.transactionId, paidAt: new Date() }
     );
+    if (enrollmentId) {
+      await Enrollment.findByIdAndUpdate(enrollmentId, { paymentStatus: "paid", paymentId: paymentId || paymentDoc.transactionId });
+    }
     return NextResponse.json({ success: true });
   }
 
-  // FAILURE CASE
+  // FAILED
   if (type === "payment.failed") {
-    await Enrollment.findOneAndUpdate({ orderId }, { paymentStatus: "failed" });
-    await Payment.findOneAndUpdate(
-      { orderId },
-      { status: "failed", transactionId: paymentId }
-    );
+    await Payment.findOneAndUpdate({ orderId }, { status: "failed", transactionId: paymentId || paymentDoc.transactionId });
+    if (enrollmentId) {
+      await Enrollment.findByIdAndUpdate(enrollmentId, { paymentStatus: "failed" });
+    }
     return NextResponse.json({ success: true });
   }
 
