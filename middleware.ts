@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
   const { pathname } = request.nextUrl
 
-  if (!token && (pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || pathname.startsWith('/course'))) {
+  if (!token && (pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || pathname.match(/^\/course\/[^/]+$/) )) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
