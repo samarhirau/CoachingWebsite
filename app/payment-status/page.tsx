@@ -28,16 +28,7 @@ export default function PaymentSuccess() {
 
   const payment = data?.payment;
 
-  // Show confetti and auto-redirect
-  // useEffect(() => {
-  //   if (payment?.orderStatus?.toLowerCase() === "paid") {
-  //     setShowConfetti(true);
-  //     const timer = setTimeout(() => {
-  //       window.location.href = "/dashboard";
-  //     }, 5000); // redirect after 5s
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [payment]);
+
 
   // Generate PDF receipt
   const generatePDF = async () => {
