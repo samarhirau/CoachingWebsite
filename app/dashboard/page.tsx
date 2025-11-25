@@ -51,41 +51,46 @@ export default function DashboardPage() {
       <ModernNavigation />
 
       {/* Header */}
-      <header className="bg-white border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+     <header className="bg-white border-b shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-800 font-bold text-lg">
               {user.name.charAt(0).toUpperCase()}
             </div>
-            <div className="flex flex-col">
-            <h1 className="text-2xl font-bold text-gray-800">Welcome back, {user.name}!</h1>
-              <p className="text-sm text-gray-400 ">- {user?.email}</p>
-              </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Welcome back, {user.name}!</h1>
+              <p className="text-sm text-gray-400">{user?.email}</p>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm"><Bell className="h-4 w-4 mr-2" /> Notifications</Button>
-            <Button variant="outline" size="sm"><MessageSquare className="h-4 w-4 mr-2" /> Support</Button>
+
+          <div className="flex items-center gap-2 sm:gap-3 justify-end">
+            <Button variant="outline" size="sm" className="text-sm">
+              <Bell className="h-4 w-4 mr-2" /> Notifications
+            </Button>
+            <Button variant="outline" size="sm" className="text-sm">
+              <MessageSquare className="h-4 w-4 mr-2" /> Support
+            </Button>
             <LogoutConfirmation />
           </div>
         </div>
       </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Tabs */}
-        <div className="flex border-b border-gray-200 grid grid-cols-4">
-          {TABS.map(tab => (
-            <button
-              key={tab.value}
-              className={`px-4 py-3 text-base font-medium border-b-2 transition-colors duration-200 ${
-                activeTab === tab.value
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-              onClick={() => setActiveTab(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
+<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6"> 
+  {/* Tabs */} 
+  <div className="flex border-b border-gray-200 grid grid-cols-4">
+            {TABS.map(tab => (
+              <button
+                key={tab.value}
+                className={`px-4 py-3 whitespace-nowrap text-sm sm:text-base font-medium border-b-2 transition-colors ${
+                  activeTab === tab.value
+                    ? "border-indigo-600 text-indigo-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+                onClick={() => setActiveTab(tab.value)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          
         </div>
 
         {/* Tab Content */}

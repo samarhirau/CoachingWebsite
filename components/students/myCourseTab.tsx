@@ -1,6 +1,8 @@
 
 
 
+
+
 // "use client";
 
 // import { BookOpen, Zap } from "lucide-react";
@@ -9,36 +11,43 @@
 // import { useAuth } from "@/components/auth-provider";
 // import { Skeleton } from "../ui/skeleton";
 // import useSWR from "swr";
-// import {CourseCard} from "@/components/students/Course";
+// import { useEffect } from "react";
+// import { CourseCard } from "@/components/students/Course";
 
-// type Course = {
-//   _id: string;
-//   slug: string;
-//   title: string;
-//   status?: string;
-//   price: number;
-//   originalPrice?: number;
-//   duration?: string;
-//   features?: string[];
-//   timeline?: string[];
-//   enrollments?: number;
-//   rating?: number;
-//   progress?: number;
+// const fetcher = async (url: string) => {
+//   const res = await fetch(url, {
+//     credentials: "include",
+//     cache: "no-store",
+//   });
 
+//   if (!res.ok) throw new Error("Failed to load data");
+//   return res.json();
 // };
 
-// const fetcher = (url: string) =>
-//   fetch(url, { credentials: "include", cache: "no-store" }).then((res) => res.json());
-
-// const MyCoursesTab = () => {
+// export default function MyCoursesTab({ refreshFlag }: { refreshFlag: boolean }) {
 //   const { user } = useAuth();
 
-//   const { data, error, isLoading, mutate } = useSWR(
+//   const {
+//     data,
+//     error,
+//     isLoading,
+//     mutate,
+//   } = useSWR(
 //     user ? `/api/enrollments/list?studentId=${user._id}` : null,
-//     fetcher
+//     fetcher,
+//     {
+//       revalidateOnFocus: true,
+//       revalidateOnReconnect: true,
+//       dedupingInterval: 0,
+//     }
 //   );
 
-//   const courses: Course[] = (data?.courses || []).map((course: any) => ({
+//   // 🔥 Refresh whenever dashboard toggles refreshFlag
+//   useEffect(() => {
+//     if (user) mutate(); // force fresh fetch
+//   }, [refreshFlag, user, mutate]);
+
+//   const courses = (data?.courses || []).map((course: any) => ({
 //     _id: course._id,
 //     slug: course.slug,
 //     title: course.title,
@@ -50,23 +59,33 @@
 //     timeline: course.timeline,
 //     enrollments: course.maxStudents || 100,
 //     rating: course.rating,
-//     progress: Math.floor(Math.random() * 100),
+//     progress: 70,
 //   }));
 
-//   if (isLoading) return <Skeleton className="h-48 w-full" />;
-//   if (error) return <p className="text-red-500 text-center py-10">{error.message || "Something went wrong"}</p>;
+//   if (isLoading)
+//     return <Skeleton className="h-48 w-full" />;
+
+//   if (error)
+//     return (
+//       <p className="text-red-500 text-center py-10">
+//         {error.message || "Something went wrong"}
+//       </p>
+//     );
 
 //   return (
 //     <div className="space-y-6">
+//       {/* Header */}
 //       <div className="flex items-center justify-between">
 //         <h2 className="text-2xl font-bold text-gray-800">
 //           My Enrolled Courses ({courses.length})
 //         </h2>
-//         <div className="gap-4 flex">
+
+//         <div className="flex gap-4">
 //           <Button variant="outline" onClick={() => mutate()}>
 //             <Zap className="h-4 w-4 mr-2" />
 //             Refresh
 //           </Button>
+
 //           <Button variant="outline">
 //             <BookOpen className="h-4 w-4 mr-2" />
 //             Explore Catalog
@@ -74,8 +93,9 @@
 //         </div>
 //       </div>
 
+//       {/* Courses */}
 //       {courses.length > 0 ? (
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:grid-cols-2">
+//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 //           {courses.map((course) => (
 //             <CourseCard key={course._id} course={course} />
 //           ))}
@@ -85,25 +105,14 @@
 //           <CardContent className="p-6 text-center space-y-3">
 //             <Zap className="h-10 w-10 text-indigo-500 mx-auto" />
 //             <h3 className="text-xl font-semibold text-gray-800">No Active Courses</h3>
-//             <p className="text-gray-500">
-//               It looks like you haven't started any courses yet. Enroll in a new course to begin your journey!
-//             </p>
-//             <Button className="gradient-primary">Explore New Courses</Button>
+//             <p className="text-gray-500">You haven’t enrolled in any courses yet.</p>
+//             <Button className="gradient-primary">Explore Courses</Button>
 //           </CardContent>
 //         </Card>
 //       )}
 //     </div>
 //   );
-// };
-
-// export default MyCoursesTab;
-
-
-
-
-
-
-
+// }
 
 
 
@@ -131,25 +140,38 @@ const fetcher = async (url: string) => {
 export default function MyCoursesTab({ refreshFlag }: { refreshFlag: boolean }) {
   const { user } = useAuth();
 
-  const {
-    data,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR(
-    user ? `/api/enrollments/list?studentId=${user._id}` : null,
+  const canFetch = user && user._id;
+
+  const { data, error, isLoading, mutate } = useSWR(
+    canFetch ? `/api/enrollments/list?studentId=${user._id}` : null,
     fetcher,
     {
       revalidateOnFocus: true,
-      revalidateOnReconnect: true,
       dedupingInterval: 0,
     }
   );
 
-  // 🔥 Refresh whenever dashboard toggles refreshFlag
   useEffect(() => {
-    if (user) mutate(); // force fresh fetch
-  }, [refreshFlag, user, mutate]);
+    if (canFetch) mutate();
+  }, [refreshFlag, canFetch, mutate]);
+
+  if (!user) return <Skeleton className="h-48 w-full" />;
+
+  if (isLoading)
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((n) => (
+          <Skeleton key={n} className="h-48 w-full" />
+        ))}
+      </div>
+    );
+
+  if (error)
+    return (
+      <p className="text-red-500 text-center py-10">
+        Failed to load courses
+      </p>
+    );
 
   const courses = (data?.courses || []).map((course: any) => ({
     _id: course._id,
@@ -166,40 +188,29 @@ export default function MyCoursesTab({ refreshFlag }: { refreshFlag: boolean }) 
     progress: 70,
   }));
 
-  if (isLoading)
-    return <Skeleton className="h-48 w-full" />;
-
-  if (error)
-    return (
-      <p className="text-red-500 text-center py-10">
-        {error.message || "Something went wrong"}
-      </p>
-    );
-
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="text-2xl font-bold text-gray-800">
           My Enrolled Courses ({courses.length})
         </h2>
 
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3">
           <Button variant="outline" onClick={() => mutate()}>
-            <Zap className="h-4 w-4 mr-2" />
-            Refresh
+            <Zap className="h-4 w-4 mr-2" /> Refresh
           </Button>
 
           <Button variant="outline">
-            <BookOpen className="h-4 w-4 mr-2" />
-            Explore Catalog
+            <BookOpen className="h-4 w-4 mr-2" /> Explore Catalog
           </Button>
         </div>
       </div>
 
-      {/* Courses */}
+      {/* Courses Grid - Responsive */}
       {courses.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
           {courses.map((course) => (
             <CourseCard key={course._id} course={course} />
           ))}
@@ -217,3 +228,4 @@ export default function MyCoursesTab({ refreshFlag }: { refreshFlag: boolean }) 
     </div>
   );
 }
+
