@@ -90,14 +90,20 @@ export default function CourseDetailsPage() {
 
             <div className="mb-10">
               <h3 className="text-2xl font-bold mb-6">Learning Roadmap</h3>
-              <div className="relative flex flex-col md:flex-row md:items-start gap-8 md:gap-0 before:absolute before:left-3 md:before:left-0 md:before:top-1/2 before:w-px md:before:w-full md:before:h-px before:bg-gray-300 before:-z-10">
-                {course.roadmap?.map((step, idx) => (
-                  <div key={idx} className="flex-1 flex items-center gap-4 md:flex-col md:items-center md:text-center">
-                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white font-bold text-lg flex-shrink-0 z-10">{idx + 1}</div>
-                    <span className="text-base font-medium mt-1 md:mt-3">{step}</span>
-                  </div>
-                ))}
-              </div>
+            <div className="relative flex flex-wrap flex-col md:flex-row md:items-start gap-8 md:gap-0 before:absolute before:left-3 md:before:left-0 md:before:top-1/2 before:w-px md:before:w-full md:before:h-px before:bg-gray-300 before:-z-10">
+  {course.roadmap?.map((step, idx) => (
+    <div
+      key={idx}
+      className="flex-1 flex items-center gap-4 md:flex-col md:items-center md:text-center min-w-[150px] pb-5"
+    >
+      <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white font-bold text-lg flex-shrink-0 z-10">
+        {idx + 1}
+      </div>
+      <span className="text-base font-medium mt-1 md:mt-3">{step}</span>
+    </div>
+  ))}
+</div>
+
             </div>
           </div>
 
