@@ -7,6 +7,7 @@ import "./globals.css"
 import { ToastProvider } from "@/components/toastProvider"
 import { AuthProvider } from "@/components/auth-provider"
 import SpeedInsightsClient from "@/components/speed-insights"
+import  GlobalLoader from "@/components/global-loader"
 
 
 
@@ -85,7 +86,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-       
+        <GlobalLoader />
           <AuthProvider>
           <Suspense fallback={null}>{children}</Suspense>
           <ToastProvider />

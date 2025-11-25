@@ -86,8 +86,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Star, PlayCircle } from "lucide-react";
+import { Clock, Star, PlayCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 type Props = {
   course: {
@@ -105,6 +106,9 @@ type Props = {
 };
 
 export const CourseCard = ({ course }: Props) => {
+  const [loading, setLoading] = useState(false);
+
+
   const progress = course.progress || 0;
 
   const categoryColorMap: Record<string, string> = {
@@ -188,12 +192,30 @@ export const CourseCard = ({ course }: Props) => {
         </div>
 
         {/* Button always at bottom */}
-        <Link href={`/course/${course.slug}`} className="mt-auto">
+        {/* <Link href={`/course/${course.slug}`} className="mt-auto">
           <Button className="w-full rounded-xl flex items-center justify-center gap-2 bg-primary  py-5 text-base font-medium transition">
             <PlayCircle className="h-5 w-5" />
             Continue Learning
           </Button>
-        </Link>
+        </Link> */}
+         <Link
+      href={`/course/${course.slug}`}
+      onClick={() => setLoading(true)}
+      className="mt-auto"
+    >
+      <Button
+        disabled={loading}
+        className="w-full rounded-xl flex items-center justify-center gap-2 bg-primary py-5 text-base font-medium transition"
+      >
+        {loading ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : (
+          <PlayCircle className="h-5 w-5" />
+        )}
+
+        {loading ? "Loading..." : "Continue Learning"}
+      </Button>
+    </Link>
       </CardContent>
     </Card>
   );
