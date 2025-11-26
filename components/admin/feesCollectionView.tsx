@@ -23,10 +23,20 @@ export default function FeesCollectionView() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(50);
 
-  const { data, error, isLoading } = useSWR(
-    `/api/fees?limit=${limit}&search=${encodeURIComponent(search)}`,
-    fetcher
-  );
+ const { data, error, isLoading } = useSWR(
+  `/api/fees?limit=${limit}&search=${encodeURIComponent(search)}`,
+  fetcher,
+  {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 0,
+    focusThrottleInterval: 0,
+    fetcher: fetcher,
+    keepPreviousData: false,
+    suspense: false,
+  }
+);
 
   const feesData: FeesCollectionItem[] = Array.isArray(data) ? data : [];
 

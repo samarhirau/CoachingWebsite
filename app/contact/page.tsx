@@ -81,9 +81,8 @@ const faqs = [
       "Immediately after successful purchase, you will receive a confirmation email with a link to the dedicated Upcoder student dashboard. Your course content, lecture videos, and assignments will be available there. You can log in using the credentials created during checkout.",
   },
   {
-    question: "Are your courses live or pre-recorded?",
-    answer:
-      "Most of our courses are delivered as **high-quality, on-demand video content** for maximum flexibility. This allows you to learn at your own pace. Larger programs often include live Q&A sessions or mentorship calls. Check the specific course page for details!",
+    question: "Is the Placement Material a video course or a downloadable PDF?",
+    answer: "The Placement Material is an instant download PDF/Ebook bundle of preparation resources. There are no videos included."
   },
   {
     question: "What is the refund policy for Upcoder courses?",

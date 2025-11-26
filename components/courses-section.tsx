@@ -236,7 +236,7 @@ export function CoursesSection() {
 
               <div className="flex items-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1"><Clock className="h-4 w-4" />{course.duration}</div>
-                <div className="flex items-center gap-1"><Users className="h-4 w-4" />{course.maxStudents}+ enrolled</div>
+                <div className="flex items-center gap-1"><Users className="h-4 w-4" />{course.maxStudents}+ Satisfied Users</div>
                 <div className="flex items-center gap-1"><Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />{course.rating}</div>
               </div>
 
@@ -256,7 +256,7 @@ export function CoursesSection() {
             <div className="flex gap-3 pt-2 mt-4">
               {user ? (
                 <Button className="flex-1 gradient-primary group" onClick={() => handleEnrollClick(course)}>
-                  Enroll Now
+                  Get Instant Access
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               ) : (
