@@ -31,7 +31,7 @@ export async function ModernNavigation() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-4">
-            <span>🎓 New Batch Starting Soon!</span>
+            <span>🎓 New Course Lanching Soon!</span>
           
 <Link
   href="/courses?filter=upcoming"

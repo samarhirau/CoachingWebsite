@@ -86,7 +86,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <GlobalLoader />
+        <GlobalLoader children={undefined} />
           <AuthProvider>
           <Suspense fallback={null}>{children}</Suspense>
           <ToastProvider />
