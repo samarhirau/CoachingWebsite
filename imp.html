@@ -2,8 +2,9 @@
 <html lang="en">
   <body style="margin:0; padding:0; background-color:#f4f5f7; font-family:'Segoe UI', Arial, sans-serif;">
     <center>
-      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px; margin:auto; background-color:#ffffff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.06); overflow:hidden;">
-        
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px; margin:auto; background-color:#ffffff; border-radius:12px; overflow:hidden;">
+
+        <!-- Header -->
         <tr>
           <td align="center" style="padding:40px 20px 10px 20px; background:oklch(0.45 0.15 240); color:#fff;">
             <h1 style="font-size:28px; font-weight:800; margin:0;">UPCODER</h1>
@@ -11,121 +12,83 @@
           </td>
         </tr>
 
+        <!-- Greeting -->
         <tr>
-          <td style="padding:40px 40px 20px 40px; text-align:left;">
-            <h2 style="font-size:32px; color:#111827; font-weight:900; margin:0 0 16px;">Hello Coder !</h2>
-            <p style="color:#4b5563; font-size:17px; line-height:1.7; margin:0 0 28px;">
-              We are thrilled to announce that <b>Upcoder</b> is officially live! 🌟<br><br>
-              Discover coding tutorials, challenges, and resources designed to empower your growth as a developer.
-            </p>
+          <td style="padding:30px 20px; text-align:left; color:#111827;">
+            <p style="font-size:16px; margin:0 0 16px;">Hi <b>${userName}</b>,</p>
 
-            <a href="https://upcoderv1.vercel.app" 
-              style="display:inline-block; background-color:oklch(0.55 0.15 240); color:#fff; padding:14px 28px; border-radius:8px; text-decoration:none; font-weight:700; letter-spacing:0.3px; font-size:16px; box-shadow:0 4px 10px rgba(37,99,235,0.25); transition:all 0.3s ease;">
-              Explore Upcoder Now →
-            </a>
+            <p style="font-size:16px; line-height:1.6; margin:0 0 16px; color:#4b5563;">
+              We’re excited to bring you the latest courses and resources at <b>Upcoder</b>.  
+              Explore topics carefully curated to help you level up as a developer.
+            </p>
           </td>
         </tr>
 
+        <!-- Featured Courses -->
         <tr>
-          <td style="padding:0 40px 20px 40px;">
-            <h3 style="font-size:24px; color:#111827; font-weight:700; margin:28px 0 20px;">🔥 Featured Courses</h3>
-            
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:20px; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+          <td style="padding:0 20px 20px 20px; text-align:left;">
+            <h2 style="font-size:22px; color:#111827; font-weight:700; margin:0 0 16px;">Featured Courses</h2>
+
+            <!-- Course 1 -->
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:16px; border:1px solid #e5e7eb; border-radius:8px;">
               <tr>
-                <td style="padding:15px; background-color:#f9fafb;">
-                  <span style="font-size:20px; color:#111827; font-weight:600; display:block; margin-bottom:4px;">AI With JavaScript - Beginner to Advanced</span>
-                  <span style="font-size:14px; color:#4b5563; display:block;">3 Weeks | 0 Enrolled | 4.9 Rating</span>
-                </td>
-                <td align="right" style="padding:15px; background-color:#f9fafb;">
-                  <span style="font-size:22px; color:#10b981; font-weight:700;">₹39</span>
-                  <span style="font-size:14px; color:#9ca3af; text-decoration:line-through;">₹499</span>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" style="padding:15px; font-size:14px; color:#6b7280; line-height:1.6;">
-                  A comprehensive course teaching Artificial Intelligence using JavaScript, covering Machine Learning, Deep Learning, NLP, Computer Vision, and more.
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" align="center" style="padding:0 15px 15px 15px;">
-                  <a href="https://upcoderv1.vercel.app/course/ai-javascript"
-                    style="display:block; background-color:oklch(0.55 0.15 240); color:#fff; padding:10px 0; border-radius:6px; text-decoration:none; font-weight:600; font-size:15px;">
-                    Enroll Now
+                <td style="padding:15px;">
+                  <strong>AI With JavaScript - Beginner to Advanced</strong>
+                  <p style="margin:4px 0 0 0; font-size:14px; color:#4b5563;">
+                    Learn Artificial Intelligence with JavaScript, covering ML, NLP, and Computer Vision.
+                  </p>
+                  <a href="https://upcoderv1.vercel.app/courses/ai-js-beginner-to-advanced" 
+                     style="display:inline-block; margin-top:8px; font-size:14px; color:#2563eb; text-decoration:none;">
+                     Start Learning →
                   </a>
                 </td>
               </tr>
             </table>
 
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:20px; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+            <!-- Course 2 -->
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:16px; border:1px solid #e5e7eb; border-radius:8px;">
               <tr>
-                <td style="padding:15px; background-color:#f9fafb;">
-                  <span style="font-size:20px; color:#111827; font-weight:600; display:block; margin-bottom:4px;">Git and GitHub Mastery: Version Control for Professionals</span>
-                  <span style="font-size:14px; color:#4b5563; display:block;">2 Weeks | 0 Enrolled | 4.9 Rating</span>
-                </td>
-                <td align="right" style="padding:15px; background-color:#f9fafb;">
-                  <span style="font-size:22px; color:#10b981; font-weight:700;">₹29</span>
-                  <span style="font-size:14px; color:#9ca3af; text-decoration:line-through;">₹299</span>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" style="padding:15px; font-size:14px; color:#6b7280; line-height:1.6;">
-                  A comprehensive course covering foundational Git commands, advanced workflows, and collaborative best practices using GitHub.
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" align="center" style="padding:0 15px 15px 15px;">
-                  <a href="https://upcoderv1.vercel.app/course/git-github-mastery"
-                    style="display:block; background-color:oklch(0.55 0.15 240); color:#fff; padding:10px 0; border-radius:6px; text-decoration:none; font-weight:600; font-size:15px;">
-                    Enroll Now
+                <td style="padding:15px;">
+                  <strong>Git and GitHub Mastery</strong>
+                  <p style="margin:4px 0 0 0; font-size:14px; color:#4b5563;">
+                    Master version control with Git and GitHub for real-world projects.
+                  </p>
+                  <a href="https://upcoderv1.vercel.app/courses/git-github-mastery" 
+                     style="display:inline-block; margin-top:8px; font-size:14px; color:#2563eb; text-decoration:none;">
+                     Start Learning →
                   </a>
                 </td>
               </tr>
             </table>
 
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:20px; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+            <!-- Course 3 -->
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:16px; border:1px solid #e5e7eb; border-radius:8px;">
               <tr>
-                <td style="padding:15px; background-color:#f9fafb;">
-                  <span style="font-size:20px; color:#111827; font-weight:600; display:block; margin-bottom:4px;">Placement Material - Beginner To Advanced</span>
-                  <span style="font-size:14px; color:#4b5563; display:block;">Self-Paced | 0 Enrolled | 4.8 Rating</span>
-                </td>
-                <td align="right" style="padding:15px; background-color:#f9fafb;">
-                  <span style="font-size:22px; color:#10b981; font-weight:700;">₹49</span>
-                  <span style="font-size:14px; color:#9ca3af; text-decoration:line-through;">₹499</span>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" style="padding:15px; font-size:14px; color:#6b7280; line-height:1.6;">
-                  Get access to complete placement preparation materials including aptitude, reasoning, and interview resources.
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" align="center" style="padding:0 15px 15px 15px;">
-                  <a href="https://upcoderv1.vercel.app/placement-material"
-                    style="display:block; background-color:oklch(0.55 0.15 240); color:#fff; padding:10px 0; border-radius:6px; text-decoration:none; font-weight:600; font-size:15px;">
-                    Enroll Now
+                <td style="padding:15px;">
+                  <strong>Placement Material - Beginner To Advanced</strong>
+                  <p style="margin:4px 0 0 0; font-size:14px; color:#4b5563;">
+                    Access complete placement prep materials including aptitude, reasoning, and interviews.
+                  </p>
+                  <a href="https://upcoderv1.vercel.app/courses/placement-material" 
+                     style="display:inline-block; margin-top:8px; font-size:14px; color:#2563eb; text-decoration:none;">
+                     Start Learning →
                   </a>
                 </td>
               </tr>
             </table>
-            
-            <p style="color:#059669; font-size:15px; line-height:1.6; margin:16px 0 0; background-color:#ecfdf5; padding:10px; border-radius:6px; border-left:4px solid #10b981; font-weight:600;">
-              ✨ Limited Time Offer! Use code <b>LAUNCH20</b> at checkout for an extra 20% off all courses!
+
+            <!-- Subtle Coupon -->
+            <p style="margin:24px 0 0 0; font-size:15px; line-height:1.6; color:#065f46; background-color:#d1fae5; padding:12px; border-radius:6px; border-left:4px solid #10b981;">
+              🎁 As a valued subscriber, use code <b>LAUNCH20</b> to get 20% off any course you enroll in this month. No rush, take your time to explore!
             </p>
           </td>
         </tr>
 
+        <!-- Footer -->
         <tr>
-          <td style="padding:0 40px;">
-            <hr style="border:none; border-top:1px solid #e5e7eb; margin:32px 0 0 0;">
-          </td>
-        </tr>
-
-        <tr>
-          <td align="center" style="padding:24px 40px 36px 40px; background-color:#f9fafb;">
-            <p style="color:#9ca3af; font-size:12px; margin:0;">
-              © 2025 <strong>Upcoder</strong>. All rights reserved.<br>
-              Visit us at <a href="https://upcoderv1.vercel.app" style="color:oklch(0.55 0.15 240); text-decoration:none;">upcoderv1.vercel.app</a>
-            </p>
+          <td align="center" style="padding:24px 20px; font-size:12px; color:#9ca3af;">
+            © 2025 <b>Upcoder</b>. All rights reserved.<br>
+            <a href="https://upcoderv1.vercel.app" style="color:#2563eb; text-decoration:none;">Visit Upcoder</a>
           </td>
         </tr>
 

@@ -305,7 +305,7 @@ const handleSignup = async (e: React.FormEvent) => {
                 <Input type="tel" placeholder="Phone Number ( Optional )" value={signupPhone} onChange={(e) => setSignupPhone(e.target.value)}/>
                 <Input type="password" placeholder="Password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
                 <Button type="submit" className="w-full" disabled={loading}>{loading ? "Creating..." : "Create Account"}</Button>
-               
+                {renderSocialLogin()}
               </form>
             )}
 
@@ -315,12 +315,12 @@ const handleSignup = async (e: React.FormEvent) => {
                 <Input type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
                 <Button type="submit" className="w-full" disabled={loading}>{loading ? "Logging in..." : "Log In"}</Button>
                 <Button variant="link" className="text-sm" onClick={() => setCurrentStep('forgot_email')}>Forgot Password?</Button>
-               
+                {renderSocialLogin()}
               </form>
             )}
 
 
- {renderSocialLogin()}
+
 
             {currentStep === 'forgot_email' && (
               <form onSubmit={handleForgotEmailSubmit} className="space-y-4">

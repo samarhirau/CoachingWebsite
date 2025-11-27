@@ -16,17 +16,36 @@ export function welcomeTemplate(userName: string) {
         <!-- Content -->
         <tr>
           <td style="padding:40px 40px 20px 40px; text-align:left;">
-            <h2 style="font-size:36px; color:#111827; font-weight:900; margin:0 0 16px;">Welcome to the Future 🚀</h2>
+            <h2 style="font-size:36px; color:#111827; font-weight:900; margin:0 0 16px;">Welcome to Upcoder 🚀</h2>
 
             <p style="color:#4b5563; font-size:17px; line-height:1.7; margin:0 0 28px;">
               Hey <b>${userName}</b>,<br><br>
-              We’re thrilled to have you join the <b>Upcoder</b> community — where passion meets innovation.
-              Your account is all set! Start exploring your dashboard and unlock tools that help you grow faster and smarter.
+
+              My name is <b>Samar</b>, and I built Upcoder with one mission —  
+              to help students learn coding in the most simple, practical, and enjoyable way possible.<br><br>
+
+              Now that you're in, you’ll start learning <b>real-world coding skills</b> through courses designed to make you industry-ready.  
+              Step-by-step. Beginner-friendly. No unnecessary complexity.
             </p>
 
-            <a href="https://upcoderv1.vercel.app" 
+            <h3 style="font-size:20px; color:#111827; margin:20px 0 10px;">🔥 What you will learn</h3>
+
+            <ul style="color:#4b5563; font-size:16px; line-height:1.7; padding-left:20px; margin:0 0 28px;">
+              <li>How to write clean and modern code</li>
+              <li>Build real projects that actually teach you something</li>
+              <li>Learn concepts with examples, visuals, and real explanations</li>
+              <li>Interview-focused coding patterns and problem-solving</li>
+              <li>Confidence to build apps on your own</li>
+            </ul>
+
+            <p style="color:#4b5563; font-size:17px; margin:0 0 28px;">
+              You’re officially part of the Upcoder community.  
+              Let’s make your coding journey meaningful, structured, and powerful.
+            </p>
+
+            <a href="https://upcoderv1.vercel.app"
               style="display:inline-block; background-color:oklch(0.55 0.15 240); color:#fff; padding:14px 28px; border-radius:8px; text-decoration:none; font-weight:700; letter-spacing:0.3px; font-size:16px; box-shadow:0 4px 10px rgba(37,99,235,0.25); transition:all 0.3s ease;">
-              Go to Dashboard →
+              Start Learning →
             </a>
 
             <p style="color:#6b7280; font-size:14px; line-height:1.6; margin:32px 0 0;">
@@ -48,7 +67,7 @@ export function welcomeTemplate(userName: string) {
           <td align="center" style="padding:24px 40px 36px 40px; background-color:#f9fafb;">
             <p style="color:#9ca3af; font-size:12px; margin:0;">
               © 2025 <strong>Upcoder</strong>. All rights reserved.<br>
-              Visit us at <a href="https://upcoderv1.vercel.app" style="color:oklch(0.55 0.15 240);; text-decoration:none;">upcoderv1.vercel.app</a>
+              Visit us at <a href="https://upcoderv1.vercel.app" style="color:oklch(0.55 0.15 240); text-decoration:none;">upcoderv1.vercel.app</a>
             </p>
           </td>
         </tr>

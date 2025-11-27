@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoDb";
 import User from "@/models/User";
 import { hashPassword } from "@/lib/auth"; 
-import { sendSuccessResetEmail } from "@/lib/services/sendmailtrap";  // chnaged here
+import { sendSuccessResetEmail } from "@/lib/services/sendmailtrap";  
 
 export async function POST(req: Request) {
   try {
